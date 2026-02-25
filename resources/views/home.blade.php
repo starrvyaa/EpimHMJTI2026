@@ -1097,12 +1097,12 @@
             </div>
             <div class="stat-item">
                 <div class="stat-icon"><i class="fas fa-users"></i></div>
-                <span class="stat-value">500+</span>
+                <span class="stat-value">600+</span>
                 <span class="stat-label">Peserta</span>
             </div>
             <div class="stat-item">
                 <div class="stat-icon"><i class="fas fa-award"></i></div>
-                <span class="stat-value">30Jt</span>
+                <span class="stat-value">40Jt</span>
                 <span class="stat-label">Total Hadiah</span>
             </div>
             <div class="stat-item">
