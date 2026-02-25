@@ -1031,7 +1031,7 @@
             <div class="navbar-logo">🏆</div>
             <div class="navbar-brand-text">
                 <span>EXPO PEKAN ILMIAH MAHASISWA</span>
-                <span>HMJTI 2026</span>
+                <span>HMJTI 2025-2026</span>
             </div>
         </a>
         <ul class="navbar-nav">
