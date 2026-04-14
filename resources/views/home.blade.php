@@ -1038,7 +1038,11 @@
             <li><a href="{{ url('/') }}" class="active">BERANDA</a></li>
             <li><a href="{{ url('/lomba') }}">LOMBA</a></li>
             <li><a href="{{ url('/timeline') }}">TIMELINE</a></li>
-            <li><a href="{{ url('/login') }}" class="btn-login">LOGIN</a></li>
+            @guest
+                <a href="{{ route('login') }}" class="btn-login">Login</a>
+            @else
+                <a href="{{ route('dashboard') }}" class="btn-login">Dashboard</a>
+            @endguest
         </ul>
         <button class="hamburger" id="hamburger">
             <span></span><span></span><span></span>
@@ -1075,14 +1079,20 @@
                 </div>
             </div>
             <div class="hero-image-wrap fade-up">
-                {{-- Ganti dengan gambar event yang sebenarnya --}}
-                <img
-                    src="{{ asset('images/hero-event.jpg') }}"
-                    alt="EPIM 2026 Event"
-                    class="hero-img"
-                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-                >
-                <div class="hero-img-placeholder" style="display:none;">...</div>
+                
+                <div class="hero-img-placeholder" style="display:none;">
+                    <div class="hero-image-wrap fade-up">
+                    <img 
+                        src="{{ asset('images/image.png') }}" 
+                        alt="EPIM 2026 Display" 
+                        class="hero-img"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                    >
+                    <div class="hero-img-placeholder" style="display:none;">
+                        <i class="fas fa-rocket" style="color: var(--orange);"></i>
+                    </div>
+                </div>
+                </div>
             </div>
         </div>
     </section>
