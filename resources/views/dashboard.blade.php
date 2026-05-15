@@ -170,12 +170,16 @@
             transition: 0.3s;
             text-align: center;
             flex: 1;
+            border: none;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
         }
 
         /* Tombol untuk kartu Hitam */
         .btn-outline {
             border: 1px solid #F97316;
             color: #F97316;
+            background: transparent;
         }
         .btn-outline:hover {
             background: #F97316;
@@ -291,7 +295,7 @@
                     <p>Front-end web programming fokus pada pembuatan tampilan menarik, responsif, dan performa tinggi.</p>
                 </div>
                 <div class="btn-group">
-                    <a href="#" class="btn btn-white">Selengkapnya</a>
+                    <button type="button" class="btn btn-white" onclick="openModal('modalWebProgramming')">Selengkapnya</button>
                     <a href="#" class="btn btn-white">Guidebook</a>
                 </div>
             </div>
@@ -302,7 +306,7 @@
                     <p>Desain kemasan kreatif untuk meningkatkan nilai jual produk dan memperkuat branding identitas.</p>
                 </div>
                 <div class="btn-group">
-                    <a href="#" class="btn btn-outline">Selengkapnya</a>
+                    <button type="button" class="btn btn-outline" onclick="openModal('modalPackaging')">Selengkapnya</button>
                     <a href="#" class="btn btn-outline">Guidebook</a>
                 </div>
             </div>
@@ -313,7 +317,7 @@
                     <p>Poster visual yang kuat untuk menyampaikan pesan secara instan dan menarik perhatian audiens.</p>
                 </div>
                 <div class="btn-group">
-                    <a href="#" class="btn btn-white">Selengkapnya</a>
+                    <button type="button" class="btn btn-white" onclick="openModal('modalPoster')">Selengkapnya</button>
                     <a href="#" class="btn btn-white">Guidebook</a>
                 </div>
             </div>
@@ -324,13 +328,65 @@
                     <p>Pembuatan karya video cinematic dengan teknik storytelling visual yang mendalam.</p>
                 </div>
                 <div class="btn-group">
-                    <a href="#" class="btn btn-outline">Selengkapnya</a>
+                    <button type="button" class="btn btn-outline" onclick="openModal('modalVideography')">Selengkapnya</button>
                     <a href="#" class="btn btn-outline">Guidebook</a>
                 </div>
             </div>
 
         </div>
     </main>
+</div>
+
+<div id="modalWebProgramming" class="modal">
+    <div class="modal-content">
+        <i class="fa-solid fa-code" style="font-size:3rem; color:#F97316; margin-bottom:15px;"></i>
+        <h3>Web Programming</h3>
+        <p style="color:#9CA3AF; font-size:0.9rem; line-height:1.7;">
+            Cabang ini menantang peserta membuat website yang rapi, responsif, mudah digunakan, dan sesuai tema. Penilaian biasanya mencakup tampilan antarmuka, struktur kode, kreativitas fitur, performa, serta kesesuaian solusi dengan kebutuhan pengguna.
+        </p>
+        <div class="modal-actions">
+            <button type="button" class="btn-modal btn-cancel" onclick="closeModal('modalWebProgramming')">Tutup</button>
+        </div>
+    </div>
+</div>
+
+<div id="modalPackaging" class="modal">
+    <div class="modal-content">
+        <i class="fa-solid fa-box-open" style="font-size:3rem; color:#F97316; margin-bottom:15px;"></i>
+        <h3>Design Packaging</h3>
+        <p style="color:#9CA3AF; font-size:0.9rem; line-height:1.7;">
+            Cabang ini berfokus pada rancangan kemasan produk yang menarik, informatif, dan punya nilai jual. Peserta perlu memadukan identitas visual, komposisi, warna, tipografi, dan fungsi kemasan agar produk terlihat profesional.
+        </p>
+        <div class="modal-actions">
+            <button type="button" class="btn-modal btn-cancel" onclick="closeModal('modalPackaging')">Tutup</button>
+        </div>
+    </div>
+</div>
+
+<div id="modalPoster" class="modal">
+    <div class="modal-content">
+        <i class="fa-solid fa-image" style="font-size:3rem; color:#F97316; margin-bottom:15px;"></i>
+        <h3>Design Poster</h3>
+        <p style="color:#9CA3AF; font-size:0.9rem; line-height:1.7;">
+            Cabang ini menilai kemampuan peserta menyampaikan pesan melalui poster visual. Karya yang kuat harus punya ide jelas, hierarki informasi yang mudah dibaca, komposisi matang, dan visual yang relevan dengan tema.
+        </p>
+        <div class="modal-actions">
+            <button type="button" class="btn-modal btn-cancel" onclick="closeModal('modalPoster')">Tutup</button>
+        </div>
+    </div>
+</div>
+
+<div id="modalVideography" class="modal">
+    <div class="modal-content">
+        <i class="fa-solid fa-video" style="font-size:3rem; color:#F97316; margin-bottom:15px;"></i>
+        <h3>Videography</h3>
+        <p style="color:#9CA3AF; font-size:0.9rem; line-height:1.7;">
+            Cabang ini menguji kemampuan membuat video yang komunikatif dan sinematik. Penilaian dapat mencakup konsep cerita, kualitas pengambilan gambar, editing, audio, ritme visual, dan kekuatan pesan yang disampaikan.
+        </p>
+        <div class="modal-actions">
+            <button type="button" class="btn-modal btn-cancel" onclick="closeModal('modalVideography')">Tutup</button>
+        </div>
+    </div>
 </div>
 
 <div id="modalLogout" class="modal">

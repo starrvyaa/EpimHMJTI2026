@@ -346,6 +346,9 @@
                             <th>Info Tim & Lomba</th>
                             @if(auth()->user()->role == 'admin')
                                 <th>Pendaftar (User)</th> @endif
+                            @if(auth()->user()->role == 'admin')
+                                <th>Bukti Bayar</th>
+                            @endif
                             <th>Proposal</th>
                             <th>Orisinalitas</th>
                             <th>Aksi</th>
@@ -365,6 +368,18 @@
                                 <td>
                                     <div style="font-weight: 700; color: #fff;">{{ $data->user->name ?? 'N/A' }}</div>
                                     <div style="font-size: 0.8rem; color: #9CA3AF;">{{ $data->user->email ?? '-' }}</div>
+                                </td>
+                            @endif
+
+                            @if(auth()->user()->role == 'admin')
+                                <td>
+                                    @if($data->bukti_bayar)
+                                        <a href="{{ asset('uploads/pembayaran/' . $data->bukti_bayar) }}" target="_blank" class="btn btn-info-outline" style="padding: 5px 10px;">
+                                            <i class="fa-solid fa-receipt"></i> Lihat
+                                        </a>
+                                    @else
+                                        <span style="color:#6B7280; font-size:0.85rem;">Belum ada</span>
+                                    @endif
                                 </td>
                             @endif
 
@@ -420,7 +435,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="{{ auth()->user()->role == 'admin' ? 6 : 5 }}" style="text-align:center; padding:60px; color:#4B5563;">
+                            <td colspan="{{ auth()->user()->role == 'admin' ? 7 : 5 }}" style="text-align:center; padding:60px; color:#4B5563;">
                                 Anda belum mendaftarkan tim manapun.
                             </td>
                         </tr>
@@ -520,9 +535,11 @@
             <form action="{{ route('Lomba.peserta.tambahproposal', $data->user_id) }}" method="POST" enctype="multipart/form-data">
                 @csrf @method('PATCH')
                 <div class="form-group"><input type="file" name="proposal" class="form-control" required accept=".pdf"></div>
-                <button type="submit" class="btn btn-orange" style="width:100%">Kirim Proposal</button>
+                <div style="display:flex; gap:10px;">
+                    <button type="button" class="btn btn-outline" style="flex:1" onclick="closeModal('modalProposal{{ $data->id }}')">Batal</button>
+                    <button type="submit" class="btn btn-orange" style="flex:1">Kirim Proposal</button>
+                </div>
             </form>
-            <button class="btn btn-outline" style="width:100%; margin-top:10px;" onclick="closeModal('modalProposal{{ $data->id }}')">Batal</button>
         </div>
     </div>
 

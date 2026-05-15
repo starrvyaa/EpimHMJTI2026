@@ -208,6 +208,26 @@
             border-color: #F97316;
         }
 
+        .password-wrap {
+            position: relative;
+        }
+
+        .password-wrap .form-control {
+            padding-right: 2.8rem;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #9CA3AF;
+            cursor: pointer;
+            padding: 0;
+        }
+
         .btn {
             padding: 0.75rem 1.2rem;
             border-radius: 8px;
@@ -400,19 +420,34 @@
 
                     <div class="form-group">
                         <label>Password Saat Ini</label>
-                        <input type="password" name="current_password" class="form-control" autocomplete="current-password" required>
+                        <div class="password-wrap">
+                            <input id="currentPassword" type="password" name="current_password" class="form-control" autocomplete="current-password" required>
+                            <button type="button" class="toggle-password" onclick="togglePassword('currentPassword', this)" title="Lihat password">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
                         @error('current_password', 'updatePassword') <span class="form-error">{{ $message }}</span> @enderror
                     </div>
 
                     <div class="form-group">
                         <label>Password Baru</label>
-                        <input type="password" name="password" class="form-control" autocomplete="new-password" required>
+                        <div class="password-wrap">
+                            <input id="newPassword" type="password" name="password" class="form-control" autocomplete="new-password" required>
+                            <button type="button" class="toggle-password" onclick="togglePassword('newPassword', this)" title="Lihat password">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
                         @error('password', 'updatePassword') <span class="form-error">{{ $message }}</span> @enderror
                     </div>
 
                     <div class="form-group">
                         <label>Konfirmasi Password Baru</label>
-                        <input type="password" name="password_confirmation" class="form-control" autocomplete="new-password" required>
+                        <div class="password-wrap">
+                            <input id="confirmPassword" type="password" name="password_confirmation" class="form-control" autocomplete="new-password" required>
+                            <button type="button" class="toggle-password" onclick="togglePassword('confirmPassword', this)" title="Lihat password">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
                         @error('password_confirmation', 'updatePassword') <span class="form-error">{{ $message }}</span> @enderror
                     </div>
 
@@ -453,6 +488,16 @@
         if (e.target.classList && e.target.classList.contains('modal')) {
             e.target.style.display = 'none';
         }
+    }
+
+    function togglePassword(inputId, button) {
+        const input = document.getElementById(inputId);
+        const icon = button.querySelector('i');
+        const visible = input.type === 'text';
+
+        input.type = visible ? 'password' : 'text';
+        icon.className = visible ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash';
+        button.title = visible ? 'Lihat password' : 'Sembunyikan password';
     }
 </script>
 

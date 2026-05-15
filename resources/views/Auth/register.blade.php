@@ -5,6 +5,7 @@
     <title>Register - EPIM 2026</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <style>
         body {
@@ -15,7 +16,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
+            padding: 2rem 1rem;
         }
 
         .box {
@@ -42,6 +44,26 @@
             border-radius: 8px;
             color: #fff;
             margin-top: 0.5rem;
+        }
+
+        .password-wrap {
+            position: relative;
+        }
+
+        .password-wrap input {
+            padding-right: 2.8rem;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-35%);
+            background: none;
+            border: none;
+            color: #9CA3AF;
+            cursor: pointer;
+            padding: 0;
         }
 
         label {
@@ -75,6 +97,23 @@
             color: #F97316;
             text-decoration: none;
         }
+
+        .error {
+            color: #FCA5A5;
+            font-size: 0.78rem;
+            display: block;
+            margin-top: 0.45rem;
+        }
+
+        .alert {
+            background: rgba(239, 68, 68, 0.1);
+            color: #FCA5A5;
+            padding: 0.85rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            font-size: 0.85rem;
+        }
     </style>
 </head>
 <body>
@@ -82,27 +121,44 @@
 <div class="box">
     <div class="title">EPIM <span>Register</span></div>
 
+    @if($errors->any())
+        <div class="alert">Mohon lengkapi data registrasi dengan benar.</div>
+    @endif
+
     <form method="POST" action="{{ route('register') }}">
         @csrf
 
         <div>
             <label>Nama</label>
-            <input type="text" name="name" required>
+            <input type="text" name="name" value="{{ old('name') }}" required pattern="^[^<>]+$" title="Tidak boleh berisi tag HTML.">
+            @error('name') <span class="error">{{ $message }}</span> @enderror
         </div>
 
         <div style="margin-top:1rem;">
             <label>Email</label>
-            <input type="email" name="email" required>
+            <input type="email" name="email" value="{{ old('email') }}" required>
+            @error('email') <span class="error">{{ $message }}</span> @enderror
         </div>
 
         <div style="margin-top:1rem;">
             <label>Password</label>
-            <input type="password" name="password" required>
+            <div class="password-wrap">
+                <input id="registerPassword" type="password" name="password" required>
+                <button type="button" class="toggle-password" onclick="togglePassword('registerPassword', this)" title="Lihat password">
+                    <i class="fa-solid fa-eye"></i>
+                </button>
+            </div>
+            @error('password') <span class="error">{{ $message }}</span> @enderror
         </div>
 
         <div style="margin-top:1rem;">
             <label>Konfirmasi Password</label>
-            <input type="password" name="password_confirmation" required>
+            <div class="password-wrap">
+                <input id="registerPasswordConfirmation" type="password" name="password_confirmation" required>
+                <button type="button" class="toggle-password" onclick="togglePassword('registerPasswordConfirmation', this)" title="Lihat password">
+                    <i class="fa-solid fa-eye"></i>
+                </button>
+            </div>
         </div>
 
         <button class="btn">Register</button>
@@ -113,6 +169,18 @@
         <a href="{{ route('login') }}" class="link">Login</a>
     </div>
 </div>
+
+<script>
+    function togglePassword(inputId, button) {
+        const input = document.getElementById(inputId);
+        const icon = button.querySelector('i');
+        const visible = input.type === 'text';
+
+        input.type = visible ? 'password' : 'text';
+        icon.className = visible ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash';
+        button.title = visible ? 'Lihat password' : 'Sembunyikan password';
+    }
+</script>
 
 </body>
 </html>

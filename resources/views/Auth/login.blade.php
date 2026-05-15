@@ -5,6 +5,7 @@
     <title>Login - EPIM 2026</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <style>
         body {
@@ -15,7 +16,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
+            padding: 2rem 1rem;
         }
 
         .login-box {
@@ -51,6 +53,26 @@
             margin-top: 0.5rem;
         }
 
+        .password-wrap {
+            position: relative;
+        }
+
+        .password-wrap input {
+            padding-right: 2.8rem;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-35%);
+            background: none;
+            border: none;
+            color: #9CA3AF;
+            cursor: pointer;
+            padding: 0;
+        }
+
         label {
             font-size: 0.8rem;
             color: #9CA3AF;
@@ -83,6 +105,23 @@
             text-align: center;
             font-size: 0.8rem;
         }
+
+        .error {
+            color: #FCA5A5;
+            font-size: 0.78rem;
+            display: block;
+            margin-top: 0.45rem;
+        }
+
+        .alert {
+            background: rgba(239, 68, 68, 0.1);
+            color: #FCA5A5;
+            padding: 0.85rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            font-size: 0.85rem;
+        }
     </style>
 </head>
 <body>
@@ -91,17 +130,28 @@
     <div class="title">EPIM <span>Login</span></div>
     <div class="subtitle">Masuk ke akun kamu</div>
 
+    @if($errors->any())
+        <div class="alert">Mohon periksa email dan password kamu.</div>
+    @endif
+
     <form method="POST" action="{{ route('login') }}">
         @csrf
 
         <div>
             <label>Email</label>
-            <input type="email" name="email" required>
+            <input type="email" name="email" value="{{ old('email') }}" required>
+            @error('email') <span class="error">{{ $message }}</span> @enderror
         </div>
 
         <div style="margin-top:1rem;">
             <label>Password</label>
-            <input type="password" name="password" required>
+            <div class="password-wrap">
+                <input id="loginPassword" type="password" name="password" required>
+                <button type="button" class="toggle-password" onclick="togglePassword('loginPassword', this)" title="Lihat password">
+                    <i class="fa-solid fa-eye"></i>
+                </button>
+            </div>
+            @error('password') <span class="error">{{ $message }}</span> @enderror
         </div>
 
         <button class="btn">Login</button>
@@ -112,6 +162,18 @@
         <a href="{{ route('register') }}" class="link">Register</a>
     </div>
 </div>
+
+<script>
+    function togglePassword(inputId, button) {
+        const input = document.getElementById(inputId);
+        const icon = button.querySelector('i');
+        const visible = input.type === 'text';
+
+        input.type = visible ? 'password' : 'text';
+        icon.className = visible ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash';
+        button.title = visible ? 'Lihat password' : 'Sembunyikan password';
+    }
+</script>
 
 </body>
 </html>
