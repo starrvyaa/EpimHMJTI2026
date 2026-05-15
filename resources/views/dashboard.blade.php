@@ -209,6 +209,50 @@
             align-items: center;
             gap: 12px;
         }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(8px);
+        }
+        .modal-content {
+            background: #161616;
+            margin: 10rem auto;
+            padding: 2.5rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            width: 90%;
+            max-width: 480px;
+            border-radius: 20px;
+            text-align: center;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .btn-modal {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            font-weight: 700;
+        }
+        .btn-cancel {
+            border: 1px solid #374151;
+            color: #9CA3AF;
+            background: transparent;
+        }
+        .btn-danger {
+            background: #EF4444;
+        }
     </style>
 </head>
 <body>
@@ -222,7 +266,7 @@
         
         <form method="POST" action="{{ route('logout') }}" class="logout-form">
             @csrf
-            <button type="submit" class="logout-btn">
+            <button type="button" class="logout-btn" onclick="openModal('modalLogout')">
                 <i class="fa-solid fa-right-from-bracket"></i> Logout
             </button>
         </form>
@@ -288,6 +332,39 @@
         </div>
     </main>
 </div>
+
+<div id="modalLogout" class="modal">
+    <div class="modal-content">
+        <i class="fa-solid fa-right-from-bracket" style="font-size:3rem; color:#EF4444; margin-bottom:15px;"></i>
+        <h3>Yakin ingin keluar?</h3>
+        <p style="color:#9CA3AF; font-size:0.9rem; line-height:1.6;">Sesi akun kamu akan diakhiri.</p>
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <div class="modal-actions">
+                <button type="button" class="btn-modal btn-cancel" onclick="closeModal('modalLogout')">Batal</button>
+                <button type="submit" class="btn-modal btn-danger">Ya, Logout</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openModal(id) {
+        const modal = document.getElementById(id);
+        if (modal) modal.style.display = 'block';
+    }
+
+    function closeModal(id) {
+        const modal = document.getElementById(id);
+        if (modal) modal.style.display = 'none';
+    }
+
+    window.onclick = function(e) {
+        if (e.target.classList && e.target.classList.contains('modal')) {
+            e.target.style.display = 'none';
+        }
+    }
+</script>
 
 </body>
 </html>

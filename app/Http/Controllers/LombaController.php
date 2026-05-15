@@ -48,7 +48,7 @@ public function index()
         'hp_1' => $phoneRule,
         'anggota_2' => $noHtmlText,
         'hp_2' => $phoneRule,
-        'bukti_bayar' => 'required|image|mimes:jpg,jpeg,png|max:2048',
+        'bukti_bayar' => 'required|image|mimes:jpg,jpeg,png',
     ], [
         '*.required' => ':attribute wajib diisi.',
         '*.not_regex' => ':attribute tidak boleh berisi tag HTML.',
@@ -57,7 +57,6 @@ public function index()
         'id_lomba.exists' => 'Kategori lomba tidak valid.',
         'bukti_bayar.image' => 'Bukti bayar harus berupa gambar.',
         'bukti_bayar.mimes' => 'Bukti bayar harus JPG, JPEG, atau PNG.',
-        'bukti_bayar.max' => 'Ukuran bukti bayar maksimal 2 MB.',
     ], [
         'nama_tim' => 'Nama tim',
         'asal_sekolah' => 'Asal sekolah',
@@ -127,8 +126,13 @@ public function index()
         'linkvideo' => 'nullable|url',
     ]);
 
-    // Ambil data berdasarkan user_id (karena id_user kamu NULL di gambar)
-    $data = Pendaftar::where('user_id', $user_id)->firstOrFail();
+    $query = Pendaftar::where('user_id', $user_id);
+
+    if (auth()->user()->role !== 'admin') {
+        $query->where('user_id', auth()->id());
+    }
+
+    $data = $query->firstOrFail();
 
     if ($request->hasFile('proposal')) {
         $file = $request->file('proposal');
@@ -149,8 +153,13 @@ public function index()
 
 public function hapusproposal($user_id)
 {
-    // Cari data berdasarkan user_id (sesuai kolom di phpMyAdmin kamu)
-    $data = \App\Models\Pendaftar::where('user_id', $user_id)->first();
+    $query = \App\Models\Pendaftar::where('user_id', $user_id);
+
+    if (auth()->user()->role !== 'admin') {
+        $query->where('user_id', auth()->id());
+    }
+
+    $data = $query->first();
 
     if ($data && $data->proposal) {
         // Path file yang akan dihapus
@@ -178,7 +187,13 @@ public function hapusproposal($user_id)
         'orisinalitas' => 'required|mimes:pdf|max:2048',
     ]);
 
-    $data = Pendaftar::where('user_id', $id)->firstOrFail();
+    $query = Pendaftar::where('user_id', $id);
+
+    if (auth()->user()->role !== 'admin') {
+        $query->where('user_id', auth()->id());
+    }
+
+    $data = $query->firstOrFail();
 
     if ($request->hasFile('orisinalitas')) {
         $file = $request->file('orisinalitas');
@@ -193,7 +208,13 @@ public function hapusproposal($user_id)
 
 public function hapusorisinalitas($id)
 {
-    $data = Pendaftar::where('user_id', $id)->firstOrFail();
+    $query = Pendaftar::where('user_id', $id);
+
+    if (auth()->user()->role !== 'admin') {
+        $query->where('user_id', auth()->id());
+    }
+
+    $data = $query->firstOrFail();
     
     // Hapus file fisik jika ada
     if ($data->orisinalitas && file_exists(public_path('uploads/orisinalitas/' . $data->orisinalitas))) {
@@ -213,6 +234,10 @@ public function hapusorisinalitas($id)
         
         // Cari data pendaftar
         $pendaftar = \App\Models\Pendaftar::findOrFail($realId);
+
+        if (auth()->user()->role !== 'admin' && $pendaftar->user_id !== Auth::id()) {
+            abort(403);
+        }
 
         // Hapus file proposal jika ada di folder
         if ($pendaftar->proposal && file_exists(public_path('uploads/proposal/' . $pendaftar->proposal))) {

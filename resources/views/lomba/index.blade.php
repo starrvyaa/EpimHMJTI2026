@@ -300,7 +300,7 @@
         
         <form method="POST" action="{{ route('logout') }}" class="logout-form">
             @csrf
-            <button type="submit" class="logout-btn">
+            <button type="button" class="logout-btn" onclick="openModal('modalLogout')">
                 <i class="fa-solid fa-right-from-bracket"></i> Logout
             </button>
         </form>
@@ -436,6 +436,24 @@
 
     </main>
 
+</div>
+
+
+<div id="modalLogout" class="modal">
+    <div class="modal-content" style="text-align:center;">
+        <i class="fa-solid fa-right-from-bracket" style="font-size:3rem; color:#EF4444; margin-bottom:15px;"></i>
+        <h3>Yakin ingin keluar?</h3>
+        <p style="color:#9CA3AF; font-size:0.9rem; line-height:1.6; margin:10px 0 0;">
+            Sesi akun kamu akan diakhiri.
+        </p>
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <div style="display:flex; gap:10px; margin-top:20px;">
+                <button type="button" class="btn btn-outline" style="flex:1" onclick="closeModal('modalLogout')">Batal</button>
+                <button type="submit" class="btn btn-orange" style="flex:1; background:#EF4444;">Ya, Logout</button>
+            </div>
+        </form>
+    </div>
 </div>
 
 
