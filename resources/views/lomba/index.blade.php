@@ -69,9 +69,12 @@
             color: #F97316;
         }
 
+        .logout-form {
+            margin-top: auto;
+        }
+
         /* ===== LOGOUT BUTTON (Identik Dashboard) ===== */
         .logout-btn {
-            margin-top: auto; /* Memaksa ke paling bawah sidebar */
             background: none;
             border: none;
             color: #ef4444;
@@ -116,6 +119,17 @@
         }
 
         .topbar h2 { font-size: 1.25rem; margin: 0; font-family: 'Montserrat'; }
+        .user-info {
+            color: #fff;
+            text-decoration: none;
+            margin-right: 1.5rem;
+            padding: 0.55rem 0.85rem;
+            border-radius: 10px;
+            transition: 0.3s;
+        }
+        .user-info:hover {
+            background: rgba(249,115,22,0.12);
+        }
         .username { color: #F97316; font-weight: 600; }
 
         /* ===== CONTENT ===== */
@@ -226,6 +240,20 @@
             transition: 0.3s;
         }
         .form-control:focus { border-color: #F97316; }
+        .form-error {
+            color: #FCA5A5;
+            font-size: 0.78rem;
+            margin-top: 0.45rem;
+            display: block;
+        }
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: #FCA5A5;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
 
         .badge-status { 
             padding: 5px 10px; 
@@ -238,6 +266,28 @@
         .step-indicator { display: flex; gap: 10px; margin-bottom: 30px; }
         .step-indicator div { flex: 1; height: 5px; border-radius: 10px; }
         .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 10px; }
+        .detail-grid {
+            display: grid;
+            gap: 15px;
+            background: #222;
+            padding: 20px;
+            border-radius: 12px;
+        }
+        .detail-item label {
+            color: #6B7280;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+        .detail-item strong {
+            display: block;
+            margin-top: 4px;
+            color: #fff;
+        }
+        .detail-separator {
+            border: 0;
+            border-top: 1px solid #333;
+            width: 100%;
+        }
     </style>
 </head>
 <body>
@@ -248,7 +298,7 @@
         <a href="{{ route('dashboard') }}"><i class="fa-solid fa-house"></i> Dashboard</a>
         <a href="{{ route('Lomba.peserta.index') }}" class="active"><i class="fa-solid fa-trophy"></i> Daftar Lomba</a>
         
-        <form method="POST" action="{{ route('logout') }}">
+        <form method="POST" action="{{ route('logout') }}" class="logout-form">
             @csrf
             <button type="submit" class="logout-btn">
                 <i class="fa-solid fa-right-from-bracket"></i> Logout
@@ -260,15 +310,21 @@
 <div class="main-container">
     <header class="topbar">
         <h2>Panel Peserta</h2>
-        <div class="user-info">
+        <a href="{{ route('profile.edit') }}" class="user-info" title="Edit data diri">
             Halo, <span class="username">{{ Auth::user()->name }}</span>
-        </div>
+        </a>
     </header>
 
     <main class="content">
         @if(session('success'))
             <div style="background: rgba(16, 185, 129, 0.1); color: #10B981; padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; border: 1px solid rgba(16, 185, 129, 0.2);">
                 <i class="fa-solid fa-circle-check"></i> {{ session('success') }}
+            </div>
+        @endif
+
+        @if($errors->any())
+            <div class="alert-danger">
+                <i class="fa-solid fa-circle-exclamation"></i> Mohon lengkapi data pendaftaran dengan benar.
             </div>
         @endif
 
@@ -296,228 +352,81 @@
                         </tr>
                     </thead>
                    <tbody>
-
-                       
-
-
-
-                        @forelse ($datas as $data)
-
-    <tr>
-
-        <td>{{ $loop->iteration }}</td>
-
-        <td>
-
-            <div style="font-weight: 700; color: #fff;">{{ $data->tim->nama_tim ?? 'N/A' }}</div>
-
-            <div style="font-size: 0.8rem; color: #F97316;">{{ $data->kategori->nama_lomba ?? 'N/A' }}</div>
-
-        </td>
-
-        <td>
-
-            @if($data->proposal)
-
-                <div style="display: flex; gap: 8px; align-items: center;">
-
-                    <a href="{{ asset('uploads/proposal/' . $data->proposal) }}" target="_blank" class="btn btn-info-outline" style="padding: 5px 10px;"><i class="fa-solid fa-download"></i></a>
-
-                    <button class="btn btn-danger-outline" style="padding: 5px 10px;" onclick="openModal('modalHapusProposal{{ $data->user_id }}')"><i class="fa-solid fa-trash-can"></i></button>
-
-                </div>
-
-            @else
-
-                <button class="btn btn-orange" onclick="openModal('modalProposal{{ $data->user_id }}')"><i class="fa-solid fa-upload"></i> Upload</button>
-
-            @endif
-
-        </td>
-
-        <td>
-
-            @if($data->orisinalitas)
-
-                <div style="display: flex; gap: 8px; align-items: center;">
-
-                    <a href="{{ asset('uploads/orisinalitas/' . $data->orisinalitas) }}" target="_blank" class="btn btn-info-outline" style="padding: 5px 10px;"><i class="fa-solid fa-download"></i></a>
-
-                    <button class="btn btn-danger-outline" style="padding: 5px 10px;" onclick="openModal('modalHapusOrisinalitas{{ $data->user_id }}')"><i class="fa-solid fa-trash-can"></i></button>
-
-                </div>
-
-            @else
-
-                <button class="btn btn-orange" onclick="openModal('modalOrisinalitas{{ $data->user_id }}')"><i class="fa-solid fa-upload"></i> Upload</button>
-
-            @endif
-
-        </td>
-
-        <td>
-
-            <div class="action-icons">
-
-                <button class="icon-btn" style="color:#60A5FA" onclick="openModal('modalDetail{{ $data->user_id }}')" title="Detail"><i class="fa-solid fa-eye"></i></button>
-
-                <a href="https://wa.me/{{ $data->hp_ketua }}" target="_blank" class="icon-btn" style="color:#25D366" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
-
-                <form action="{{ route('Lomba.peserta.destroy', Crypt::encrypt($data->id)) }}" method="POST" onsubmit="return confirm('Hapus pendaftaran?')">
-
-                    @csrf @method('DELETE')
-
-                    <button type="submit" class="icon-btn" style="color:#EF4444" title="Hapus"><i class="fa-solid fa-trash-can"></i></button>
-
-                </form>
-
-            </div>
-
-        </td>
-
-    </tr>
-
-
-
-    <div id="modalDetail{{ $data->user_id }}" class="modal">
-
-        <div class="modal-content">
-
-            <h3 style="color:#F97316; margin-bottom:20px; font-family:'Montserrat';">Detail Tim</h3>
-
-            <div style="display:grid; gap:15px; background: #222; padding: 20px; border-radius: 12px;">
-
-                {{-- <div><label style="color:#6B7280; font-size:0.75rem;">ASAL SEKOLAH</label><br><strong>{{ $data->tim->asal_sekolah }}</strong></div>
-
-                <div><label style="color:#6B7280; font-size:0.75rem;">PEMBIMBING</label><br><strong>{{ $data->tim->guru_pembimbing }}</strong></div> --}}
-
-                <hr style="border:0; border-top:1px solid #333;">
-
-                <div><label style="color:#6B7280; font-size:0.75rem;">KETUA</label><br><strong>{{ $data->nama_ketua }}</strong></div>
-
-            </div>
-
-            <button class="btn btn-outline" style="width:100%; margin-top:20px;" onclick="closeModal('modalDetail{{ $data->user_id }}')">Tutup</button>
-
-        </div>
-
-    </div>
-
-   
-
-    <div id="modalProposal{{ $data->user_id }}" class="modal">
-
-        <div class="modal-content">
-
-            <h3>Upload Proposal</h3>
-
-            <form action="{{ route('Lomba.peserta.tambahproposal', $data->user_id) }}" method="POST" enctype="multipart/form-data">
-
-                @csrf @method('PATCH')
-
-                <div class="form-group"><input type="file" name="proposal" class="form-control" required accept=".pdf"></div>
-
-                <button type="submit" class="btn btn-orange" style="width:100%">Kirim Proposal</button>
-
-            </form>
-
-            <button class="btn btn-outline" style="width:100%; margin-top:10px;" onclick="closeModal('modalProposal{{ $data->user_id }}')">Batal</button>
-
-        </div>
-
-    </div>
-
-
-
-    <div id="modalHapusProposal{{ $data->user_id }}" class="modal">
-
-        <div class="modal-content" style="text-align:center;">
-
-            <i class="fa-solid fa-triangle-exclamation" style="font-size:3rem; color:#EF4444; margin-bottom:15px;"></i>
-
-            <h3>Hapus Proposal?</h3>
-
-            <form action="{{ route('Lomba.peserta.hapusproposal', $data->user_id) }}" method="POST">
-
-                @csrf @method('DELETE')
-
-                <div style="display:flex; gap:10px; margin-top:20px;">
-
-                    <button type="button" class="btn btn-outline" style="flex:1" onclick="closeModal('modalHapusProposal{{ $data->user_id }}')">Batal</button>
-
-                    <button type="submit" class="btn btn-orange" style="flex:1; background:#EF4444;">Ya, Hapus</button>
-
-                </div>
-
-            </form>
-
-        </div>
-
-    </div>
-
-
-
-    <div id="modalOrisinalitas{{ $data->user_id }}" class="modal">
-
-        <div class="modal-content">
-
-            <h3>Upload Lembar Orisinalitas</h3>
-
-            <p style="color: #9CA3AF; font-size: 0.8rem; margin-bottom: 1rem;">Pastikan file dalam format PDF.</p>
-
-            <form action="{{ route('Lomba.peserta.tambahorisinalitas', $data->user_id) }}" method="POST" enctype="multipart/form-data">
-
-                @csrf @method('PATCH')
-
-                <div class="form-group"><input type="file" name="orisinalitas" class="form-control" required accept=".pdf"></div>
-
-                <button type="submit" class="btn btn-orange" style="width:100%">Kirim Berkas</button>
-
-            </form>
-
-            <button class="btn btn-outline" style="width:100%; margin-top:10px;" onclick="closeModal('modalOrisinalitas{{ $data->user_id }}')">Batal</button>
-
-        </div>
-
-    </div>
-
-
-
-    <div id="modalHapusOrisinalitas{{ $data->user_id }}" class="modal">
-
-        <div class="modal-content" style="text-align:center;">
-
-            <i class="fa-solid fa-triangle-exclamation" style="font-size:3rem; color:#EF4444; margin-bottom:15px;"></i>
-
-            <h3>Hapus Lembar Orisinalitas?</h3>
-
-            <form action="{{ route('Lomba.peserta.hapusorisinalitas', $data->user_id) }}" method="POST">
-
-                @csrf @method('DELETE')
-
-                <div style="display:flex; gap:10px; margin-top:20px;">
-
-                    <button type="button" class="btn btn-outline" style="flex:1" onclick="closeModal('modalHapusOrisinalitas{{ $data->user_id }}')">Batal</button>
-
-                    <button type="submit" class="btn btn-orange" style="flex:1; background:#EF4444;">Ya, Hapus</button>
-
-                </div>
-
-            </form>
-
-        </div>
-
-    </div>
-
-
-
-    @empty
-
-    <tr><td colspan="5" style="text-align:center; padding:60px; color:#4B5563;">Anda belum mendaftarkan tim manapun.</td></tr>
-
-    @endforelse
-
+                    @forelse ($datas as $data)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+
+                            <td>
+                                <div style="font-weight: 700; color: #fff;">{{ $data->tim->nama_tim ?? 'N/A' }}</div>
+                                <div style="font-size: 0.8rem; color: #F97316;">{{ $data->kategori->nama_lomba ?? 'N/A' }}</div>
+                            </td>
+
+                            @if(auth()->user()->role == 'admin')
+                                <td>
+                                    <div style="font-weight: 700; color: #fff;">{{ $data->user->name ?? 'N/A' }}</div>
+                                    <div style="font-size: 0.8rem; color: #9CA3AF;">{{ $data->user->email ?? '-' }}</div>
+                                </td>
+                            @endif
+
+                            <td>
+                                @if($data->proposal)
+                                    <div style="display: flex; gap: 8px; align-items: center;">
+                                        <a href="{{ asset('uploads/proposal/' . $data->proposal) }}" target="_blank" class="btn btn-info-outline" style="padding: 5px 10px;">
+                                            <i class="fa-solid fa-download"></i>
+                                        </a>
+                                        <button class="btn btn-danger-outline" style="padding: 5px 10px;" onclick="openModal('modalHapusProposal{{ $data->id }}')">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </button>
+                                    </div>
+                                @else
+                                    <button class="btn btn-orange" onclick="openModal('modalProposal{{ $data->id }}')">
+                                        <i class="fa-solid fa-upload"></i> Upload
+                                    </button>
+                                @endif
+                            </td>
+
+                            <td>
+                                @if($data->orisinalitas)
+                                    <div style="display: flex; gap: 8px; align-items: center;">
+                                        <a href="{{ asset('uploads/orisinalitas/' . $data->orisinalitas) }}" target="_blank" class="btn btn-info-outline" style="padding: 5px 10px;">
+                                            <i class="fa-solid fa-download"></i>
+                                        </a>
+                                        <button class="btn btn-danger-outline" style="padding: 5px 10px;" onclick="openModal('modalHapusOrisinalitas{{ $data->id }}')">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </button>
+                                    </div>
+                                @else
+                                    <button class="btn btn-orange" onclick="openModal('modalOrisinalitas{{ $data->id }}')">
+                                        <i class="fa-solid fa-upload"></i> Upload
+                                    </button>
+                                @endif
+                            </td>
+
+                            <td>
+                                <div class="action-icons">
+                                    <button class="icon-btn" style="color:#60A5FA" onclick="openModal('modalDetail{{ $data->id }}')" title="Detail">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </button>
+
+                                    <a href="https://wa.me/{{ $data->hp_ketua }}" target="_blank" class="icon-btn" style="color:#25D366" title="WhatsApp">
+                                        <i class="fa-brands fa-whatsapp"></i>
+                                    </a>
+
+                                    <button type="button" class="icon-btn" style="color:#EF4444" onclick="openModal('modalHapusPendaftaran{{ $data->id }}')" title="Hapus">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="{{ auth()->user()->role == 'admin' ? 6 : 5 }}" style="text-align:center; padding:60px; color:#4B5563;">
+                                Anda belum mendaftarkan tim manapun.
+                            </td>
+                        </tr>
+                    @endforelse
                     </tbody>
+
 
                 </table>
 
@@ -529,6 +438,135 @@
 
 </div>
 
+
+@foreach ($datas as $data)
+    <div id="modalDetail{{ $data->id }}" class="modal">
+        <div class="modal-content">
+            <h3 style="color:#F97316; margin-bottom:20px; font-family:'Montserrat';">Detail Tim</h3>
+
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <label>Nama Tim</label>
+                    <strong>{{ $data->tim->nama_tim ?? 'N/A' }}</strong>
+                </div>
+
+                <div class="detail-item">
+                    <label>Kategori Lomba</label>
+                    <strong>{{ $data->kategori->nama_lomba ?? 'N/A' }}</strong>
+                </div>
+
+                <div class="detail-item">
+                    <label>Asal Sekolah</label>
+                    <strong>{{ $data->tim->asal_sekolah ?? 'N/A' }}</strong>
+                </div>
+
+                <div class="detail-item">
+                    <label>Pembimbing</label>
+                    <strong>{{ $data->tim->guru_pembimbing ?? 'N/A' }}</strong>
+                </div>
+
+                <hr class="detail-separator">
+
+                <div class="detail-item">
+                    <label>Ketua</label>
+                    <strong>{{ $data->nama_ketua ?? 'N/A' }}</strong>
+                </div>
+
+                <div class="detail-item">
+                    <label>No WA Ketua</label>
+                    <strong>{{ $data->hp_ketua ?? 'N/A' }}</strong>
+                </div>
+
+                @if($data->anggota_1)
+                    <div class="detail-item">
+                        <label>Anggota 1</label>
+                        <strong>{{ $data->anggota_1 }}{{ $data->hp_1 ? ' - ' . $data->hp_1 : '' }}</strong>
+                    </div>
+                @endif
+
+                @if($data->anggota_2)
+                    <div class="detail-item">
+                        <label>Anggota 2</label>
+                        <strong>{{ $data->anggota_2 }}{{ $data->hp_2 ? ' - ' . $data->hp_2 : '' }}</strong>
+                    </div>
+                @endif
+            </div>
+
+            <button class="btn btn-outline" style="width:100%; margin-top:20px;" onclick="closeModal('modalDetail{{ $data->id }}')">Tutup</button>
+        </div>
+    </div>
+
+    <div id="modalProposal{{ $data->id }}" class="modal">
+        <div class="modal-content">
+            <h3>Upload Proposal</h3>
+            <form action="{{ route('Lomba.peserta.tambahproposal', $data->user_id) }}" method="POST" enctype="multipart/form-data">
+                @csrf @method('PATCH')
+                <div class="form-group"><input type="file" name="proposal" class="form-control" required accept=".pdf"></div>
+                <button type="submit" class="btn btn-orange" style="width:100%">Kirim Proposal</button>
+            </form>
+            <button class="btn btn-outline" style="width:100%; margin-top:10px;" onclick="closeModal('modalProposal{{ $data->id }}')">Batal</button>
+        </div>
+    </div>
+
+    <div id="modalHapusPendaftaran{{ $data->id }}" class="modal">
+        <div class="modal-content" style="text-align:center;">
+            <i class="fa-solid fa-triangle-exclamation" style="font-size:3rem; color:#EF4444; margin-bottom:15px;"></i>
+            <h3>Hapus Pendaftaran?</h3>
+            <p style="color:#9CA3AF; font-size:0.9rem; line-height:1.6; margin:10px 0 0;">
+                Data pendaftaran tim {{ $data->tim->nama_tim ?? 'ini' }} akan dihapus.
+            </p>
+            <form action="{{ route('Lomba.peserta.destroy', Crypt::encrypt($data->id)) }}" method="POST">
+                @csrf
+                @method('DELETE')
+                <div style="display:flex; gap:10px; margin-top:20px;">
+                    <button type="button" class="btn btn-outline" style="flex:1" onclick="closeModal('modalHapusPendaftaran{{ $data->id }}')">Batal</button>
+                    <button type="submit" class="btn btn-orange" style="flex:1; background:#EF4444;">Ya, Hapus</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modalHapusProposal{{ $data->id }}" class="modal">
+        <div class="modal-content" style="text-align:center;">
+            <i class="fa-solid fa-triangle-exclamation" style="font-size:3rem; color:#EF4444; margin-bottom:15px;"></i>
+            <h3>Hapus Proposal?</h3>
+            <form action="{{ route('Lomba.peserta.hapusproposal', $data->user_id) }}" method="POST">
+                @csrf @method('DELETE')
+                <div style="display:flex; gap:10px; margin-top:20px;">
+                    <button type="button" class="btn btn-outline" style="flex:1" onclick="closeModal('modalHapusProposal{{ $data->id }}')">Batal</button>
+                    <button type="submit" class="btn btn-orange" style="flex:1; background:#EF4444;">Ya, Hapus</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modalOrisinalitas{{ $data->id }}" class="modal">
+        <div class="modal-content">
+            <h3>Upload Lembar Orisinalitas</h3>
+            <p style="color: #9CA3AF; font-size: 0.8rem; margin-bottom: 1rem;">Pastikan file dalam format PDF.</p>
+            <form action="{{ route('Lomba.peserta.tambahorisinalitas', $data->user_id) }}" method="POST" enctype="multipart/form-data">
+                @csrf @method('PATCH')
+                <div class="form-group"><input type="file" name="orisinalitas" class="form-control" required accept=".pdf"></div>
+                <button type="submit" class="btn btn-orange" style="width:100%">Kirim Berkas</button>
+            </form>
+            <button class="btn btn-outline" style="width:100%; margin-top:10px;" onclick="closeModal('modalOrisinalitas{{ $data->id }}')">Batal</button>
+        </div>
+    </div>
+
+    <div id="modalHapusOrisinalitas{{ $data->id }}" class="modal">
+        <div class="modal-content" style="text-align:center;">
+            <i class="fa-solid fa-triangle-exclamation" style="font-size:3rem; color:#EF4444; margin-bottom:15px;"></i>
+            <h3>Hapus Lembar Orisinalitas?</h3>
+            <form action="{{ route('Lomba.peserta.hapusorisinalitas', $data->user_id) }}" method="POST">
+                @csrf @method('DELETE')
+                <div style="display:flex; gap:10px; margin-top:20px;">
+                    <button type="button" class="btn btn-outline" style="flex:1" onclick="closeModal('modalHapusOrisinalitas{{ $data->id }}')">Batal</button>
+                    <button type="submit" class="btn btn-orange" style="flex:1; background:#EF4444;">Ya, Hapus</button>
+                </div>
+            </form>
+        </div>
+    </div>
+@endforeach
 
 
 <div id="modalCreate" class="modal">
@@ -549,17 +587,29 @@
 
 
 
-        <form action="{{ route('Lomba.peserta.store') }}" method="POST" enctype="multipart/form-data">
+        <form id="formPendaftaran" action="{{ route('Lomba.peserta.store') }}" method="POST" enctype="multipart/form-data">
 
             @csrf
 
             <div id="step1">
 
-                <div class="form-group"><label>Nama Tim</label><input type="text" name="nama_tim" class="form-control" required></div>
+                <div class="form-group">
+                    <label>Nama Tim</label>
+                    <input type="text" name="nama_tim" class="form-control" value="{{ old('nama_tim') }}" required pattern="^[^<>]+$" title="Tidak boleh kosong atau berisi tag HTML.">
+                    @error('nama_tim') <span class="form-error">{{ $message }}</span> @enderror
+                </div>
 
-                <div class="form-group"><label>Asal Sekolah</label><input type="text" name="asal_sekolah" class="form-control" required></div>
+                <div class="form-group">
+                    <label>Asal Sekolah</label>
+                    <input type="text" name="asal_sekolah" class="form-control" value="{{ old('asal_sekolah') }}" required pattern="^[^<>]+$" title="Tidak boleh kosong atau berisi tag HTML.">
+                    @error('asal_sekolah') <span class="form-error">{{ $message }}</span> @enderror
+                </div>
 
-                <div class="form-group"><label>Guru Pembimbing</label><input type="text" name="guru_pembimbing" class="form-control" required></div>
+                <div class="form-group">
+                    <label>Guru Pembimbing</label>
+                    <input type="text" name="guru_pembimbing" class="form-control" value="{{ old('guru_pembimbing') }}" required pattern="^[^<>]+$" title="Tidak boleh kosong atau berisi tag HTML.">
+                    @error('guru_pembimbing') <span class="form-error">{{ $message }}</span> @enderror
+                </div>
 
                 <div class="form-group">
 
@@ -571,11 +621,12 @@
 
                         @foreach($listKategori as $kat)
 
-                            <option value="{{ $kat->id }}">{{ $kat->nama_lomba }}</option>
+                            <option value="{{ $kat->id }}" {{ old('id_lomba') == $kat->id ? 'selected' : '' }}>{{ $kat->nama_lomba }}</option>
 
                         @endforeach
 
                     </select>
+                    @error('id_lomba') <span class="form-error">{{ $message }}</span> @enderror
 
                 </div>
 
@@ -589,17 +640,43 @@
 
                 <div class="input-grid">
 
-                    <div class="form-group"><label>Nama Ketua</label><input type="text" name="nama_ketua" class="form-control" required></div>
+                    <div class="form-group">
+                        <label>Nama Ketua</label>
+                        <input type="text" name="nama_ketua" class="form-control" value="{{ old('nama_ketua') }}" required pattern="^[^<>]+$" title="Tidak boleh kosong atau berisi tag HTML.">
+                        @error('nama_ketua') <span class="form-error">{{ $message }}</span> @enderror
+                    </div>
 
-                    <div class="form-group"><label>No WA Ketua</label><input type="text" name="hp_ketua" class="form-control" required placeholder="08xxx"></div>
+                    <div class="form-group">
+                        <label>No WA Ketua</label>
+                        <input type="text" name="hp_ketua" class="form-control" value="{{ old('hp_ketua') }}" required placeholder="08xxx" pattern="^[0-9+\-\s]+$" title="Hanya boleh angka, spasi, +, atau -.">
+                        @error('hp_ketua') <span class="form-error">{{ $message }}</span> @enderror
+                    </div>
 
                 </div>
 
-                <p style="color:#9CA3AF; font-size:0.75rem; border-top:1px solid #333; padding-top:15px;">Anggota (Opsional)</p>
+                <p style="color:#9CA3AF; font-size:0.75rem; border-top:1px solid #333; padding-top:15px;">Anggota</p>
 
-                <div class="input-grid"><input type="text" name="anggota_1" class="form-control" placeholder="Nama Anggota 1"><input type="text" name="hp_1" class="form-control" placeholder="WA Anggota 1"></div>
+                <div class="input-grid">
+                    <div class="form-group">
+                        <input type="text" name="anggota_1" class="form-control" value="{{ old('anggota_1') }}" placeholder="Nama Anggota 1" required pattern="^[^<>]+$" title="Tidak boleh kosong atau berisi tag HTML.">
+                        @error('anggota_1') <span class="form-error">{{ $message }}</span> @enderror
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="hp_1" class="form-control" value="{{ old('hp_1') }}" placeholder="WA Anggota 1" required pattern="^[0-9+\-\s]+$" title="Hanya boleh angka, spasi, +, atau -.">
+                        @error('hp_1') <span class="form-error">{{ $message }}</span> @enderror
+                    </div>
+                </div>
 
-                <div class="input-grid"><input type="text" name="anggota_2" class="form-control" placeholder="Nama Anggota 2"><input type="text" name="hp_2" class="form-control" placeholder="WA Anggota 2"></div>
+                <div class="input-grid">
+                    <div class="form-group">
+                        <input type="text" name="anggota_2" class="form-control" value="{{ old('anggota_2') }}" placeholder="Nama Anggota 2" required pattern="^[^<>]+$" title="Tidak boleh kosong atau berisi tag HTML.">
+                        @error('anggota_2') <span class="form-error">{{ $message }}</span> @enderror
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="hp_2" class="form-control" value="{{ old('hp_2') }}" placeholder="WA Anggota 2" required pattern="^[0-9+\-\s]+$" title="Hanya boleh angka, spasi, +, atau -.">
+                        @error('hp_2') <span class="form-error">{{ $message }}</span> @enderror
+                    </div>
+                </div>
 
                 <div style="display:flex; gap:10px; margin-top:20px;">
 
@@ -629,7 +706,8 @@
 
                     <label>Upload Bukti Bayar (JPG/PNG)</label>
 
-                    <input type="file" name="bukti_bayar" class="form-control" required accept="image/*">
+                    <input type="file" name="bukti_bayar" class="form-control" required accept=".jpg,.jpeg,.png,image/jpeg,image/png">
+                    @error('bukti_bayar') <span class="form-error">{{ $message }}</span> @enderror
 
                 </div>
 
@@ -657,7 +735,8 @@
 
         if(id === 'modalCreate') goToStep(1);
 
-        document.getElementById(id).style.display = "block";
+        const modal = document.getElementById(id);
+        if (modal) modal.style.display = "block";
 
     }
 
@@ -669,13 +748,32 @@
 
     window.onclick = function(e) {
 
-        if(e.target.className === 'modal') e.target.style.display = "none";
+        if(e.target.classList && e.target.classList.contains('modal')) e.target.style.display = "none";
 
     }
 
 
+    function validateStep(step) {
+        const currentStep = document.getElementById('step' + step);
+        const inputs = currentStep.querySelectorAll('input, select');
+
+        for (const input of inputs) {
+            if (!input.checkValidity()) {
+                input.reportValidity();
+                return false;
+            }
+        }
+
+        return true;
+    }
 
     function goToStep(step) {
+        const activeStep = document.querySelector('[id^="step"][style*="block"]');
+        const activeStepNumber = activeStep ? Number(activeStep.id.replace('step', '')) : 1;
+
+        if (step > activeStepNumber && !validateStep(activeStepNumber)) {
+            return;
+        }
 
         document.getElementById('step1').style.display = 'none';
 
@@ -694,6 +792,12 @@
         document.getElementById('ind3').style.background = (step >= 3) ? '#F97316' : '#333';
 
     }
+
+    @if($errors->any())
+        document.addEventListener('DOMContentLoaded', function () {
+            openModal('modalCreate');
+        });
+    @endif
 
 </script>
 

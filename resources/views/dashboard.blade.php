@@ -31,6 +31,8 @@
             top: 0;
             left: 0;
             z-index: 100;
+            display: flex;
+            flex-direction: column;
         }
 
         .logo {
@@ -41,6 +43,12 @@
             margin-bottom: 2.5rem;
             display: block;
             text-decoration: none;
+        }
+
+        .menu {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
         }
 
         .menu a {
@@ -84,6 +92,17 @@
         }
 
         .topbar h2 { font-size: 1.25rem; margin: 0; font-family: 'Montserrat'; }
+        .user-info {
+            color: #fff;
+            text-decoration: none;
+            margin-right: 1.5rem;
+            padding: 0.55rem 0.85rem;
+            border-radius: 10px;
+            transition: 0.3s;
+        }
+        .user-info:hover {
+            background: rgba(249,115,22,0.12);
+        }
         .username { color: #F97316; font-weight: 600; }
 
         /* ===== CONTENT AREA ===== */
@@ -173,8 +192,11 @@
         }
 
         /* Logout khusus */
-        .logout-btn {
+        .logout-form {
             margin-top: auto;
+        }
+
+        .logout-btn {
             background: none;
             border: none;
             color: #ef4444;
@@ -198,7 +220,7 @@
         <a href="#" class="active"><i class="fa-solid fa-house"></i> Dashboard</a>
         <a href="/lomba" class="bg-orange-500 ..."><i class="fa-solid fa-trophy"></i> Daftar Lomba</a>
         
-        <form method="POST" action="{{ route('logout') }}" style="margin-top: 2rem;">
+        <form method="POST" action="{{ route('logout') }}" class="logout-form">
             @csrf
             <button type="submit" class="logout-btn">
                 <i class="fa-solid fa-right-from-bracket"></i> Logout
@@ -211,9 +233,9 @@
     
     <header class="topbar">
         <h2>Dashboard Overview</h2>
-        <div class="user-info">
+        <a href="{{ route('profile.edit') }}" class="user-info" title="Edit data diri">
             Hello, <span class="username">{{ Auth::user()->name }}</span>
-        </div>
+        </a>
     </header>
 
     <main class="content">

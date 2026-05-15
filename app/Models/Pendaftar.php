@@ -19,8 +19,14 @@ class Pendaftar extends Model
     }
 
     public function kategori()
-{
-    // id_lomba di tabel pendaftar merujuk ke id di tabel kategori_lomba
-    return $this->belongsTo(KategoriLomba::class, 'id_lomba');
-}
+    {
+        // id_lomba di tabel pendaftar merujuk ke id di tabel kategori_lomba
+        return $this->belongsTo(KategoriLomba::class, 'id_lomba');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
 }

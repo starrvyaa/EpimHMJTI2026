@@ -11,18 +11,17 @@ use Illuminate\Support\Facades\Crypt;
 
 class LombaController extends Controller
 {
-    public function index()
+public function index()
 {
     $listKategori = \App\Models\KategoriLomba::all();
     $user = auth()->user();
 
-    // LOGIKA FILTER DATA
     if ($user->role == 'admin') {
-        // Jika admin, ambil semua data pendaftar beserta relasi timnya
-        $datas = Pendaftar::with('tim', 'kategori')->get();
+        $datas = Pendaftar::with('tim', 'kategori', 'user')->get();
     } else {
-        // Jika user biasa, hanya ambil data milik user_id tersebut
-        $datas = Pendaftar::with('tim', 'kategori')->where('user_id', $user->id)->get();
+        $datas = Pendaftar::with('tim', 'kategori', 'user')
+            ->where('user_id', $user->id)
+            ->get();
     }
 
     $pengaturan = Pengaturan::first() ?? (object)[
@@ -32,30 +31,67 @@ class LombaController extends Controller
 
     return view('lomba.index', compact('listKategori', 'datas', 'pengaturan'));
 }
+
    public function store(Request $request)
 {
+    $noHtmlText = 'required|string|max:150|not_regex:/<[^>]*>/';
+    $phoneRule = 'required|string|max:20|regex:/^[0-9+\-\s]+$/|not_regex:/<[^>]*>/';
+
+    $validated = $request->validate([
+        'nama_tim' => $noHtmlText,
+        'asal_sekolah' => $noHtmlText,
+        'guru_pembimbing' => $noHtmlText,
+        'id_lomba' => 'required|exists:kategori_lomba,id',
+        'nama_ketua' => $noHtmlText,
+        'hp_ketua' => $phoneRule,
+        'anggota_1' => $noHtmlText,
+        'hp_1' => $phoneRule,
+        'anggota_2' => $noHtmlText,
+        'hp_2' => $phoneRule,
+        'bukti_bayar' => 'required|image|mimes:jpg,jpeg,png|max:2048',
+    ], [
+        '*.required' => ':attribute wajib diisi.',
+        '*.not_regex' => ':attribute tidak boleh berisi tag HTML.',
+        '*.max' => ':attribute terlalu panjang.',
+        '*.regex' => ':attribute hanya boleh berisi angka, spasi, +, atau -.',
+        'id_lomba.exists' => 'Kategori lomba tidak valid.',
+        'bukti_bayar.image' => 'Bukti bayar harus berupa gambar.',
+        'bukti_bayar.mimes' => 'Bukti bayar harus JPG, JPEG, atau PNG.',
+        'bukti_bayar.max' => 'Ukuran bukti bayar maksimal 2 MB.',
+    ], [
+        'nama_tim' => 'Nama tim',
+        'asal_sekolah' => 'Asal sekolah',
+        'guru_pembimbing' => 'Guru pembimbing',
+        'id_lomba' => 'Kategori lomba',
+        'nama_ketua' => 'Nama ketua',
+        'hp_ketua' => 'No WA ketua',
+        'anggota_1' => 'Nama anggota 1',
+        'hp_1' => 'WA anggota 1',
+        'anggota_2' => 'Nama anggota 2',
+        'hp_2' => 'WA anggota 2',
+        'bukti_bayar' => 'Bukti bayar',
+    ]);
+
     // 1. Simpan ke tabel Tim
     $tim = new \App\Models\Tim;
-    $tim->nama_tim = $request->nama_tim;
-    $tim->asal_sekolah = $request->asal_sekolah;
-    $tim->guru_pembimbing = $request->guru_pembimbing;
+    $tim->nama_tim = $validated['nama_tim'];
+    $tim->asal_sekolah = $validated['asal_sekolah'];
+    $tim->guru_pembimbing = $validated['guru_pembimbing'];
     // Tambahkan baris ini agar kolom no_hp di tabel tim terisi
-    $tim->no_hp = $request->hp_ketua; 
+    $tim->no_hp = $validated['hp_ketua'];
     $tim->save();
 
     // 2. Simpan ke tabel Pendaftar
     $pendaftar = new \App\Models\Pendaftar;
     $pendaftar->user_id = auth()->id();
     $pendaftar->tim_id = $tim->id;
-    $pendaftar->id_lomba = $request->id_lomba;
-    $pendaftar->nama_ketua = $request->nama_ketua;
-    $pendaftar->hp_ketua = $request->hp_ketua;
-    $pendaftar->anggota_1 = $request->anggota_1;
-    $pendaftar->hp_1 = $request->hp_1;
-    $pendaftar->anggota_2 = $request->anggota_2;
-    $pendaftar->hp_2 = $request->hp_2;
-    $pendaftar->anggota_3 = $request->anggota_3;
-    $pendaftar->hp_3 = $request->hp_3;
+    $pendaftar->id_lomba = $validated['id_lomba'];
+    $pendaftar->nama_ketua = $validated['nama_ketua'];
+    $pendaftar->hp_ketua = $validated['hp_ketua'];
+    $pendaftar->anggota_1 = $validated['anggota_1'];
+    $pendaftar->hp_1 = $validated['hp_1'];
+    $pendaftar->anggota_2 = $validated['anggota_2'];
+    $pendaftar->hp_2 = $validated['hp_2'];
 
     if ($request->hasFile('bukti_bayar')) {
         $file = $request->file('bukti_bayar');
