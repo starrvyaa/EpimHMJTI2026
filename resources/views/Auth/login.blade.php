@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <style>
+        * { box-sizing: border-box; }
+
         body {
             margin: 0;
             font-family: 'Inter', sans-serif;
@@ -21,7 +23,7 @@
         }
 
         .login-box {
-            width: 400px;
+            width: min(400px, 100%);
             background: #111;
             padding: 2.5rem;
             border-radius: 16px;
@@ -55,6 +57,7 @@
 
         .password-wrap {
             position: relative;
+            width: 100%;
         }
 
         .password-wrap input {
