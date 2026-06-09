@@ -1328,6 +1328,25 @@
                             <a href="{{ url('/daftar/desain-grafis') }}" class="btn-daftar">Daftar</a>
                         </div>
                     </div>
+                    <div class="lomba-card-body">
+                        <h3 class="lomba-card-title">Desain Poster</h3>
+                        <span class="lomba-tag design">design</span>
+                        <p class="lomba-card-desc">
+                            Ekspresikan kreativitas melalui desain visual yang menarik,
+                            komunikatif, dan berkarakter kuat dalam berbagai media.
+                        </p>
+                        <div class="lomba-deadline">
+                            <i class="fas fa-calendar"></i>
+                            Deadline: <strong>15 Maret 2026</strong>
+                        </div>
+                        <div class="lomba-prize">
+                            <i class="fas fa-trophy"></i> Rp 3.000.000
+                        </div>
+                        <div class="lomba-actions">
+                            <a href="{{ url('/lomba/desain-grafis') }}" class="btn-detail">Detail Lomba</a>
+                            <a href="{{ url('/daftar/desain-grafis') }}" class="btn-daftar">Daftar</a>
+                        </div>
+                    </div>
                 </div>
 
                 {{-- Card 4: Karya Tulis Ilmiah --}}

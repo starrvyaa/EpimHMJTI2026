@@ -289,14 +289,87 @@
             position: relative;
         }
 
-        .hero-img {
-            width: 100%;
-            max-width: 520px;
-            height: 360px;
-            object-fit: cover;
+        /* Hero slider */
+        .hero-slider-container {
+            position: relative;
+            overflow: hidden;
             border-radius: 18px;
-            display: block;
+            max-width: 520px;
             box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+        }
+
+        .hero-slider-track {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+
+        .hero-slide-item {
+            min-width: 100%;
+            height: 360px;
+            flex-shrink: 0;
+            background: var(--dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero-slide-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .hero-slider-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 36px;
+            height: 36px;
+            background: rgba(0,0,0,0.6);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 50%;
+            color: #fff;
+            font-size: 0.85rem;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s, border-color 0.3s;
+            opacity: 0;
+        }
+
+        .hero-slider-container:hover .hero-slider-btn {
+            opacity: 1;
+        }
+
+        .hero-slider-btn:hover {
+            background: var(--orange);
+            border-color: var(--orange);
+        }
+
+        .hero-slider-btn-prev { left: 12px; }
+        .hero-slider-btn-next { right: 12px; }
+
+        .hero-slider-dots {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .hero-slider-dots .hdot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            cursor: pointer;
+            transition: background 0.3s, transform 0.3s;
+        }
+
+        .hero-slider-dots .hdot.active {
+            background: var(--orange);
+            transform: scale(1.3);
         }
 
         .hero-img-placeholder {
@@ -994,6 +1067,99 @@
             display: block;
         }
 
+        /* ===== GALLERY SLIDER ===== */
+        .gallery-slider {
+            padding: 5rem 0;
+            background: var(--dark);
+        }
+
+        .slider-section-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 3rem;
+        }
+
+        .slider-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 18px;
+            margin-top: 2.5rem;
+        }
+
+        .slider-track {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+
+        .slide-item {
+            min-width: 100%;
+            height: 380px;
+            flex-shrink: 0;
+            padding: 0 40px;
+        }
+
+        .slide-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .slide-item {
+                height: 240px;
+                padding: 0 12px;
+            }
+        }
+
+        .slider-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 48px;
+            height: 48px;
+            background: rgba(0,0,0,0.6);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 50%;
+            color: #fff;
+            font-size: 1.1rem;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s, border-color 0.3s;
+        }
+
+        .slider-btn:hover {
+            background: var(--orange);
+            border-color: var(--orange);
+        }
+
+        .slider-btn-prev { left: 16px; }
+        .slider-btn-next { right: 16px; }
+
+        .slider-dots {
+            display: flex;
+            justify-content: center;
+            gap: 0.6rem;
+            margin-top: 1.5rem;
+        }
+
+        .slider-dots .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            cursor: pointer;
+            transition: background 0.3s, transform 0.3s;
+        }
+
+        .slider-dots .dot.active {
+            background: var(--orange);
+            transform: scale(1.3);
+        }
+
         /* ===== RESPONSIVE ===== */
         @media (max-width: 1024px) {
             .hero-inner { grid-template-columns: 1fr; gap: 2.5rem; }
@@ -1005,16 +1171,65 @@
             .footer-inner { grid-template-columns: 1fr 1fr; gap: 2.5rem; }
             .stats-inner { grid-template-columns: repeat(2, 1fr); }
         }
+        /* ===== HERO SLIDER REVISED ===== */
+        .hero-slider-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 18px;
+            max-width: 520px;
+            width: 100%;
+            /* Menggunakan aspect-ratio agar proporsi slider otomatis rapi di semua ukuran layar */
+            aspect-ratio: 4 / 3; 
+            box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+            border: 1px solid var(--border);
+            background: var(--dark-card);
+        }
+
+        .hero-slider-track {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .hero-slide-item {
+            min-width: 100%;
+            width: 100%;
+            height: 100%;
+            flex-shrink: 0;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .hero-slide-item img {
+            width: 100%;
+            height: 100%;
+            /* Mengubah contain menjadi cover agar gambar mengisi penuh ruang slider tanpa merusak rasio */
+            object-fit: cover;
+            object-position: center;
+            transition: transform 0.3s ease;
+        }
+
+        /* Efek hover opsional untuk mempercantik tampilan */
+        .hero-slider-container:hover .hero-slide-item img {
+            transform: scale(1.03);
+        }
 
         @media (max-width: 768px) {
             .navbar { padding: 0 1.5rem; }
             .navbar-nav { display: none; }
             .hamburger { display: flex; }
-            .hero-inner, .about-inner, .lomba-inner, .timeline-inner, .footer-inner { padding: 0 1.5rem; }
+            .hero-inner, .about-inner, .lomba-inner, .slider-section-inner, .timeline-inner, .footer-inner { padding: 0 1.5rem; }
             .benefits-grid { padding: 0 1.5rem; }
             .stats-inner { padding: 0 1.5rem; grid-template-columns: repeat(2, 1fr); }
             .benefits-grid { grid-template-columns: 1fr; }
             .footer-inner { grid-template-columns: 1fr; gap: 2rem; }
+            .slider-btn { width: 36px; height: 36px; font-size: 0.9rem; }
+            .hero-slide-item { height: 250px; }
+            
         }
 
         /* Fade in animation */
@@ -1042,7 +1257,10 @@
     <nav class="navbar">
         <a href="{{ url('/') }}" class="navbar-brand">
             <div class="navbar-logo">
-                <img src="{{ asset('images/rudo.png') }}" alt="Logo EPIM" class="navbar-logo-img" width="40">
+                {{-- <img src="{{ asset('images/rudo.png') }}" alt="Logo EPIM" class="navbar-logo-img" width="40"> --}}
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trophy-fill" viewBox="0 0 16 16">
+  <path d="M2.5.5A.5.5 0 0 1 3 0h10a.5.5 0 0 1 .5.5q0 .807-.034 1.536a3 3 0 1 1-1.133 5.89c-.79 1.865-1.878 2.777-2.833 3.011v2.173l1.425.356c.194.048.377.135.537.255L13.3 15.1a.5.5 0 0 1-.3.9H3a.5.5 0 0 1-.3-.9l1.838-1.379c.16-.12.343-.207.537-.255L6.5 13.11v-2.173c-.955-.234-2.043-1.146-2.833-3.012a3 3 0 1 1-1.132-5.89A33 33 0 0 1 2.5.5m.099 2.54a2 2 0 0 0 .72 3.935c-.333-1.05-.588-2.346-.72-3.935m10.083 3.935a2 2 0 0 0 .72-3.935c-.133 1.59-.388 2.885-.72 3.935"/>
+</svg>
             </div>
             <div class="navbar-brand-text">
                 <span>EXPO PEKAN ILMIAH MAHASISWA</span>
@@ -1094,51 +1312,54 @@
                 </div>
             </div>
             <div class="hero-image-wrap fade-up">
-    <img 
-        src="{{ asset('images/image.png') }}" 
-        alt="EPIM 2026 Display" 
-        class="hero-img"
-        id="heroImage"
-        onerror="handleImageError()"
-    >
-    
-    <div id="imagePlaceholder" class="hero-img-placeholder" style="display: none;">
-        <i class="fas fa-rocket" style="color: var(--orange); font-size: 4rem;"></i>
-    </div>
-</div>
-
-<script>
-    function handleImageError() {
-        // Jika gambar error, sembunyikan tag img dan tampilkan placeholder
-        document.getElementById('heroImage').style.display = 'none';
-        document.getElementById('imagePlaceholder').style.display = 'flex';
-    }
-</script>
+                <div class="hero-slider-container">
+                    <div class="hero-slider-track" id="heroSliderTrack">
+                        <div class="hero-slide-item">
+                            <img src="{{ asset('images/image.png') }}" alt="EPIM 1">
+                        </div>
+                        <div class="hero-slide-item">
+                            <img src="{{ asset('images/epim.png') }}" alt="EPIM 2">
+                        </div>
+                        <div class="hero-slide-item">
+                            <img src="{{ asset('images/poster_ai.png') }}" alt="EPIM 3">
+                        </div>
+                        <div class="hero-slide-item">
+                            <img src="{{ asset('images/videografi.jpeg') }}" alt="EPIM 4">
+                        </div>
+                        <div class="hero-slide-item">
+                            <img src="{{ asset('images/LogoEPIM.png') }}" alt="EPIM 5">
+                        </div>
+                    </div>
+                    <button class="hero-slider-btn hero-slider-btn-prev" id="heroSliderPrev"><i class="fas fa-chevron-left"></i></button>
+                    <button class="hero-slider-btn hero-slider-btn-next" id="heroSliderNext"><i class="fas fa-chevron-right"></i></button>
+                </div>
+                <div class="hero-slider-dots" id="heroSliderDots"></div>
+            </div>
         </div>
     </section>
 
     {{-- ===== STATS BAR ===== --}}
-    <section class="stats-bar">
+    <section class="stats-bar" id="statsBar">
         <div class="stats-inner">
             <div class="stat-item">
                 <div class="stat-icon"><i class="fas fa-trophy"></i></div>
-                <span class="stat-value">4</span>
+                <span class="stat-value" data-target="4" data-suffix="">0</span>
                 <span class="stat-label">Kategori Lomba</span>
             </div>
             <div class="stat-item">
                 <div class="stat-icon"><i class="fas fa-users"></i></div>
-                <span class="stat-value">600+</span>
+                <span class="stat-value" data-target="600" data-suffix="+">0</span>
                 <span class="stat-label">Peserta</span>
             </div>
             <div class="stat-item">
                 <div class="stat-icon"><i class="fas fa-award"></i></div>
-                <span class="stat-value">40Jt</span>
+                <span class="stat-value" data-target="40" data-suffix="Jt">0</span>
                 <span class="stat-label">Total Hadiah</span>
             </div>
             <div class="stat-item">
                 <div class="stat-icon"><i class="fas fa-calendar-alt"></i></div>
-                <span class="stat-value">15 Mar</span>
-                <span class="stat-label">Deadline</span>
+                <span class="stat-value" data-target="15" data-suffix="">0</span>
+                <span class="stat-label">Hari Lagi</span>
             </div>
         </div>
     </section>
@@ -1239,6 +1460,41 @@
         </div>
     </section>
 
+    {{-- ===== GALLERY SLIDER ===== --}}
+    <section class="gallery-slider">
+        <div class="slider-section-inner">
+            <div class="section-header">
+                <div class="section-eyebrow-center">
+                    <i class="fas fa-images"></i> GALERI KEGIATAN <i class="fas fa-images"></i>
+                </div>
+                <h2 class="section-title">DOKUMENTASI <span>EPIM 2026</span></h2>
+                <p class="section-subtitle">Abadikan momen-momen terbaik dari rangkaian acara EPIM</p>
+            </div>
+            <div class="slider-container">
+                <div class="slider-track" id="sliderTrack">
+                    <div class="slide-item">
+                        <img src="{{ asset('images/image.png') }}" alt="Dokumentasi 1">
+                    </div>
+                    <div class="slide-item">
+                        <img src="{{ asset('images/epim.png') }}" alt="Dokumentasi 2">
+                    </div>
+                    <div class="slide-item">
+                        <img src="{{ asset('images/poster_ai.png') }}" alt="Dokumentasi 3">
+                    </div>
+                    <div class="slide-item">
+                        <img src="{{ asset('images/videografi.jpeg') }}" alt="Dokumentasi 4">
+                    </div>
+                    <div class="slide-item">
+                        <img src="{{ asset('images/LogoEPIM.png') }}" alt="Dokumentasi 5">
+                    </div>
+                </div>
+                <button class="slider-btn slider-btn-prev" id="sliderPrev"><i class="fas fa-chevron-left"></i></button>
+                <button class="slider-btn slider-btn-next" id="sliderNext"><i class="fas fa-chevron-right"></i></button>
+            </div>
+            <div class="slider-dots" id="sliderDots"></div>
+        </div>
+    </section>
+
     {{-- ===== KATEGORI LOMBA ===== --}}
     <section class="lomba" id="lomba">
         <div class="lomba-inner">
@@ -1258,7 +1514,7 @@
                 <div class="lomba-card">
                     <div class="lomba-card-img-wrap">
                         <img
-                            src="{{ asset('images/videografi.jpeg') }}"
+                            src="{{ asset('images/LogoEPIM.png') }}"
                             alt="Desain Packaging"
                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
                         >
@@ -1266,11 +1522,11 @@
                         <div class="lomba-card-icon"><i class="fas fa-cube"></i></div>
                     </div>
                     <div class="lomba-card-body">
-                        <h3 class="lomba-card-title">Videografi</h3>
-                        <span class="lomba-tag design">Editing</span>
+                        <h3 class="lomba-card-title">Desain Packaging</h3>
+                        <span class="lomba-tag design">design</span>
                         <p class="lomba-card-desc">
-                            Videografi adalah proses merekam gambar bergerak menggunakan media elektronik (kamera atau ponsel). 
-                            Jika desain kemasan adalah "wajah" produk di rak, maka videografi adalah "cerita" produk di layar digital.
+                            Desain kemasan sangat penting dalam mempengaruhi persepsi konsumen,
+                            menarik perhatian mereka, dan membedakan produk dari pesaing di rak toko.
                         </p>
                         <div class="lomba-deadline">
                             <i class="fas fa-calendar"></i>
@@ -1350,23 +1606,23 @@
                     </div>
                 </div>
 
-                {{-- Card 4: Karya Tulis Ilmiah --}}
-                {{-- <div class="lomba-card">
+                {{-- Card 4: Videography --}}
+                <div class="lomba-card">
                     <div class="lomba-card-img-wrap">
                         <img
-                            src="{{ asset('images/lomba-kti.jpg') }}"
-                            alt="Karya Tulis Ilmiah"
+                            src="{{ asset('images/videografi.jpeg') }}"
+                            alt="Videography"
                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
                         >
-                        <div class="lomba-card-img-placeholder" style="display:none;">📝</div>
-                        <div class="lomba-card-icon"><i class="fas fa-pen"></i></div>
+                        <div class="lomba-card-img-placeholder" style="display:none;">🎥</div>
+                        <div class="lomba-card-icon"><i class="fas fa-video"></i></div>
                     </div>
                     <div class="lomba-card-body">
-                        <h3 class="lomba-card-title">Karya Tulis Ilmiah</h3>
-                        <span class="lomba-tag science">science</span>
+                        <h3 class="lomba-card-title">Videography</h3>
+                        <span class="lomba-tag design">videography</span>
                         <p class="lomba-card-desc">
-                            Tuangkan ide dan penelitian inovatif melalui karya tulis ilmiah
-                            yang berkualitas dan berdampak bagi masyarakat.
+                            Buat karya video kreatif yang memukau — ceritakan ide dan
+                            inovasi melalui visual bergerak yang impactful.
                         </p>
                         <div class="lomba-deadline">
                             <i class="fas fa-calendar"></i>
@@ -1376,11 +1632,11 @@
                             <i class="fas fa-trophy"></i> Rp 4.000.000
                         </div>
                         <div class="lomba-actions">
-                            <a href="{{ url('/lomba/karya-tulis') }}" class="btn-detail">Detail Lomba</a>
-                            <a href="{{ url('/daftar/karya-tulis') }}" class="btn-daftar">Daftar</a>
+                            <a href="{{ url('/lomba/videography') }}" class="btn-detail">Detail Lomba</a>
+                            <a href="{{ url('/daftar/videography') }}" class="btn-daftar">Daftar</a>
                         </div>
                     </div>
-                </div> --}}
+                </div>
 
             </div>
         </div>
@@ -1531,6 +1787,140 @@
             el.style.opacity = '0';
             observer.observe(el);
         });
+
+        // ===== HERO SLIDER =====
+        const heroTrack = document.getElementById('heroSliderTrack');
+        const heroPrev = document.getElementById('heroSliderPrev');
+        const heroNext = document.getElementById('heroSliderNext');
+        const heroDotsContainer = document.getElementById('heroSliderDots');
+        if (heroTrack) {
+            const heroSlides = heroTrack.querySelectorAll('.hero-slide-item');
+            let heroCurrent = 0;
+            const heroTotal = heroSlides.length;
+
+            for (let i = 0; i < heroTotal; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'hdot' + (i === 0 ? ' active' : '');
+                dot.addEventListener('click', () => {
+                    heroCurrent = i;
+                    heroTrack.style.transform = `translateX(-${heroCurrent * 100}%)`;
+                    heroDotsContainer.querySelectorAll('.hdot').forEach((d, idx) => d.classList.toggle('active', idx === heroCurrent));
+                });
+                heroDotsContainer.appendChild(dot);
+            }
+
+            heroNext.addEventListener('click', () => {
+                heroCurrent = (heroCurrent + 1) % heroTotal;
+                heroTrack.style.transform = `translateX(-${heroCurrent * 100}%)`;
+                heroDotsContainer.querySelectorAll('.hdot').forEach((d, i) => d.classList.toggle('active', i === heroCurrent));
+            });
+
+            heroPrev.addEventListener('click', () => {
+                heroCurrent = (heroCurrent - 1 + heroTotal) % heroTotal;
+                heroTrack.style.transform = `translateX(-${heroCurrent * 100}%)`;
+                heroDotsContainer.querySelectorAll('.hdot').forEach((d, i) => d.classList.toggle('active', i === heroCurrent));
+            });
+
+            let heroAuto = setInterval(() => {
+                heroCurrent = (heroCurrent + 1) % heroTotal;
+                heroTrack.style.transform = `translateX(-${heroCurrent * 100}%)`;
+                heroDotsContainer.querySelectorAll('.hdot').forEach((d, i) => d.classList.toggle('active', i === heroCurrent));
+            }, 4000);
+
+            heroTrack.addEventListener('mouseenter', () => clearInterval(heroAuto));
+            heroTrack.addEventListener('mouseleave', () => {
+                heroAuto = setInterval(() => {
+                    heroCurrent = (heroCurrent + 1) % heroTotal;
+                    heroTrack.style.transform = `translateX(-${heroCurrent * 100}%)`;
+                    heroDotsContainer.querySelectorAll('.hdot').forEach((d, i) => d.classList.toggle('active', i === heroCurrent));
+                }, 4000);
+            });
+        }
+
+        // ===== GALLERY SLIDER =====
+        const track = document.getElementById('sliderTrack');
+        const prevBtn = document.getElementById('sliderPrev');
+        const nextBtn = document.getElementById('sliderNext');
+        const dotsContainer = document.getElementById('sliderDots');
+        if (track) {
+            const slides = track.querySelectorAll('.slide-item');
+            let currentSlide = 0;
+            const totalSlides = slides.length;
+
+            // Create dots
+            for (let i = 0; i < totalSlides; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'dot' + (i === 0 ? ' active' : '');
+                dot.dataset.index = i;
+                dot.addEventListener('click', () => goToSlide(i));
+                dotsContainer.appendChild(dot);
+            }
+
+            function goToSlide(index) {
+                currentSlide = index;
+                track.style.transform = `translateX(-${currentSlide * 100}%)`;
+                document.querySelectorAll('.slider-dots .dot').forEach((d, i) => {
+                    d.classList.toggle('active', i === currentSlide);
+                });
+            }
+
+            function nextSlide() {
+                goToSlide((currentSlide + 1) % totalSlides);
+            }
+
+            function prevSlide() {
+                goToSlide((currentSlide - 1 + totalSlides) % totalSlides);
+            }
+
+            nextBtn.addEventListener('click', nextSlide);
+            prevBtn.addEventListener('click', prevSlide);
+
+            // Auto-slide every 4 seconds
+            let autoSlide = setInterval(nextSlide, 4000);
+
+            // Pause on hover
+            track.addEventListener('mouseenter', () => clearInterval(autoSlide));
+            track.addEventListener('mouseleave', () => { autoSlide = setInterval(nextSlide, 4000); });
+        }
+
+        // ===== STATS COUNTER =====
+        const statsSection = document.getElementById('statsBar');
+        if (statsSection) {
+            const statValues = statsSection.querySelectorAll('.stat-value');
+            let statsAnimated = false;
+
+            const statsObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !statsAnimated) {
+                        statsAnimated = true;
+                        statValues.forEach(stat => {
+                            const target = parseInt(stat.dataset.target);
+                            const suffix = stat.dataset.suffix || '';
+                            const duration = 2000;
+                            const startTime = performance.now();
+
+                            function updateCounter(currentTime) {
+                                const elapsed = currentTime - startTime;
+                                const progress = Math.min(elapsed / duration, 1);
+                                // Ease out cubic
+                                const eased = 1 - Math.pow(1 - progress, 3);
+                                const current = Math.floor(eased * target);
+                                stat.textContent = current + suffix;
+                                if (progress < 1) {
+                                    requestAnimationFrame(updateCounter);
+                                } else {
+                                    stat.textContent = target + suffix;
+                                }
+                            }
+                            requestAnimationFrame(updateCounter);
+                        });
+                        statsObserver.unobserve(statsSection);
+                    }
+                });
+            }, { threshold: 0.3 });
+
+            statsObserver.observe(statsSection);
+        }
     </script>
 
 </body>
