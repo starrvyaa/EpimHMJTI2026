@@ -794,6 +794,51 @@
             background: var(--dark-section);
         }
 
+        /* Tab Buttons */
+        .timeline-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3.5rem;
+        }
+
+        .timeline-tab {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            color: var(--text-gray);
+            padding: 0.75rem 1.75rem;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .timeline-tab:hover, .timeline-tab.active {
+            background: var(--orange);
+            color: #fff;
+            border-color: var(--orange);
+            box-shadow: 0 10px 20px rgba(249, 115, 22, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Timeline Content Toggle */
+        .timeline-content {
+            display: none;
+        }
+        .timeline-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .timeline-inner {
             max-width: 900px;
             margin: 0 auto;
@@ -1643,6 +1688,77 @@
     </section>
 
     {{-- ===== TIMELINE ===== --}}
+    @php
+    $categories = [
+        'videography' => [
+            'name' => 'Videography & Desain Poster',
+            'icon' => 'fas fa-video',
+            'schedule' => [
+                [
+                    'title' => 'Pendaftaran Lomba & Pengumpulan Proposal',
+                    'date' => '23 Juni 2026',
+                    'desc' => 'Pembukaan pendaftaran resmi Lomba dan Pengumpulan Proposal',
+                    'status' => 'upcoming',
+                ],
+                [
+                    'title' => 'Penutupan Pendaftaran',
+                    'date' => '13 Agustus 2026',
+                    'desc' => 'Batas akhir pendaftaran Lomba',
+                    'status' => 'upcoming',
+                ],
+                [
+                    'title' => 'Pengumuman Juara',
+                    'date' => '24 Agustus 2026',
+                    'desc' => 'Pengumuman pemenang Lomba Videography dan Desain Poster',
+                    'status' => 'upcoming',
+                ],
+            ]
+        ],
+        'packaging' => [
+            'name' => 'Design Packaging & Web Programming',
+            'icon' => 'fas fa-box-open',
+            'schedule' => [
+                [
+                    'title' => 'Pendaftaran Lomba & Pengumpulan Proposal',
+                    'date' => '23 Juni 2026 ',
+                    'desc' => 'Pendaftaran & pengumpulan proposal Design Packaging dan Web Programming',
+                    'status' => 'upcoming',
+                ],
+                [
+                    'title' => 'Batas Akhir Pendaftaran',
+                    'date' => '13 Agustus 2026',
+                    'desc' => 'Batas waktu pendaftaran Design Packaging dan Web Programming',
+                    'status' => 'upcoming',
+                ],
+                [
+                    'title' => 'Pengumuman Finalis',
+                    'date' => '17 Agustus 2026',
+                    'desc' => 'Pengumuman peserta yang lolos ke Babak Final',
+                    'status' => 'upcoming',
+                ],
+                [
+                    'title' => 'Technical Meeting',
+                    'date' => '18 Agustus 2026',
+                    'desc' => 'Penjelasan teknis babak final',
+                    'status' => 'upcoming',
+                ],
+                [
+                    'title' => 'Babak Final',
+                    'date' => '23 Agustus 2026',
+                    'desc' => 'Babak final kompetisi Design Packaging dan Web Programming, Offline di Politeknik Negeri Jember ',
+                    'status' => 'upcoming',
+                ],
+                [
+                    'title' => 'Pengumuman Juara',
+                    'date' => '24 Agustus 2026',
+                    'desc' => 'Pengumuman pemenang Lomba Design Packaging dan Web Programing',
+                    'status' => 'upcoming',
+                ],
+            ]
+        ],
+    ];
+    @endphp
+
     <section class="timeline" id="timeline">
         <div class="timeline-inner">
             <div class="section-header">
@@ -1652,48 +1768,54 @@
                 <h2 class="section-title">TIMELINE <span>EVENT</span></h2>
                 <p class="section-subtitle">Catat tanggal penting untuk setiap tahapan kompetisi</p>
             </div>
-            <div class="timeline-list">
 
-                <div class="timeline-item">
-                    <div class="tl-icon done">📅</div>
-                    <div class="tl-card">
-                        <div class="tl-date">1 FEBRUARI 2026</div>
-                        <div class="tl-title">Pembukaan Pendaftaran</div>
-                        <div class="tl-desc">Mulai daftar sekarang!</div>
-                        <span class="tl-badge done">✓ SELESAI</span>
-                    </div>
-                </div>
-
-                <div class="timeline-item">
-                    <div class="tl-icon active">📅</div>
-                    <div class="tl-card active">
-                        <div class="tl-date">15 MARET 2026</div>
-                        <div class="tl-title">Penutupan Pendaftaran</div>
-                        <div class="tl-desc">Deadline untuk mendaftar</div>
-                        <span class="tl-badge active">AKTIF SEKARANG</span>
-                    </div>
-                </div>
-
-                <div class="timeline-item">
-                    <div class="tl-icon upcoming">📅</div>
-                    <div class="tl-card">
-                        <div class="tl-date">20 MARET 2026</div>
-                        <div class="tl-title">Pengumuman Finalis</div>
-                        <div class="tl-desc">10 finalis terbaik akan diumumkan</div>
-                    </div>
-                </div>
-
-                <div class="timeline-item">
-                    <div class="tl-icon upcoming">📅</div>
-                    <div class="tl-card">
-                        <div class="tl-date">25–26 MARET 2026</div>
-                        <div class="tl-title">Grand Final &amp; Awarding</div>
-                        <div class="tl-desc">Presentasi finalis dan pengumuman pemenang</div>
-                    </div>
-                </div>
-
+            <div class="timeline-tabs">
+                @foreach($categories as $key => $category)
+                <button class="timeline-tab {{ $loop->first ? 'active' : ''}}" data-target="{{ $key }}">
+                    <i class="{{ $category['icon'] }}"></i>
+                    {{ $category['name'] }}
+                </button>
+                @endforeach
             </div>
-        </div>
+
+            @foreach($categories as $key => $category)
+            <div class="timeline-content {{ $loop->first ? 'active' : ''}}" id="timeline-{{ $key }}">
+                <div class="timeline-list">
+                    @foreach($category['schedule'] as $item)
+                    <div class="timeline-item">
+                        <div @class([
+                            'tl-icon',
+                            'done' => $item['status'] === 'done',
+                            'active' => $item['status'] === 'active',
+                            'upcoming' => $item['status'] === 'upcoming'
+                        ])>
+                            @if($item['status'] === 'done')
+                                ✓
+                            @elseif($item['status'] === 'active')
+                                🔥
+                            @else
+                                📅
+                            @endif
+                        </div>
+                        <div @class([
+                            'tl-card',
+                            'active' => $item['status'] === 'active'
+                        ])>
+                            <div class="tl-date">{{ $item['date'] }}</div>
+                            <div class="tl-title">{{ $item['title'] }}</div>
+                            <div class="tl-desc">{{ $item['desc'] }}</div>
+                            @if($item['status'] === 'done')
+                                <span class="tl-badge done">SELESAI</span>
+                            @elseif($item['status'] === 'active')
+                                <span class="tl-badge active">AKTIF SEKARANG</span>
+                            @endif
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+            @endforeach
+
     </section>
 
     {{-- ===== FOOTER ===== --}}
@@ -1921,6 +2043,18 @@
 
             statsObserver.observe(statsSection);
         }
+
+        document.querySelectorAll('.timeline-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const target = tab.dataset.target;
+
+                document.querySelectorAll('.timeline-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.timeline-content').forEach(c => c.classList.remove('active'));
+
+                tab.classList.add('active');
+                document.getElementById(`timeline-${target}`).classList.add('active');
+            });
+        });
     </script>
 
 </body>
