@@ -11,7 +11,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->alias([
+            'only_admin' => \App\Http\Middleware\OnlyAdmin::class,
+            'only_peserta' => \App\Http\Middleware\OnlyPeserta::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

@@ -18,7 +18,7 @@ class OnlyAdmin
     public function handle(Request $request, Closure $next)
     {
         // kasi tau kalo akun yg login bukan admin
-        if (Auth::user()->role != "Admin") {
+        if (strtolower(Auth::user()->role ?? '') != 'admin') {
             return redirect('/');
         }
 

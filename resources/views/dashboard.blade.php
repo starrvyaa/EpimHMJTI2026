@@ -262,11 +262,12 @@
 <body>
 
 <nav class="sidebar">
-    <a href="#" class="logo">EPIM.TI</a>
+    <a href="{{ route('home') }}" class="logo">EPIM.TI</a>
 
     <div class="menu">
         <a href="#" class="active"><i class="fa-solid fa-house"></i> Dashboard</a>
-        <a href="/lomba" class="bg-orange-500 ..."><i class="fa-solid fa-trophy"></i> Daftar Lomba</a>
+        <a href="/lomba"><i class="fa-solid fa-trophy"></i> Daftar Lomba</a>
+        {{-- <a href="{{ route('karya.index') }}"><i class="fa-solid fa-upload"></i> Kumpulkan Karya</a> --}}
         
         <form method="POST" action="{{ route('logout') }}" class="logout-form">
             @csrf
