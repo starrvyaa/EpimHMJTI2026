@@ -122,6 +122,12 @@
         <span class="value">{{ $pendaftar->anggota_2 }}</span>
     </div>
     @endif
+    @if($pendaftar->anggota_3)
+    <div class="field">
+        <span class="label">Anggota 3</span>
+        <span class="value">{{ $pendaftar->anggota_3 }}</span>
+    </div>
+    @endif
     <div class="field">
         <span class="label">Asal Sekolah</span>
         <span class="value">{{ $pendaftar->tim->asal_sekolah ?? '-' }}</span>

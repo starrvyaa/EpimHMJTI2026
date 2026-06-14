@@ -12,37 +12,79 @@ use Illuminate\Support\Facades\Crypt;
 
 class LombaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $listKategori = \App\Models\KategoriLomba::all();
         $user = auth()->user();
 
+        $query = Pendaftar::with('tim', 'kategori', 'user');
+
         if ($user->role == 'admin') {
-            $datas = Pendaftar::with('tim', 'kategori', 'user')->get();
+            // Filter by kategori
+            if ($request->filled('filter_kategori')) {
+                $query->where('id_lomba', $request->filter_kategori);
+            }
+            $query->orderBy('updated_at', 'desc');
+            $datas = $query->paginate(10)->withQueryString();
         } else {
-            $datas = Pendaftar::with('tim', 'kategori', 'user')
-                ->where('user_id', $user->id)
-                ->get();
+            $datas = $query->where('user_id', $user->id)->get();
         }
 
-        // Inject payment info per pendaftar
-        foreach ($datas as $d) {
-            $d->payment_info = PembayaranHelper::getInfo($d->id_lomba);
+        // Inject payment info per pendaftar (only for non-paginated collection)
+        if ($user->role != 'admin') {
+            foreach ($datas as $d) {
+                $d->payment_info = PembayaranHelper::getInfo($d->id_lomba);
+            }
+        } else {
+            foreach ($datas as $d) {
+                $d->payment_info = PembayaranHelper::getInfo($d->id_lomba);
+            }
         }
 
         $pengaturan = Pengaturan::first() ?? (object)[
             'status_pendaftaran_ditutup' => 0,
-            'status_upload_postervideo_ditutup' => 0
+            'status_upload_postervideo_ditutup' => 0,
+            'status_pengumpulan_karya' => 0,
         ];
 
         $deadline = \Carbon\Carbon::parse('2026-08-13 23:59:00', 'Asia/Jakarta');
         $isExpired = now()->setTimezone('Asia/Jakarta')->gt($deadline);
 
-        return view('lomba.index', compact('listKategori', 'datas', 'pengaturan', 'deadline', 'isExpired'));
+        // Check if user has any pendaftaran (for alert logic)
+        $userHasPendaftaran = Pendaftar::where('user_id', $user->id)->exists();
+
+        $filterKategori = $request->filter_kategori;
+
+        // Check if user has any pendaftaran with incomplete karya (for alert logic)
+        $userHasUnsubmittedKarya = false;
+        if ($user->role != 'admin') {
+            $userPendaftarans = Pendaftar::where('user_id', $user->id)->get();
+            foreach ($userPendaftarans as $p) {
+                $karyaComplete = match ($p->id_lomba) {
+                    1 => (bool) $p->judul_karya,
+                    2 => (bool) $p->gambar_karya,
+                    3 => (bool) $p->judul_karya,
+                    4 => (bool) $p->link_video_karya,
+                    default => false,
+                };
+                if (!$karyaComplete) {
+                    $userHasUnsubmittedKarya = true;
+                    break;
+                }
+            }
+        }
+
+        return view('lomba.index', compact('listKategori', 'datas', 'pengaturan', 'deadline', 'isExpired', 'filterKategori', 'userHasPendaftaran', 'userHasUnsubmittedKarya'));
     }
 
     public function store(Request $request)
     {
+        // ► GATEKEEP: cek pendaftaran ditutup
+        $pengaturan = Pengaturan::first();
+        if ($pengaturan && $pengaturan->status_pendaftaran_ditutup) {
+            return back()->with('error', 'Maaf, pendaftaran lomba saat ini sudah ditutup oleh Admin.');
+        }
+
         $noHtmlText = 'required|string|max:150|not_regex:/<[^>]*>/';
         $phoneRule = 'required|string|max:20|regex:/^[0-9+\-\s]+$/|not_regex:/<[^>]*>/';
 
@@ -91,13 +133,15 @@ class LombaController extends Controller
             'bukti_sosmed' => 'Bukti sosial media',
         ];
 
-        // Web Programming: anggota 1 wajib
+        // Web Programming: anggota opsional (sama seperti lomba lain)
         if ($request->id_lomba == 1) {
-            $rules['anggota_1'] = 'required|string|max:150|not_regex:/<[^>]*>/';
-            $rules['hp_1'] = 'required|string|max:20|regex:/^[0-9+\-\s]+$/|not_regex:/<[^>]*>/';
-            $rules['anggota_nis_1'] = 'required|string|max:50|not_regex:/<[^>]*>/';
-            $msgs['anggota_1.required'] = 'Web Programming minimal 2 orang — anggota 1 wajib.';
-            $msgs['anggota_nis_1.required'] = 'NIS/NIM anggota 1 wajib.';
+            $rules['anggota_1'] = 'nullable|string|max:150|not_regex:/<[^>]*>/';
+            $rules['hp_1'] = 'nullable|string|max:20|regex:/^[0-9+\-\s]*$/|not_regex:/<[^>]*>/';
+            $rules['anggota_nis_1'] = 'nullable|string|max:50|not_regex:/<[^>]*>/';
+
+            $rules['anggota_2'] = 'nullable|string|max:150|not_regex:/<[^>]*>/';
+            $rules['hp_2'] = 'nullable|string|max:20|regex:/^[0-9+\-\s]*$/|not_regex:/<[^>]*>/';
+            $rules['anggota_nis_2'] = 'nullable|string|max:50|not_regex:/<[^>]*>/';
         }
 
         $validated = $request->validate($rules, $msgs, $attrs);
@@ -122,6 +166,9 @@ class LombaController extends Controller
         $pendaftar->anggota_2 = $validated['anggota_2'] ?? null;
         $pendaftar->hp_2 = $validated['hp_2'] ?? null;
         $pendaftar->anggota_nis_2 = $validated['anggota_nis_2'] ?? null;
+        $pendaftar->anggota_3 = $validated['anggota_3'] ?? null;
+        $pendaftar->hp_3 = $validated['hp_3'] ?? null;
+        $pendaftar->anggota_nis_3 = $validated['anggota_nis_3'] ?? null;
         $pendaftar->status_pembayaran = 'pending';
         $pendaftar->accepted_integrity = true;
 
@@ -168,6 +215,12 @@ class LombaController extends Controller
 
     public function tambahproposal(Request $request, $user_id)
     {
+        // ► GATEKEEP: cek upload proposal ditutup
+        $pengaturan = Pengaturan::first();
+        if ($pengaturan && $pengaturan->status_upload_postervideo_ditutup && auth()->user()->role !== 'admin') {
+            return back()->with('error', 'Maaf, pengumpulan proposal saat ini sudah ditutup oleh Admin.');
+        }
+
         $request->validate([
             'proposal' => 'nullable|file|mimes:pdf|max:2048',
             'linkvideo' => 'nullable|url',
@@ -229,6 +282,12 @@ class LombaController extends Controller
 
     public function tambahorisinalitas(Request $request, $id)
     {
+        // ► GATEKEEP: cek upload ditutup
+        $pengaturan = Pengaturan::first();
+        if ($pengaturan && $pengaturan->status_upload_postervideo_ditutup && auth()->user()->role !== 'admin') {
+            return back()->with('error', 'Maaf, pengumpulan berkas saat ini sudah ditutup oleh Admin.');
+        }
+
         $request->validate([
             'orisinalitas' => 'required|mimes:pdf|max:2048',
         ]);

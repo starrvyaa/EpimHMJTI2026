@@ -59,6 +59,9 @@
             align-items: center;
             gap: 0.75rem;
             text-decoration: none;
+            min-width: 0;
+            flex-shrink: 1;
+            overflow: hidden;
         }
 
         .navbar-logo {
@@ -70,11 +73,13 @@
             align-items: center;
             justify-content: center;
             font-size: 1.2rem;
+            flex-shrink: 0;
         }
 
         .navbar-brand-text {
             display: flex;
             flex-direction: column;
+            min-width: 0;
         }
 
         .navbar-brand-text span:first-child {
@@ -84,6 +89,9 @@
             letter-spacing: 0.05em;
             color: #fff;
             line-height: 1.1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .navbar-brand-text span:last-child {
@@ -91,6 +99,7 @@
             color: var(--orange);
             font-weight: 600;
             letter-spacing: 0.05em;
+            white-space: nowrap;
         }
 
         .navbar-nav {
@@ -102,27 +111,14 @@
 
         .navbar-nav a {
             text-decoration: none;
-            color: var(--text-gray);
+            color: #FFFFFF;
             font-size: 0.82rem;
-            font-weight: 500;
+            font-weight: 700;
             letter-spacing: 0.06em;
             text-transform: uppercase;
             transition: color 0.2s;
         }
 
-        .navbar-logo-img {
-    height: 40px; /* Atur tinggi gambar */
-    width: auto;  /* Lebar otomatis menyesuaikan agar tidak gepeng */
-    display: block;
-    margin-right: 10px; /* Memberi jarak antara logo dan teks */
-}
-
-/* Pastikan container navbar-brand menggunakan flex agar sejajar */
-.navbar-brand {
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-}
         .navbar-nav a:hover, .navbar-nav a.active {
             color: #fff;
         }
@@ -1102,6 +1098,9 @@
             cursor: pointer;
             background: none;
             border: none;
+            padding: 6px;
+            z-index: 1002;
+            position: relative;
         }
 
         .hamburger span {
@@ -1115,6 +1114,22 @@
         .hamburger.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
         .hamburger.active span:nth-child(2) { opacity: 0; }
         .hamburger.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+        /* Mobile nav close button */
+        .nav-close {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-gray);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            line-height: 1;
+        }
+        .nav-close:hover { color: #fff; }
+        .navbar-nav.open .nav-close {
+            display: inline-block;
+        }
 
         /* ===== GALLERY SLIDER ===== */
         .gallery-slider {
@@ -1278,7 +1293,6 @@
             .footer-inner { grid-template-columns: 1fr; gap: 2rem; }
             .slider-btn { width: 36px; height: 36px; font-size: 0.9rem; }
             .hero-slide-item { height: 250px; }
-            
         }
 
         /* mobile menu overlay */
@@ -1318,6 +1332,12 @@
         }
         .navbar-nav.open a:hover { color: #fff; }
         .navbar-nav.open .btn-login { margin-top: 1rem; text-align: center; }
+        .navbar-nav.open .nav-close { display: block; }
+        .nav-close-li {
+            list-style: none;
+            display: flex;
+            justify-content: flex-end;
+        }
         body.sidebar-open { overflow: hidden; }
 
         /* Fade in animation */
@@ -1356,6 +1376,11 @@
             </div>
         </a>
         <ul class="navbar-nav">
+            <li class="nav-close-li">
+                {{-- <button class="nav-close" onclick="closeMobileNav()" aria-label="Tutup menu">
+                    <i class="fa-solid fa-xmark"></i>
+                </button> --}}
+            </li>
             <li><a href="{{ url('/') }}" class="active">BERANDA</a></li>
             <li><a href="{{ url('/lomba') }}">LOMBA</a></li>
             <li><a href="{{ url('/timeline') }}">TIMELINE</a></li>
@@ -1504,50 +1529,140 @@
         </div>
     </section>
 
-    {{-- ===== BENEFITS ===== --}}
-    <section class="benefits">
-        <div class="section-header">
-            <div class="section-eyebrow-center">
-                <i class="fas fa-bolt"></i> KEUNTUNGAN <i class="fas fa-bolt"></i>
-            </div>
-            <h2 class="section-title">Apa yang <span>Kamu Dapatkan?</span></h2>
-            <p class="section-subtitle">
-                Bergabunglah dengan ratusan peserta lainnya dan raih kesempatan untuk
-                mengembangkan skill dan memenangkan hadiah menarik!
-            </p>
-        </div>
-        <div class="benefits-grid">
-            <div class="benefit-card fade-up">
-                <span class="benefit-icon">🏆</span>
-                <div class="benefit-title">Total Hadiah 30 Juta</div>
-                <p class="benefit-desc">Hadiah menarik untuk juara 1, 2, 3 di setiap kategori lomba</p>
-            </div>
-            <div class="benefit-card fade-up">
-                <span class="benefit-icon">📜</span>
-                <div class="benefit-title">Sertifikat Resmi</div>
-                <p class="benefit-desc">Sertifikat peserta dan pemenang yang dapat digunakan untuk portofolio</p>
-            </div>
-            <div class="benefit-card fade-up">
-                <span class="benefit-icon">🤝</span>
-                <div class="benefit-title">Networking Luas</div>
-                <p class="benefit-desc">Kesempatan bertemu dan berkolaborasi dengan mahasiswa se-Indonesia</p>
-            </div>
-            <div class="benefit-card fade-up">
-                <span class="benefit-icon">⭐</span>
-                <div class="benefit-title">Pengalaman Berharga</div>
-                <p class="benefit-desc">Asah kemampuan dan tingkatkan kepercayaan diri melalui kompetisi nyata</p>
-            </div>
-            <div class="benefit-card fade-up">
-                <span class="benefit-icon">🤖</span>
-                <div class="benefit-title">Juri Profesional</div>
-                <p class="benefit-desc">Dinilai langsung oleh para profesional dan pakar di bidangnya</p>
-            </div>
-            <div class="benefit-card fade-up">
-                <span class="benefit-icon">🚀</span>
-                <div class="benefit-title">Karier Lebih Baik</div>
-                <p class="benefit-desc">Portofolio kompetisi yang dapat memperkuat profil profesional kamu</p>
             </div>
         </div>
+    </section>
+
+    {{-- ===== TIMELINE ===== --}}
+
+    @php
+    $categories = [
+        'videography' => [
+            'name' => 'Videography & Desain Poster',
+            'icon' => 'fas fa-video',
+            'schedule' => [
+                [
+                    'title' => 'Pendaftaran Lomba & Pengumpulan Proposal',
+                    'date' => '23 Juni 2026',
+                    'desc' => 'Pembukaan pendaftaran resmi Lomba dan Pengumpulan Proposal',
+                    'status' => 'upcoming',
+                ],
+                [
+                    'title' => 'Penutupan Pendaftaran',
+                    'date' => '13 Agustus 2026',
+                    'desc' => 'Batas akhir pendaftaran Lomba',
+                    'status' => 'upcoming',
+                ],
+                [
+                    'title' => 'Pengumuman Juara',
+                    'date' => '24 Agustus 2026',
+                    'desc' => 'Pengumuman pemenang Lomba Videography dan Desain Poster',
+                    'status' => 'upcoming',
+                ],
+            ]
+        ],
+        'packaging' => [
+            'name' => 'Design Packaging & Web Programming',
+            'icon' => 'fas fa-box-open',
+            'schedule' => [
+                [
+                    'title' => 'Pendaftaran Lomba & Pengumpulan Proposal',
+                    'date' => '23 Juni 2026 ',
+                    'desc' => 'Pendaftaran & pengumpulan proposal Design Packaging dan Web Programming',
+                    'status' => 'upcoming',
+                ],
+                [
+                    'title' => 'Batas Akhir Pendaftaran',
+                    'date' => '13 Agustus 2026',
+                    'desc' => 'Batas waktu pendaftaran Design Packaging dan Web Programming',
+                    'status' => 'upcoming',
+                ],
+                [
+                    'title' => 'Pengumuman Finalis',
+                    'date' => '17 Agustus 2026',
+                    'desc' => 'Pengumuman peserta yang lolos ke Babak Final',
+                    'status' => 'upcoming',
+                ],
+                [
+                    'title' => 'Technical Meeting',
+                    'date' => '18 Agustus 2026',
+                    'desc' => 'Penjelasan teknis babak final',
+                    'status' => 'upcoming',
+                ],
+                [
+                    'title' => 'Babak Final',
+                    'date' => '23 Agustus 2026',
+                    'desc' => 'Babak final kompetisi Design Packaging dan Web Programming, Offline di Politeknik Negeri Jember ',
+                    'status' => 'upcoming',
+                ],
+                [
+                    'title' => 'Pengumuman Juara',
+                    'date' => '24 Agustus 2026',
+                    'desc' => 'Pengumuman pemenang Lomba Design Packaging dan Web Programing',
+                    'status' => 'upcoming',
+                ],
+            ]
+        ],
+    ];
+    @endphp
+
+    <section class="timeline" id="timeline">
+        <div class="timeline-inner">
+            <div class="section-header">
+                <div class="section-eyebrow-center">
+                    <i class="fas fa-calendar"></i> JADWAL EVENT <i class="fas fa-calendar"></i>
+                </div>
+                <h2 class="section-title">TIMELINE <span>EVENT</span></h2>
+                <p class="section-subtitle">Catat tanggal penting untuk setiap tahapan kompetisi</p>
+            </div>
+
+            <div class="timeline-tabs">
+                @foreach($categories as $key => $category)
+                <button class="timeline-tab {{ $loop->first ? 'active' : ''}}" data-target="{{ $key }}">
+                    <i class="{{ $category['icon'] }}"></i>
+                    {{ $category['name'] }}
+                </button>
+                @endforeach
+            </div>
+
+            @foreach($categories as $key => $category)
+            <div class="timeline-content {{ $loop->first ? 'active' : ''}}" id="timeline-{{ $key }}">
+                <div class="timeline-list">
+                    @foreach($category['schedule'] as $item)
+                    <div class="timeline-item">
+                        <div @class([
+                            'tl-icon',
+                            'done' => $item['status'] === 'done',
+                            'active' => $item['status'] === 'active',
+                            'upcoming' => $item['status'] === 'upcoming'
+                        ])>
+                            @if($item['status'] === 'done')
+                                ✓
+                            @elseif($item['status'] === 'active')
+                                🔥
+                            @else
+                                📅
+                            @endif
+                        </div>
+                        <div @class([
+                            'tl-card',
+                            'active' => $item['status'] === 'active'
+                        ])>
+                            <div class="tl-date">{{ $item['date'] }}</div>
+                            <div class="tl-title">{{ $item['title'] }}</div>
+                            <div class="tl-desc">{{ $item['desc'] }}</div>
+                            @if($item['status'] === 'done')
+                                <span class="tl-badge done">SELESAI</span>
+                            @elseif($item['status'] === 'active')
+                                <span class="tl-badge active">AKTIF SEKARANG</span>
+                            @endif
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+            @endforeach
+
     </section>
 
     {{-- ===== GALLERY SLIDER ===== --}}
@@ -1728,139 +1843,51 @@
                     </div>
                 </div>
 
+
+    {{-- ===== BENEFITS ===== --}}
+    <section class="benefits">
+        <div class="section-header">
+            <div class="section-eyebrow-center">
+                <i class="fas fa-bolt"></i> KEUNTUNGAN <i class="fas fa-bolt"></i>
+            </div>
+            <h2 class="section-title">Apa yang <span>Kamu Dapatkan?</span></h2>
+            <p class="section-subtitle">
+                Bergabunglah dengan ratusan peserta lainnya dan raih kesempatan untuk
+                mengembangkan skill dan memenangkan hadiah menarik!
+            </p>
+        </div>
+        <div class="benefits-grid">
+            <div class="benefit-card fade-up">
+                <span class="benefit-icon">🏆</span>
+                <div class="benefit-title">Total Hadiah 30 Juta</div>
+                <p class="benefit-desc">Hadiah menarik untuk juara 1, 2, 3 di setiap kategori lomba</p>
+            </div>
+            <div class="benefit-card fade-up">
+                <span class="benefit-icon">📜</span>
+                <div class="benefit-title">Sertifikat Resmi</div>
+                <p class="benefit-desc">Sertifikat peserta dan pemenang yang dapat digunakan untuk portofolio</p>
+            </div>
+            <div class="benefit-card fade-up">
+                <span class="benefit-icon">🤝</span>
+                <div class="benefit-title">Networking Luas</div>
+                <p class="benefit-desc">Kesempatan bertemu dan berkolaborasi dengan mahasiswa se-Indonesia</p>
+            </div>
+            <div class="benefit-card fade-up">
+                <span class="benefit-icon">⭐</span>
+                <div class="benefit-title">Pengalaman Berharga</div>
+                <p class="benefit-desc">Asah kemampuan dan tingkatkan kepercayaan diri melalui kompetisi nyata</p>
+            </div>
+            <div class="benefit-card fade-up">
+                <span class="benefit-icon">🤖</span>
+                <div class="benefit-title">Juri Profesional</div>
+                <p class="benefit-desc">Dinilai langsung oleh para profesional dan pakar di bidangnya</p>
+            </div>
+            <div class="benefit-card fade-up">
+                <span class="benefit-icon">🚀</span>
+                <div class="benefit-title">Karier Lebih Baik</div>
+                <p class="benefit-desc">Portofolio kompetisi yang dapat memperkuat profil profesional kamu</p>
             </div>
         </div>
-    </section>
-
-    {{-- ===== TIMELINE ===== --}}
-    @php
-    $categories = [
-        'videography' => [
-            'name' => 'Videography & Desain Poster',
-            'icon' => 'fas fa-video',
-            'schedule' => [
-                [
-                    'title' => 'Pendaftaran Lomba & Pengumpulan Proposal',
-                    'date' => '23 Juni 2026',
-                    'desc' => 'Pembukaan pendaftaran resmi Lomba dan Pengumpulan Proposal',
-                    'status' => 'upcoming',
-                ],
-                [
-                    'title' => 'Penutupan Pendaftaran',
-                    'date' => '13 Agustus 2026',
-                    'desc' => 'Batas akhir pendaftaran Lomba',
-                    'status' => 'upcoming',
-                ],
-                [
-                    'title' => 'Pengumuman Juara',
-                    'date' => '24 Agustus 2026',
-                    'desc' => 'Pengumuman pemenang Lomba Videography dan Desain Poster',
-                    'status' => 'upcoming',
-                ],
-            ]
-        ],
-        'packaging' => [
-            'name' => 'Design Packaging & Web Programming',
-            'icon' => 'fas fa-box-open',
-            'schedule' => [
-                [
-                    'title' => 'Pendaftaran Lomba & Pengumpulan Proposal',
-                    'date' => '23 Juni 2026 ',
-                    'desc' => 'Pendaftaran & pengumpulan proposal Design Packaging dan Web Programming',
-                    'status' => 'upcoming',
-                ],
-                [
-                    'title' => 'Batas Akhir Pendaftaran',
-                    'date' => '13 Agustus 2026',
-                    'desc' => 'Batas waktu pendaftaran Design Packaging dan Web Programming',
-                    'status' => 'upcoming',
-                ],
-                [
-                    'title' => 'Pengumuman Finalis',
-                    'date' => '17 Agustus 2026',
-                    'desc' => 'Pengumuman peserta yang lolos ke Babak Final',
-                    'status' => 'upcoming',
-                ],
-                [
-                    'title' => 'Technical Meeting',
-                    'date' => '18 Agustus 2026',
-                    'desc' => 'Penjelasan teknis babak final',
-                    'status' => 'upcoming',
-                ],
-                [
-                    'title' => 'Babak Final',
-                    'date' => '23 Agustus 2026',
-                    'desc' => 'Babak final kompetisi Design Packaging dan Web Programming, Offline di Politeknik Negeri Jember ',
-                    'status' => 'upcoming',
-                ],
-                [
-                    'title' => 'Pengumuman Juara',
-                    'date' => '24 Agustus 2026',
-                    'desc' => 'Pengumuman pemenang Lomba Design Packaging dan Web Programing',
-                    'status' => 'upcoming',
-                ],
-            ]
-        ],
-    ];
-    @endphp
-
-    <section class="timeline" id="timeline">
-        <div class="timeline-inner">
-            <div class="section-header">
-                <div class="section-eyebrow-center">
-                    <i class="fas fa-calendar"></i> JADWAL EVENT <i class="fas fa-calendar"></i>
-                </div>
-                <h2 class="section-title">TIMELINE <span>EVENT</span></h2>
-                <p class="section-subtitle">Catat tanggal penting untuk setiap tahapan kompetisi</p>
-            </div>
-
-            <div class="timeline-tabs">
-                @foreach($categories as $key => $category)
-                <button class="timeline-tab {{ $loop->first ? 'active' : ''}}" data-target="{{ $key }}">
-                    <i class="{{ $category['icon'] }}"></i>
-                    {{ $category['name'] }}
-                </button>
-                @endforeach
-            </div>
-
-            @foreach($categories as $key => $category)
-            <div class="timeline-content {{ $loop->first ? 'active' : ''}}" id="timeline-{{ $key }}">
-                <div class="timeline-list">
-                    @foreach($category['schedule'] as $item)
-                    <div class="timeline-item">
-                        <div @class([
-                            'tl-icon',
-                            'done' => $item['status'] === 'done',
-                            'active' => $item['status'] === 'active',
-                            'upcoming' => $item['status'] === 'upcoming'
-                        ])>
-                            @if($item['status'] === 'done')
-                                ✓
-                            @elseif($item['status'] === 'active')
-                                🔥
-                            @else
-                                📅
-                            @endif
-                        </div>
-                        <div @class([
-                            'tl-card',
-                            'active' => $item['status'] === 'active'
-                        ])>
-                            <div class="tl-date">{{ $item['date'] }}</div>
-                            <div class="tl-title">{{ $item['title'] }}</div>
-                            <div class="tl-desc">{{ $item['desc'] }}</div>
-                            @if($item['status'] === 'done')
-                                <span class="tl-badge done">SELESAI</span>
-                            @elseif($item['status'] === 'active')
-                                <span class="tl-badge active">AKTIF SEKARANG</span>
-                            @endif
-                        </div>
-                    </div>
-                    @endforeach
-                </div>
-            </div>
-            @endforeach
-
     </section>
 
     {{-- ===== FOOTER ===== --}}
@@ -1935,7 +1962,7 @@
                     hamburger.classList.toggle('active');
                     document.body.classList.toggle('sidebar-open');
                 });
-                nav.querySelectorAll('a').forEach(function (link) {
+                nav.querySelectorAll('a, button.nav-close').forEach(function (link) {
                     link.addEventListener('click', closeMobileNav);
                 });
             }

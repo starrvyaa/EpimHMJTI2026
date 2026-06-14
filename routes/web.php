@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\LombaController;
 use App\Http\Controllers\KaryaController;
+use App\Http\Controllers\PengaturanController;
 
 // 1. HALAMAN UTAMA (Sudah diberi nama 'home' agar tidak error lagi!)
 Route::get('/', function () {
@@ -42,11 +43,12 @@ Route::middleware(['auth'])->group(function () {
     // --- Pengumpulan Karya ---
     Route::get('/karya', [KaryaController::class, 'index'])->name('karya.index');
     Route::post('/karya/store', [KaryaController::class, 'store'])->name('karya.store');
+    Route::patch('/karya/update/{id}', [KaryaController::class, 'update'])->name('karya.update');
 
     // --- Tiket Finalis ---
     Route::get('/tiket', [LombaController::class, 'tiketFinalis'])->name('tiket.finalis');
 
-    // --- Admin: Verifikasi Pembayaran ---
+    // --- Admin: Verifikasi Pembayaran & Pengaturan ---
     Route::middleware(['auth', 'only_admin'])->group(function () {
         Route::patch('/admin/pembayaran/verifikasi/{id}', [LombaController::class, 'verifikasiPembayaran'])
             ->name('admin.pembayaran.verifikasi');
@@ -54,6 +56,10 @@ Route::middleware(['auth'])->group(function () {
             ->name('admin.pembayaran.tolak');
         Route::patch('/admin/kelulusan/{id}/{status}', [LombaController::class, 'aturKelulusan'])
             ->name('admin.kelulusan.atur');
+
+        // Pengaturan (Setting) — Admin only
+        Route::get('/pengaturan', [PengaturanController::class, 'index'])->name('Pengaturan.index');
+        Route::post('/pengaturan', [PengaturanController::class, 'store'])->name('Pengaturan.store');
     });
 });
 

@@ -11,6 +11,7 @@ class Pengaturan extends Model
 
     protected $fillable = [
         'status_pendaftaran_ditutup',
-        'status_upload_postervideo_ditutup'
+        'status_upload_postervideo_ditutup',
+        'status_pengumpulan_karya',
     ];
 }

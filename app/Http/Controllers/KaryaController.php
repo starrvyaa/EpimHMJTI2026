@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Pendaftar;
+use App\Models\Pengaturan;
 use App\Models\KategoriLomba;
 use Illuminate\Support\Facades\Auth;
 
@@ -41,6 +42,12 @@ class KaryaController extends Controller
             return back()->with('error', 'Batas waktu pengumpulan karya sudah berakhir (13 Agustus 2026 pukul 23:59 WIB).');
         }
 
+        // ► GATEKEEP: cek upload ditutup
+        $pengaturan = Pengaturan::first();
+        if ($pengaturan && $pengaturan->status_upload_postervideo_ditutup) {
+            return back()->with('error', 'Maaf, pengumpulan karya/proposal saat ini sudah ditutup oleh Admin.');
+        }
+
         $pendaftar = Pendaftar::with('tim', 'kategori')
             ->where('user_id', $user->id)
             ->where('status_pembayaran', 'verified')
@@ -56,12 +63,6 @@ class KaryaController extends Controller
         $messages['judul_karya.required'] = 'Judul karya wajib diisi.';
         $messages['judul_karya.not_regex'] = 'Judul tidak boleh berisi tag HTML.';
 
-        // Orisinalitas — Semua cabang
-        $rules['orisinalitas'] = 'required|file|mimes:pdf|max:2048';
-        $messages['orisinalitas.required'] = 'Surat orisinalitas (materai 10rb) wajib diupload.';
-        $messages['orisinalitas.mimes'] = 'Surat orisinalitas harus PDF.';
-        $messages['orisinalitas.max'] = 'Surat orisinalitas maksimal 2MB.';
-
         // Integritas checkbox
         $rules['accepted_integrity_karya'] = 'required|accepted';
         $messages['accepted_integrity_karya.required'] = 'Anda wajib menyetujui pernyataan integritas.';
@@ -70,12 +71,8 @@ class KaryaController extends Controller
         switch ($idLomba) {
             case 1: // Web Programming
                 $rules['subtema'] = 'required|string|in:Manajemen absensi,Perpustakaan,Ekstrakurikuler,Kantin sehat';
-                $rules['proposal'] = 'required|file|mimes:pdf|max:10240';
                 $messages['subtema.required'] = 'Pilih subtema lomba.';
                 $messages['subtema.in'] = 'Subtema tidak valid.';
-                $messages['proposal.required'] = 'Proposal wajib diupload.';
-                $messages['proposal.mimes'] = 'Proposal harus PDF.';
-                $messages['proposal.max'] = 'Proposal maksimal 10MB.';
                 break;
 
             case 2: // Design Poster
@@ -85,11 +82,7 @@ class KaryaController extends Controller
                 $messages['gambar_karya.max'] = 'Poster maksimal 15MB.';
                 break;
 
-            case 3: // Design Packaging
-                $rules['proposal'] = 'required|file|mimes:pdf|max:10240';
-                $messages['proposal.required'] = 'Proposal wajib diupload.';
-                $messages['proposal.mimes'] = 'Proposal harus PDF.';
-                $messages['proposal.max'] = 'Proposal maksimal 10MB.';
+            case 3: // Design Packaging — judul saja
                 break;
 
             case 4: // Videography
@@ -109,14 +102,6 @@ class KaryaController extends Controller
             'accepted_integrity' => true,
         ];
 
-        // Upload orisinalitas
-        if ($request->hasFile('orisinalitas')) {
-            $file = $request->file('orisinalitas');
-            $nama = 'ORISINALITAS_' . time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('uploads/orisinalitas'), $nama);
-            $updateData['orisinalitas'] = $nama;
-        }
-
         // Upload gambar poster
         if ($request->hasFile('gambar_karya')) {
             $file = $request->file('gambar_karya');
@@ -125,26 +110,74 @@ class KaryaController extends Controller
             $updateData['gambar_karya'] = $nama;
         }
 
-        // Upload proposal (dengan autoname untuk Packaging)
-        if ($request->hasFile('proposal')) {
-            $file = $request->file('proposal');
-            $ext = $file->getClientOriginalExtension();
+        $pendaftar->update($updateData);
 
-            if ($idLomba == 3) {
-                $namaPeserta = str_replace(' ', '_', trim($user->name));
-                $asalSekolah = str_replace(' ', '_', trim($tim->asal_sekolah ?? 'Unknown'));
-                $namaFile = "Lomba Design Packaging_Proposal_{$namaPeserta}_{$asalSekolah}_EPIM 2026.{$ext}";
-            } else {
-                $namaFile = 'PROPOSAL_' . time() . '_' . $file->getClientOriginalName();
-            }
+        return redirect()->route('Lomba.peserta.index')->with('success', 'Karya berhasil dikumpulkan! ✅');
+    }
 
-            $file->move(public_path('uploads/proposal'), $namaFile);
-            $updateData['proposal'] = $namaFile;
-            $updateData['proposal_nama_file'] = $namaFile;
+    public function update(Request $request, $id)
+    {
+        $user = Auth::user();
+        $now = now()->setTimezone('Asia/Jakarta');
+        $deadline = \Carbon\Carbon::parse(self::DEADLINE, 'Asia/Jakarta');
+
+        if ($now->gt($deadline)) {
+            return back()->with('error', 'Batas waktu pengumpulan karya sudah berakhir (13 Agustus 2026 pukul 23:59 WIB).');
+        }
+
+        // ► GATEKEEP: cek pengumpulan karya ditutup
+        $pengaturan = Pengaturan::first();
+        if ($pengaturan && !$pengaturan->status_pengumpulan_karya) {
+            return back()->with('error', 'Maaf, pengumpulan karya saat ini sedang ditutup oleh Admin.');
+        }
+
+        $pendaftar = Pendaftar::with('tim', 'kategori')
+            ->where('id', $id)
+            ->where('user_id', $user->id)
+            ->where('status_pembayaran', 'verified')
+            ->firstOrFail();
+
+        $idLomba = $pendaftar->id_lomba;
+        $rules = [];
+        $messages = [];
+
+        // Judul
+        $rules['judul_karya'] = 'required|string|max:255|not_regex:/<[^>]*>/';
+        $messages['judul_karya.required'] = 'Judul karya wajib diisi.';
+        $messages['judul_karya.not_regex'] = 'Judul tidak boleh berisi tag HTML.';
+
+        // Subtema — Web
+        if ($idLomba == 1) {
+            $rules['subtema'] = 'required|string|in:Manajemen absensi,Perpustakaan,Ekstrakurikuler,Kantin sehat';
+            $messages['subtema.required'] = 'Pilih subtema lomba.';
+            $messages['subtema.in'] = 'Subtema tidak valid.';
+        }
+
+        // Orisinalitas
+        $rules['orisinalitas'] = 'nullable|file|mimes:pdf|max:10240';
+        $messages['orisinalitas.mimes'] = 'Bukti Orisinalitas harus PDF.';
+        $messages['orisinalitas.max'] = 'Bukti Orisinalitas maksimal 10MB.';
+
+        $request->validate($rules, $messages);
+
+        $updateData = [
+            'judul_karya' => $request->judul_karya,
+        ];
+
+        if ($idLomba == 1 && $request->filled('subtema')) {
+            $updateData['subtema'] = $request->subtema;
+        }
+
+        // Upload orisinalitas if provided
+        if ($request->hasFile('orisinalitas')) {
+            $file = $request->file('orisinalitas');
+            $namaFile = 'ORISINALITAS_' . time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('uploads/orisinalitas'), $namaFile);
+            $updateData['orisinalitas'] = $namaFile;
         }
 
         $pendaftar->update($updateData);
 
-        return redirect()->route('Lomba.peserta.index')->with('success', 'Karya berhasil dikumpulkan! ✅');
+        return redirect()->route('Lomba.peserta.index')->with('success', 'Karya berhasil diperbarui! ✅');
     }
 }

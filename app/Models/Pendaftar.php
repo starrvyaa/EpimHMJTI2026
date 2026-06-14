@@ -13,6 +13,7 @@ class Pendaftar extends Model
         'user_id', 'tim_id', 'id_lomba', 'proposal', 'orisinalitas',
         'bukti_bayar', 'status_pembayaran', 'alasan_penolakan',
         'nama_ketua', 'hp_ketua', 'anggota_1', 'hp_1', 'anggota_2', 'hp_2',
+        'anggota_3', 'hp_3', 'anggota_nis_3',
         'judul_karya', 'subtema', 'link_video_karya', 'gambar_karya', 'proposal_nama_file',
         'nis_nim_ketua', 'anggota_nis_1', 'anggota_nis_2',
         'bukti_status_aktif', 'bukti_sosmed',
