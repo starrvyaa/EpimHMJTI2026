@@ -187,9 +187,13 @@
             border: 1px solid rgba(255,255,255,0.08);
         }
 
-        /* === SETTINGS OVERRIDE (no max-width constraint) === */
+        /* === SETTINGS OVERRIDE === */
         .settings-card {
-            max-width: 100%;
+            max-width: 600px;
+            width: 100%;
+        }
+        @media (max-width: 768px) {
+            .settings-card { max-width: 100%; }
         }
 
         /* === ALERT === */
