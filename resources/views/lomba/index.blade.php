@@ -381,7 +381,7 @@
                                         @endif
                                     </div>
                                 @elseif(!$isLocked && !$uploadTutup)
-                                    <button class="btn btn-orange" style="padding:4px 10px; font-size:0.72rem;" onclick="openModal('modalOrisinalitas{{ $data->id }}')">
+                                    <button class="btn btn-orange" style="padding:10px 20px; font-size:0.72rem;" onclick="openModal('modalOrisinalitas{{ $data->id }}')">
                                         <i class="fa-solid fa-file-signature"></i> Upload
                                     </button>
                                 @elseif($uploadTutup)
@@ -578,6 +578,87 @@
                         <strong>{{ $data->anggota_3 }}{{ $data->hp_3 ? ' - ' . $data->hp_3 : '' }}</strong>
                     </div>
                 @endif
+                <hr class="detail-separator">
+                <div class="detail-item">
+                    <label>Bukti KTM/Kartu Pelajar/Status Aktif</label>
+                    @if($data->bukti_status_aktif)
+                        @php
+                            $extStatus = strtolower(pathinfo($data->bukti_status_aktif, PATHINFO_EXTENSION));
+                            $isStatusImg = in_array($extStatus, ['jpg', 'jpeg', 'png', 'gif', 'webp']);
+                        @endphp
+                        @if($isStatusImg)
+                            <div style="margin-top: 8px;">
+                                <a href="{{ asset('uploads/status_aktif/' . $data->bukti_status_aktif) }}" target="_blank" title="Klik untuk memperbesar">
+                                    <img src="{{ asset('uploads/status_aktif/' . $data->bukti_status_aktif) }}" alt="Bukti Status Aktif" style="max-width: 100%; max-height: 200px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); display: block; object-fit: contain;">
+                                </a>
+                            </div>
+                        @else
+                            <strong>
+                                <a href="{{ asset('uploads/status_aktif/' . $data->bukti_status_aktif) }}" target="_blank" style="color: #60A5FA; text-decoration: none;">
+                                    <i class="fa-solid fa-file-pdf"></i> Lihat PDF Bukti Aktif
+                                </a>
+                            </strong>
+                        @endif
+                    @else
+                        <strong style="color: #EF4444;">Belum diunggah</strong>
+                    @endif
+
+                    @if(auth()->user()->role == 'admin' || ($data->status_pembayaran ?? 'pending') == 'pending')
+                    <div style="margin-top: 8px;">
+                        <button type="button" class="btn btn-outline btn-edit-status-toggle-{{ $data->id }}" style="padding: 4px 8px; font-size: 0.75rem;" onclick="document.getElementById('editStatusForm{{ $data->id }}').style.display = 'block'; this.style.display = 'none';">
+                            <i class="fa-solid fa-pen-to-square"></i> Edit
+                        </button>
+                        <form id="editStatusForm{{ $data->id }}" action="{{ route('Lomba.peserta.updatestatusaktif', $data->user_id) }}" method="POST" enctype="multipart/form-data" style="display: none; margin-top: 8px;">
+                            @csrf @method('PATCH')
+                            <div style="display: flex; gap: 8px; align-items: center;">
+                                <input type="file" name="bukti_status_aktif" class="form-control" required accept=".pdf,.jpg,.jpeg,.png" style="padding: 4px; font-size: 0.8rem;">
+                                <button type="submit" class="btn btn-orange" style="padding: 6px 12px; font-size: 0.8rem;">Simpan</button>
+                                <button type="button" class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem;" onclick="document.getElementById('editStatusForm{{ $data->id }}').style.display = 'none'; document.querySelector('.btn-edit-status-toggle-{{ $data->id }}').style.display = 'inline-flex';">Batal</button>
+                            </div>
+                        </form>
+                    </div>
+                    @endif
+                </div>
+                <div class="detail-item">
+                    <label>Bukti Follow Sosmed</label>
+                    @if($data->bukti_sosmed)
+                        @php
+                            $extSosmed = strtolower(pathinfo($data->bukti_sosmed, PATHINFO_EXTENSION));
+                            $isSosmedImg = in_array($extSosmed, ['jpg', 'jpeg', 'png', 'gif', 'webp']);
+                        @endphp
+                        @if($isSosmedImg)
+                            <div style="margin-top: 8px;">
+                                <a href="{{ asset('uploads/sosmed/' . $data->bukti_sosmed) }}" target="_blank" title="Klik untuk memperbesar">
+                                    <img src="{{ asset('uploads/sosmed/' . $data->bukti_sosmed) }}" alt="Bukti Follow Sosmed" style="max-width: 100%; max-height: 200px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); display: block; object-fit: contain;">
+                                </a>
+                            </div>
+                        @else
+                            <strong>
+                                <a href="{{ asset('uploads/sosmed/' . $data->bukti_sosmed) }}" target="_blank" style="color: #60A5FA; text-decoration: none;">
+                                    <i class="fa-solid fa-file-pdf"></i> Lihat PDF Follow Sosmed
+                                </a>
+                            </strong>
+                        @endif
+                    @else
+                        <strong style="color: #EF4444;">Belum diunggah</strong>
+                    @endif
+
+                    @if(auth()->user()->role == 'admin' || ($data->status_pembayaran ?? 'pending') == 'pending')
+                    <div style="margin-top: 8px;">
+                        <button type="button" class="btn btn-outline btn-edit-sosmed-toggle-{{ $data->id }}" style="padding: 4px 8px; font-size: 0.75rem;" onclick="document.getElementById('editSosmedForm{{ $data->id }}').style.display = 'block'; this.style.display = 'none';">
+                            <i class="fa-solid fa-pen-to-square"></i> Edit
+                        </button>
+                        <form id="editSosmedForm{{ $data->id }}" action="{{ route('Lomba.peserta.updatesosmed', $data->user_id) }}" method="POST" enctype="multipart/form-data" style="display: none; margin-top: 8px;">
+                            @csrf @method('PATCH')
+                            <div style="display: flex; gap: 8px; align-items: center;">
+                                <input type="file" name="bukti_sosmed" class="form-control" required accept=".pdf,.jpg,.jpeg,.png" style="padding: 4px; font-size: 0.8rem;">
+                                <button type="submit" class="btn btn-orange" style="padding: 6px 12px; font-size: 0.8rem;">Simpan</button>
+                                <button type="button" class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem;" onclick="document.getElementById('editSosmedForm{{ $data->id }}').style.display = 'none'; document.querySelector('.btn-edit-sosmed-toggle-{{ $data->id }}').style.display = 'inline-flex';">Batal</button>
+                            </div>
+                        </form>
+                    </div>
+                    @endif
+                </div>
             </div>
             <button class="btn btn-outline" style="width:100%; margin-top:20px;" onclick="closeModal('modalDetail{{ $data->id }}')">Tutup</button>
         </div>

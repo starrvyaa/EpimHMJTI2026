@@ -35,6 +35,10 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('lomba/peserta/tambahorisinalitas/{id}', [LombaController::class, 'tambahorisinalitas'])->name('Lomba.peserta.tambahorisinalitas');
     Route::delete('lomba/peserta/hapusorisinalitas/{id}', [LombaController::class, 'hapusorisinalitas'])->name('Lomba.peserta.hapusorisinalitas');
 
+    // --- Berkas KTM & Sosmed ---
+    Route::patch('/lomba/update-status-aktif/{id}', [LombaController::class, 'updateStatusAktif'])->name('Lomba.peserta.updatestatusaktif');
+    Route::patch('/lomba/update-sosmed/{id}', [LombaController::class, 'updateSosmed'])->name('Lomba.peserta.updatesosmed');
+
     // --- Profile User ---
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

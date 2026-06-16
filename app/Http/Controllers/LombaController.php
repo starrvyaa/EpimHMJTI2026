@@ -411,4 +411,62 @@ class LombaController extends Controller
         $pendaftar->save();
         return back()->with('success', 'Status kelulusan ' . ($pendaftar->tim->nama_tim ?? 'Tim #'.$id) . ': ' . strtoupper($status));
     }
+
+    public function updateStatusAktif(Request $request, $id)
+    {
+        $request->validate([
+            'bukti_status_aktif' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
+        ]);
+
+        $query = Pendaftar::where('user_id', $id);
+        if (auth()->user()->role !== 'admin') {
+            $query->where('user_id', auth()->id());
+        }
+        $data = $query->firstOrFail();
+
+        if ($request->hasFile('bukti_status_aktif')) {
+            // Hapus file lama jika ada
+            if ($data->bukti_status_aktif && file_exists(public_path('uploads/status_aktif/' . $data->bukti_status_aktif))) {
+                unlink(public_path('uploads/status_aktif/' . $data->bukti_status_aktif));
+            }
+
+            $f = $request->file('bukti_status_aktif');
+            $filename = 'status_'.time().'.'.$f->getClientOriginalExtension();
+            $f->move(public_path('uploads/status_aktif'), $filename);
+            
+            $data->bukti_status_aktif = $filename;
+            $data->save();
+        }
+
+        return back()->with('success', 'Bukti KTM/Status Aktif berhasil diperbarui!');
+    }
+
+    public function updateSosmed(Request $request, $id)
+    {
+        $request->validate([
+            'bukti_sosmed' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
+        ]);
+
+        $query = Pendaftar::where('user_id', $id);
+        if (auth()->user()->role !== 'admin') {
+            $query->where('user_id', auth()->id());
+        }
+        $data = $query->firstOrFail();
+
+        if ($request->hasFile('bukti_sosmed')) {
+            // Hapus file lama jika ada
+            if ($data->bukti_sosmed && file_exists(public_path('uploads/sosmed/' . $data->bukti_sosmed))) {
+                unlink(public_path('uploads/sosmed/' . $data->bukti_sosmed));
+            }
+
+            $f = $request->file('bukti_sosmed');
+            $filename = 'sosmed_'.time().'.'.$f->getClientOriginalExtension();
+            $f->move(public_path('uploads/sosmed'), $filename);
+            
+            $data->bukti_sosmed = $filename;
+            $data->save();
+        }
+
+        return back()->with('success', 'Bukti Follow Sosial Media berhasil diperbarui!');
+    }
 }
