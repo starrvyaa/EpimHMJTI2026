@@ -70,9 +70,10 @@ class KaryaController extends Controller
 
         switch ($idLomba) {
             case 1: // Web Programming
-                $rules['subtema'] = 'required|string|in:Manajemen absensi,Perpustakaan,Ekstrakurikuler,Kantin sehat';
-                $messages['subtema.required'] = 'Pilih subtema lomba.';
-                $messages['subtema.in'] = 'Subtema tidak valid.';
+                // Subtema di-comment sesuai permintaan agar mudah diaktifkan kembali
+                // $rules['subtema'] = 'required|string|in:Manajemen absensi,Perpustakaan,Ekstrakurikuler,Kantin sehat';
+                // $messages['subtema.required'] = 'Pilih subtema lomba.';
+                // $messages['subtema.in'] = 'Subtema tidak valid.';
                 break;
 
             case 2: // Design Poster
@@ -97,10 +98,13 @@ class KaryaController extends Controller
 
         $updateData = [
             'judul_karya' => $request->judul_karya,
-            'subtema' => $request->subtema,
             'link_video_karya' => $request->link_video_karya,
             'accepted_integrity' => true,
         ];
+
+        if ($request->filled('subtema')) {
+            $updateData['subtema'] = $request->subtema;
+        }
 
         // Upload gambar poster
         if ($request->hasFile('gambar_karya')) {
@@ -146,11 +150,32 @@ class KaryaController extends Controller
         $messages['judul_karya.required'] = 'Judul karya wajib diisi.';
         $messages['judul_karya.not_regex'] = 'Judul tidak boleh berisi tag HTML.';
 
-        // Subtema — Web
-        if ($idLomba == 1) {
-            $rules['subtema'] = 'required|string|in:Manajemen absensi,Perpustakaan,Ekstrakurikuler,Kantin sehat';
-            $messages['subtema.required'] = 'Pilih subtema lomba.';
-            $messages['subtema.in'] = 'Subtema tidak valid.';
+        // Subtema — Web (di-comment sesuai permintaan)
+        // if ($idLomba == 1) {
+        //     $rules['subtema'] = 'required|string|in:Manajemen absensi,Perpustakaan,Ekstrakurikuler,Kantin sehat';
+        //     $messages['subtema.required'] = 'Pilih subtema lomba.';
+        //     $messages['subtema.in'] = 'Subtema tidak valid.';
+        // }
+
+        // Poster Artwork
+        if ($idLomba == 2) {
+            $rules['gambar_karya'] = 'nullable|file|mimes:jpg,jpeg,png|max:15360';
+            $messages['gambar_karya.mimes'] = 'Poster harus berupa JPG/JPEG/PNG.';
+            $messages['gambar_karya.max'] = 'Poster maksimal 15MB.';
+        }
+
+        // Video Link
+        if ($idLomba == 4) {
+            $rules['link_video_karya'] = 'required|url|max:500';
+            $messages['link_video_karya.required'] = 'Link video wajib diisi.';
+            $messages['link_video_karya.url'] = 'Format URL tidak valid.';
+        }
+
+        // Proposal (Web Programming = 1, Design Packaging = 3)
+        if (in_array($idLomba, [1, 3])) {
+            $rules['proposal'] = 'nullable|file|mimes:pdf|max:10240';
+            $messages['proposal.mimes'] = 'Proposal harus berupa PDF.';
+            $messages['proposal.max'] = 'Proposal maksimal 10MB.';
         }
 
         // Orisinalitas
@@ -168,8 +193,38 @@ class KaryaController extends Controller
             $updateData['subtema'] = $request->subtema;
         }
 
+        // Upload new poster file if provided
+        if ($idLomba == 2 && $request->hasFile('gambar_karya')) {
+            if ($pendaftar->gambar_karya && file_exists(public_path('uploads/karya/' . $pendaftar->gambar_karya))) {
+                unlink(public_path('uploads/karya/' . $pendaftar->gambar_karya));
+            }
+            $file = $request->file('gambar_karya');
+            $nama = 'POSTER_' . time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('uploads/karya'), $nama);
+            $updateData['gambar_karya'] = $nama;
+        }
+
+        // Update video link
+        if ($idLomba == 4) {
+            $updateData['link_video_karya'] = $request->link_video_karya;
+        }
+
+        // Upload new proposal file if provided
+        if (in_array($idLomba, [1, 3]) && $request->hasFile('proposal')) {
+            if ($pendaftar->proposal && file_exists(public_path('uploads/proposal/' . $pendaftar->proposal))) {
+                unlink(public_path('uploads/proposal/' . $pendaftar->proposal));
+            }
+            $file = $request->file('proposal');
+            $namaProposal = 'PROPOSAL_' . time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('uploads/proposal'), $namaProposal);
+            $updateData['proposal'] = $namaProposal;
+        }
+
         // Upload orisinalitas if provided
         if ($request->hasFile('orisinalitas')) {
+            if ($pendaftar->orisinalitas && file_exists(public_path('uploads/orisinalitas/' . $pendaftar->orisinalitas))) {
+                unlink(public_path('uploads/orisinalitas/' . $pendaftar->orisinalitas));
+            }
             $file = $request->file('orisinalitas');
             $namaFile = 'ORISINALITAS_' . time() . '_' . $file->getClientOriginalName();
             $file->move(public_path('uploads/orisinalitas'), $namaFile);

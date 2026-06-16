@@ -38,6 +38,7 @@ Route::middleware(['auth'])->group(function () {
     // --- Berkas KTM & Sosmed ---
     Route::patch('/lomba/update-status-aktif/{id}', [LombaController::class, 'updateStatusAktif'])->name('Lomba.peserta.updatestatusaktif');
     Route::patch('/lomba/update-sosmed/{id}', [LombaController::class, 'updateSosmed'])->name('Lomba.peserta.updatesosmed');
+    Route::patch('/lomba/update-bukti/{id}', [LombaController::class, 'updateBukti'])->name('Lomba.peserta.updatebukti');
 
     // --- Profile User ---
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -54,10 +55,7 @@ Route::middleware(['auth'])->group(function () {
 
     // --- Admin: Verifikasi Pembayaran & Pengaturan ---
     Route::middleware(['auth', 'only_admin'])->group(function () {
-        Route::patch('/admin/pembayaran/verifikasi/{id}', [LombaController::class, 'verifikasiPembayaran'])
-            ->name('admin.pembayaran.verifikasi');
-        Route::patch('/admin/pembayaran/tolak/{id}', [LombaController::class, 'tolakPembayaran'])
-            ->name('admin.pembayaran.tolak');
+
         Route::patch('/admin/kelulusan/{id}/{status}', [LombaController::class, 'aturKelulusan'])
             ->name('admin.kelulusan.atur');
 

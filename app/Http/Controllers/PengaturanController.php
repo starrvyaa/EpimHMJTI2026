@@ -13,6 +13,7 @@ class PengaturanController extends Controller
             [
                 'status_pendaftaran_ditutup' => 0,
                 'status_upload_postervideo_ditutup' => 0,
+                'status_pengumpulan_karya' => 1,
             ]
         );
         return view('admin.pengaturan', compact('data'));
@@ -25,13 +26,14 @@ class PengaturanController extends Controller
             [
                 'status_pendaftaran_ditutup' => 0,
                 'status_upload_postervideo_ditutup' => 0,
+                'status_pengumpulan_karya' => 1,
             ]
         );
 
         $data->update([
-            'status_pendaftaran_ditutup' => $request->tutup_pendaftaran == 'on' ? 1 : 0,
-            'status_upload_postervideo_ditutup' => $request->status_upload_postervideo_ditutup == 'on' ? 1 : 0,
-            'status_pengumpulan_karya' => $request->status_pengumpulan_karya != 'on' ? 1 : 0,
+            'status_pendaftaran_ditutup' => $request->status_pendaftaran_buka == 'on' ? 0 : 1,
+            'status_upload_postervideo_ditutup' => $request->status_upload_postervideo_buka == 'on' ? 0 : 1,
+            'status_pengumpulan_karya' => $request->status_pengumpulan_karya_buka == 'on' ? 1 : 0,
         ]);
 
         return redirect()->route('Pengaturan.index')

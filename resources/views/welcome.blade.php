@@ -67,11 +67,15 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            border: 2px;
+            border-color: #ffffff;
         }
         .navbar-logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 30px;
+            
         }
 
         .navbar-brand-text {
@@ -390,7 +394,7 @@
         /* ===== STATS BAR ===== */
         .stats-bar {
             background: var(--orange);
-            padding: 2.5rem 0;
+            padding: 1rem 0;
         }
 
         .stats-inner {
@@ -962,8 +966,14 @@
         }
 
         .footer-logo {
+            max-width: 70px;
+            height: 70px;
+        }
+
+        .footer-logo img{
             width: 50px;
             height: 50px;
+            object-fit: cover;
         }
 
         .footer-brand-name {
@@ -1339,6 +1349,118 @@
         .fade-up:nth-child(4) { animation-delay: 0.4s; }
         .fade-up:nth-child(5) { animation-delay: 0.5s; }
         .fade-up:nth-child(6) { animation-delay: 0.6s; }
+
+        /* ===== MODAL DETAIL LOMBA ===== */
+        .wmodal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.85);
+            backdrop-filter: blur(8px);
+            align-items: center;
+            justify-content: center;
+        }
+        .wmodal-content {
+            background-color: #111;
+            margin: auto;
+            padding: 2.5rem;
+            border: 1px solid rgba(255,255,255,0.08);
+            width: 90%;
+            max-width: 600px;
+            border-radius: 16px;
+            position: relative;
+            animation: modalFadeIn 0.3s ease-out;
+            color: #fff;
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .wmodal-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            color: #9CA3AF;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .wmodal-close:hover { color: #fff; }
+        .wmodal-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--orange);
+            margin-bottom: 1rem;
+        }
+        .wmodal-body {
+            line-height: 1.6;
+            font-size: 0.92rem;
+            color: #d1d5db;
+        }
+        .wmodal-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 1.5rem 0;
+            background: #1a1a1a;
+            padding: 1.2rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.03);
+        }
+        .wmodal-info-item label {
+            display: block;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            color: #6B7280;
+            margin-bottom: 4px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+        .wmodal-info-item span {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+        }
+        .wmodal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 2rem;
+        }
+        .wmodal-actions .btn {
+            flex: 1;
+            padding: 0.8rem;
+            border-radius: 8px;
+            text-align: center;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .wmodal-actions .btn-close {
+            background: transparent;
+            color: #fff;
+            border: 1.5px solid rgba(255,255,255,0.15);
+        }
+        .wmodal-actions .btn-close:hover {
+            border-color: rgba(255,255,255,0.4);
+        }
+        .wmodal-actions .btn-daftar {
+            background: var(--orange);
+            color: #fff;
+            border: none;
+            display: inline-block;
+        }
+        .wmodal-actions .btn-daftar:hover {
+            background: var(--orange-dark);
+        }
     </style>
 </head>
 <body>
@@ -1347,7 +1469,7 @@
     <nav class="navbar">
         <a href="{{ url('/') }}" class="navbar-brand">
             <div class="navbar-logo">
-                <img src="{{ asset('img/rudo.png') }}" alt="Logo EPIM">
+                <img src="{{ asset('images/maskot2.png') }}" alt="Logo EPIM">
             </div>
             <div class="navbar-brand-text">
                 <span>EXPO PEKAN ILMIAH MAHASISWA</span>
@@ -1355,9 +1477,9 @@
             </div>
         </a>
         <ul class="navbar-nav">
-            <li><a href="{{ url('/') }}" class="active">BERANDA</a></li>
-            <li><a href="{{ url('/lomba') }}">LOMBA</a></li>
-            <li><a href="{{ url('/timeline') }}">TIMELINE</a></li>
+            <li><a href="#beranda" class="active">BERANDA</a></li>
+            <li><a href="#lomba">LOMBA</a></li>
+            <li><a href="#timeline">TIMELINE</a></li>
             @guest
                 <li><a href="{{ route('login') }}" class="btn-login">Login</a></li>
             @else
@@ -1392,10 +1514,10 @@
                     <strong>kreativitas</strong> dan <strong>inovasi</strong> di bidang teknologi informasi dan desain.
                 </p>
                 <div class="hero-actions fade-up">
-                    <a href="{{ url('/lomba') }}" class="btn-primary">
+                    <a href="#lomba" class="btn-primary">
                         LIHAT LOMBA <i class="fas fa-arrow-right"></i>
                     </a>
-                    <a href="{{ url('/daftar') }}" class="btn-outline">
+                    <a href="{{ url('/lomba') }}" class="btn-outline">
                         SUBMIT KARYA
                     </a>
                 </div>
@@ -1442,12 +1564,12 @@
             </div>
             <div class="stat-item">
                 <div class="stat-icon"><i class="fas fa-award"></i></div>
-                <span class="stat-value" data-target="40" data-suffix="Jt">0</span>
+                <span class="stat-value" data-target="20" data-suffix="Jt">0</span>
                 <span class="stat-label">Total Hadiah</span>
             </div>
             <div class="stat-item">
                 <div class="stat-icon"><i class="fas fa-calendar-alt"></i></div>
-                <span class="stat-value" data-target="15" data-suffix="">0</span>
+                <span class="stat-value" data-target="6" data-suffix="">0</span>
                 <span class="stat-label">Hari Lagi</span>
             </div>
         </div>
@@ -1513,25 +1635,25 @@
                 [
                     'title' => 'Pendaftaran Lomba & Pengumpulan Proposal',
                     'date' => '23 Juni 2026',
-                    'desc' => 'Pembukaan pendaftaran resmi Lomba dan Pengumpulan Proposal',
+                    'desc' => 'Pembukaan pendaftaran resmi Lomba dan Pengumpulan Karya',
                     'status' => 'upcoming',
                 ],
                 [
                     'title' => 'Penutupan Pendaftaran',
-                    'date' => '13 Agustus 2026',
-                    'desc' => 'Batas akhir pendaftaran Lomba',
+                    'date' => '22 Agustus 2026',
+                    'desc' => 'Batas akhir pendaftaran Lomba & Pengumpulan Karya',
                     'status' => 'upcoming',
                 ],
                 [
-                    'title' => 'Pengumuman Juara',
-                    'date' => '24 Agustus 2026',
+                    'title' => 'Puncak Acara(Pengumuman Juara)',
+                    'date' => '23 Agustus 2026',
                     'desc' => 'Pengumuman pemenang Lomba Videography dan Desain Poster',
                     'status' => 'upcoming',
                 ],
             ]
         ],
         'packaging' => [
-            'name' => 'Design Packaging & Web Programming',
+            'name' => 'Desain Packaging & Web Programming',
             'icon' => 'fas fa-box-open',
             'schedule' => [
                 [
@@ -1541,32 +1663,32 @@
                     'status' => 'upcoming',
                 ],
                 [
-                    'title' => 'Batas Akhir Pendaftaran',
-                    'date' => '13 Agustus 2026',
-                    'desc' => 'Batas waktu pendaftaran Design Packaging dan Web Programming',
+                    'title' => 'Batas Akhir Pendaftaran & Pengumpulan Proposal',
+                    'date' => '8 Agustus 2026',
+                    'desc' => 'Batas akhir pendaftaran Design Packaging dan Web Programming, Pengumpulan Proposal',
                     'status' => 'upcoming',
                 ],
                 [
                     'title' => 'Pengumuman Finalis',
-                    'date' => '17 Agustus 2026',
+                    'date' => '12 Agustus 2026',
                     'desc' => 'Pengumuman peserta yang lolos ke Babak Final',
                     'status' => 'upcoming',
                 ],
                 [
-                    'title' => 'Technical Meeting',
-                    'date' => '18 Agustus 2026',
+                    'title' => 'Technical Meeting Finalis',
+                    'date' => '13 Agustus 2026',
                     'desc' => 'Penjelasan teknis babak final',
                     'status' => 'upcoming',
                 ],
                 [
                     'title' => 'Babak Final',
-                    'date' => '23 Agustus 2026',
+                    'date' => '22 Agustus 2026',
                     'desc' => 'Babak final kompetisi Design Packaging dan Web Programming, Offline di Politeknik Negeri Jember ',
                     'status' => 'upcoming',
                 ],
                 [
-                    'title' => 'Pengumuman Juara',
-                    'date' => '24 Agustus 2026',
+                    'title' => 'Puncak Acara(Pengumuman Juara)',
+                    'date' => '23 Agustus 2026',
                     'desc' => 'Pengumuman pemenang Lomba Design Packaging dan Web Programing',
                     'status' => 'upcoming',
                 ],
@@ -1641,7 +1763,7 @@
                 <div class="section-eyebrow-center">
                     <i class="fas fa-images"></i> GALERI KEGIATAN <i class="fas fa-images"></i>
                 </div>
-                <h2 class="section-title">DOKUMENTASI <span>EPIM 2026</span></h2>
+                <h2 class="section-title">DOKUMENTASI <span>EPIM</span></h2>
                 <p class="section-subtitle">Abadikan momen-momen terbaik dari rangkaian acara EPIM</p>
             </div>
             <div class="slider-container">
@@ -1650,17 +1772,17 @@
                         <img src="{{ asset('images/image.png') }}" alt="Dokumentasi 1">
                     </div>
                     <div class="slide-item">
-                        <img src="{{ asset('images/epim.png') }}" alt="Dokumentasi 2">
-                    </div>
-                    <div class="slide-item">
-                        <img src="{{ asset('images/poster_ai.png') }}" alt="Dokumentasi 3">
-                    </div>
-                    <div class="slide-item">
-                        <img src="{{ asset('images/videografi.jpeg') }}" alt="Dokumentasi 4">
-                    </div>
-                    <div class="slide-item">
-                        <img src="{{ asset('images/LogoEPIM.png') }}" alt="Dokumentasi 5">
-                    </div>
+                            <img src="{{ asset('images/DSC02634.JPG') }}" alt="EPIM 2">
+                        </div>
+                        <div class="slide-item">
+                            <img src="{{ asset('images/DSC02839.JPG') }}" alt="EPIM 3">
+                        </div>
+                        <div class="slide-item">
+                            <img src="{{ asset('images/DSC02847.JPG') }}" alt="EPIM 4">
+                        </div>
+                        <div class="slide-item">
+                            <img src="{{ asset('images/DSC02852.JPG') }}" alt="EPIM 5">
+                        </div>
                 </div>
                 <button class="slider-btn slider-btn-prev" id="sliderPrev"><i class="fas fa-chevron-left"></i></button>
                 <button class="slider-btn slider-btn-next" id="sliderNext"><i class="fas fa-chevron-right"></i></button>
@@ -1704,14 +1826,14 @@
                         </p>
                         <div class="lomba-deadline">
                             <i class="fas fa-calendar"></i>
-                            Deadline: <strong>15 Maret 2026</strong>
+                            Deadline: <strong>23 Juni - 8 Agustus 2026</strong>
                         </div>
                         <div class="lomba-prize">
                             <i class="fas fa-trophy"></i> Rp 3.000.000
                         </div>
                         <div class="lomba-actions">
-                            <a href="{{ url('/lomba/desain-packaging') }}" class="btn-detail">Detail Lomba</a>
-                            <a href="{{ url('/daftar/desain-packaging') }}" class="btn-daftar">Daftar</a>
+                            <a href="javascript:void(0)" onclick="openWModal('wmodalPackaging')" class="btn-detail">Detail Lomba</a>
+                            <a href="{{ url('/lomba') }}" class="btn-daftar">Daftar</a>
                         </div>
                     </div>
                 </div>
@@ -1736,14 +1858,14 @@
                         </p>
                         <div class="lomba-deadline">
                             <i class="fas fa-calendar"></i>
-                            Deadline: <strong>15 Maret 2026</strong>
+                            Deadline: <strong>23 Juni - 8 Agustus 2026</strong>
                         </div>
                         <div class="lomba-prize">
-                            <i class="fas fa-trophy"></i> Rp 5.000.000
+                            <i class="fas fa-trophy"></i> Rp 3.000.000
                         </div>
                         <div class="lomba-actions">
-                            <a href="{{ url('/lomba/web-programming') }}" class="btn-detail">Detail Lomba</a>
-                            <a href="{{ url('/daftar/web-programming') }}" class="btn-daftar">Daftar</a>
+                            <a href="javascript:void(0)" onclick="openWModal('wmodalWebProg')" class="btn-detail">Detail Lomba</a>
+                            <a href="{{ url('/lomba') }}" class="btn-daftar">Daftar</a>
                         </div>
                     </div>
                 </div>
@@ -1768,14 +1890,14 @@
                         </p>
                         <div class="lomba-deadline">
                             <i class="fas fa-calendar"></i>
-                            Deadline: <strong>15 Maret 2026</strong>
+                            Deadline: <strong>23 Juni - 8 Agustus 2026</strong>
                         </div>
                         <div class="lomba-prize">
                             <i class="fas fa-trophy"></i> Rp 3.000.000
                         </div>
                         <div class="lomba-actions">
-                            <a href="{{ url('/lomba/desain-grafis') }}" class="btn-detail">Detail Lomba</a>
-                            <a href="{{ url('/daftar/desain-grafis') }}" class="btn-daftar">Daftar</a>
+                            <a href="javascript:void(0)" onclick="openWModal('wmodalPoster')" class="btn-detail">Detail Lomba</a>
+                            <a href="{{ url('/lomba') }}" class="btn-daftar">Daftar</a>
                         </div>
                     </div>
                 </div>
@@ -1800,14 +1922,14 @@
                         </p>
                         <div class="lomba-deadline">
                             <i class="fas fa-calendar"></i>
-                            Deadline: <strong>15 Maret 2026</strong>
+                            Deadline: <strong>23 Juni - 8 Agustus 2026</strong>
                         </div>
                         <div class="lomba-prize">
-                            <i class="fas fa-trophy"></i> Rp 4.000.000
+                            <i class="fas fa-trophy"></i> Rp 3.000.000
                         </div>
                         <div class="lomba-actions">
-                            <a href="{{ url('/lomba/videography') }}" class="btn-detail">Detail Lomba</a>
-                            <a href="{{ url('/daftar/videography') }}" class="btn-daftar">Daftar</a>
+                            <a href="javascript:void(0)" onclick="openWModal('wmodalVideography')" class="btn-detail">Detail Lomba</a>
+                            <a href="{{ url('/lomba') }}" class="btn-daftar">Daftar</a>
                         </div>
                     </div>
                 </div>
@@ -1868,7 +1990,7 @@
         <div class="footer-inner">
             <div>
                 <div class="footer-brand">
-                    <img src="{{ asset('img/logo-epim.png') }}" alt="EPIM Logo" class="footer-logo"
+                    <img src="{{ asset('images/maskot1.png') }}" alt="EPIM Logo" class="footer-logo"
                          onerror="this.style.display='none'">
                     <div>
                         <div class="footer-brand-name">EPIM.TI</div>
@@ -1889,13 +2011,14 @@
             </div>
 
             <div>
-                <div class="footer-col-title">EPIM 2025</div>
+                <div class="footer-col-title">EPIM 2026</div>
                 <ul class="footer-links">
                     <li><a href="{{ url('/') }}">Home</a></li>
-                    <li><a href="{{ url('/tentang') }}">Tentang EPIM</a></li>
-                    <li><a href="{{ url('/informasi') }}">Informasi</a></li>
-                    <li><a href="{{ url('/pendaftaran') }}">Pendaftaran</a></li>
-                    <li><a href="{{ url('/pengumuman') }}">Pengumuman</a></li>
+                    <li><a href="{{ url('/#tentang') }}">Tentang EPIM</a></li>
+                    <!-- <li><a href="{{ url('/informasi') }}">Informasi</a></li> -->
+                    <li><a href="{{ url('/#lomba') }}">Kategori Lomba</a></li>
+                    <li><a href="{{ url('/#timeline') }}">Timeline</a></li>
+                    <!-- <li><a href="{{ url('/pengumuman') }}">Pengumuman</a></li> -->
                 </ul>
             </div>
 
@@ -1909,16 +2032,13 @@
                     Kabupaten Jember, Jawa Timur 68121
                 </p>
                 <a href="#" class="footer-contact-item" style="display:block; margin-top:0.5rem; color: var(--orange); font-size:0.85rem; text-decoration:none;">
-                    hmjtipolije2025.com
-                </a>
-                <a href="#" class="footer-btn-app">
-                    <i class="fas fa-download"></i> Download Our App
+                    hmjtipolije2026.com
                 </a>
             </div>
         </div>
 
         <div class="footer-bottom">
-            <p>© 2025 &nbsp; Designed by Departemen Kominfo</p>
+            <p>© 2026 &nbsp; Designed by Departemen Kominfo</p>
         </div>
     </footer>
 
@@ -2124,7 +2244,165 @@
                 document.getElementById(`timeline-${target}`).classList.add('active');
             });
         });
+
+        // Welcome Detail Modals handlers
+        function openWModal(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+        }
+        function closeWModal(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+        }
+        window.addEventListener('click', function (e) {
+            if (e.target.classList && e.target.classList.contains('wmodal')) {
+                e.target.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+        });
     </script>
+
+    {{-- Modal Detail Desain Packaging --}}
+    <div id="wmodalPackaging" class="wmodal">
+        <div class="wmodal-content">
+            <span class="wmodal-close" onclick="closeWModal('wmodalPackaging')">&times;</span>
+            <h3 class="wmodal-title">Desain Packaging</h3>
+            <div class="wmodal-body">
+                <p>Lomba Desain Kemasan Produk Kreatif bertujuan untuk menantang kreativitas dan ketajaman desain peserta dalam merancang kemasan produk yang estetik, inovatif, ramah lingkungan, serta memiliki nilai jual tinggi untuk sektor UMKM/industri.</p>
+                <div class="wmodal-info-grid">
+                    <div class="wmodal-info-item">
+                        <label>Biaya Registrasi</label>
+                        <span>Rp 50.000</span>
+                    </div>
+                    <div class="wmodal-info-item">
+                        <label>Total Hadiah</label>
+                        <span style="color:#F97316;">Rp 3.000.000</span>
+                    </div>
+                    <div class="wmodal-info-item">
+                        <label>Batas Pendaftaran</label>
+                        <span>15 Maret 2026</span>
+                    </div>
+                    <div class="wmodal-info-item">
+                        <label>Tipe Peserta</label>
+                        <span>Individu</span>
+                    </div>
+                </div>
+                <p style="font-size:0.85rem; color:#9CA3AF;"><strong>Deliverables:</strong> Proposal rancangan desain kemasan dalam format PDF, file gambar mock-up kemasan 3D, serta lembar orisinalitas karya bermaterai.</p>
+            </div>
+            <div class="wmodal-actions">
+                <button class="btn btn-close" onclick="closeWModal('wmodalPackaging')">Tutup</button>
+                <a href="{{ url('/lomba') }}" class="btn btn-daftar">Daftar Sekarang</a>
+            </div>
+        </div>
+    </div>
+
+    {{-- Modal Detail Web Programming --}}
+    <div id="wmodalWebProg" class="wmodal">
+        <div class="wmodal-content">
+            <span class="wmodal-close" onclick="closeWModal('wmodalWebProg')">&times;</span>
+            <h3 class="wmodal-title">Web Programming</h3>
+            <div class="wmodal-body">
+                <p>Lomba Pemrograman Web menantang kreativitas dan ketangkasan tim dalam mengembangkan aplikasi web yang responsif, fungsional, dan inovatif untuk memecahkan permasalahan nyata di lingkungan sekolah atau masyarakat umum.</p>
+                <div class="wmodal-info-grid">
+                    <div class="wmodal-info-item">
+                        <label>Biaya Registrasi</label>
+                        <span>Rp 75.000</span>
+                    </div>
+                    <div class="wmodal-info-item">
+                        <label>Total Hadiah</label>
+                        <span style="color:#F97316;">Rp 5.000.000</span>
+                    </div>
+                    <div class="wmodal-info-item">
+                        <label>Batas Pendaftaran</label>
+                        <span>15 Maret 2026</span>
+                    </div>
+                    <div class="wmodal-info-item">
+                        <label>Tipe Peserta</label>
+                        <span>Tim (Maks. 3 Orang)</span>
+                    </div>
+                </div>
+                <p style="font-size:0.85rem; color:#9CA3AF;"><strong>Deliverables:</strong> Dokumen proposal sistem aplikasi, tautan kode sumber (GitHub), demo aplikasi web aktif, serta orisinalitas karya bermaterai.</p>
+            </div>
+            <div class="wmodal-actions">
+                <button class="btn btn-close" onclick="closeWModal('wmodalWebProg')">Tutup</button>
+                <a href="{{ url('/lomba') }}" class="btn btn-daftar">Daftar Sekarang</a>
+            </div>
+        </div>
+    </div>
+
+    {{-- Modal Detail Desain Poster --}}
+    <div id="wmodalPoster" class="wmodal">
+        <div class="wmodal-content">
+            <span class="wmodal-close" onclick="closeWModal('wmodalPoster')">&times;</span>
+            <h3 class="wmodal-title">Desain Poster</h3>
+            <div class="wmodal-body">
+                <p>Lomba Desain Poster mengajak peserta mengekspresikan gagasan visual yang kreatif, komunikatif, dan persuasif untuk mempublikasikan pesan edukatif yang kuat dan bermakna bagi khalayak ramai.</p>
+                <div class="wmodal-info-grid">
+                    <div class="wmodal-info-item">
+                        <label>Biaya Registrasi</label>
+                        <span>Rp 50.000</span>
+                    </div>
+                    <div class="wmodal-info-item">
+                        <label>Total Hadiah</label>
+                        <span style="color:#F97316;">Rp 3.000.000</span>
+                    </div>
+                    <div class="wmodal-info-item">
+                        <label>Batas Pendaftaran</label>
+                        <span>15 Maret 2026</span>
+                    </div>
+                    <div class="wmodal-info-item">
+                        <label>Tipe Peserta</label>
+                        <span>Individu</span>
+                    </div>
+                </div>
+                <p style="font-size:0.85rem; color:#9CA3AF;"><strong>Deliverables:</strong> Desain poster format JPG/PNG dengan resolusi tinggi (min 300dpi), orisinalitas karya bermaterai.</p>
+            </div>
+            <div class="wmodal-actions">
+                <button class="btn btn-close" onclick="closeWModal('wmodalPoster')">Tutup</button>
+                <a href="{{ url('/lomba') }}" class="btn btn-daftar">Daftar Sekarang</a>
+            </div>
+        </div>
+    </div>
+
+    {{-- Modal Detail Videography --}}
+    <div id="wmodalVideography" class="wmodal">
+        <div class="wmodal-content">
+            <span class="wmodal-close" onclick="closeWModal('wmodalVideography')">&times;</span>
+            <h3 class="wmodal-title">Videography</h3>
+            <div class="wmodal-body">
+                <p>Lomba Pembuatan Video Pendek/Kreatif menantang sineas muda bercerita secara sinematik mengenai ide, inovasi, atau pesan sosial kemasyarakatan melalui visual bergerak yang menggugah emosi penonton.</p>
+                <div class="wmodal-info-grid">
+                    <div class="wmodal-info-item">
+                        <label>Biaya Registrasi</label>
+                        <span>Rp 50.000</span>
+                    </div>
+                    <div class="wmodal-info-item">
+                        <label>Total Hadiah</label>
+                        <span style="color:#F97316;">Rp 4.000.000</span>
+                    </div>
+                    <div class="wmodal-info-item">
+                        <label>Batas Pendaftaran</label>
+                        <span>15 Maret 2026</span>
+                    </div>
+                    <div class="wmodal-info-item">
+                        <label>Tipe Peserta</label>
+                        <span>Individu</span>
+                    </div>
+                </div>
+                <p style="font-size:0.85rem; color:#9CA3AF;"><strong>Deliverables:</strong> Unggah file video kreatif di Google Drive (akses publik), serta lembar orisinalitas karya bermaterai.</p>
+            </div>
+            <div class="wmodal-actions">
+                <button class="btn btn-close" onclick="closeWModal('wmodalVideography')">Tutup</button>
+                <a href="{{ url('/lomba') }}" class="btn btn-daftar">Daftar Sekarang</a>
+            </div>
+        </div>
+    </div>
 
 </body>
 </html>
