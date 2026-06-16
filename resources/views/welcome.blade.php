@@ -62,14 +62,16 @@
         }
 
         .navbar-logo {
-            width: 38px;
-            height: 38px;
-            background: var(--orange);
-            border-radius: 10px;
+            width: 50px;
+            height: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
+        }
+        .navbar-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
 
         .navbar-brand-text {
@@ -1345,10 +1347,7 @@
     <nav class="navbar">
         <a href="{{ url('/') }}" class="navbar-brand">
             <div class="navbar-logo">
-                {{-- <img src="{{ asset('images/rudo.png') }}" alt="Logo EPIM" class="navbar-logo-img" width="40"> --}}
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trophy-fill" viewBox="0 0 16 16">
-  <path d="M2.5.5A.5.5 0 0 1 3 0h10a.5.5 0 0 1 .5.5q0 .807-.034 1.536a3 3 0 1 1-1.133 5.89c-.79 1.865-1.878 2.777-2.833 3.011v2.173l1.425.356c.194.048.377.135.537.255L13.3 15.1a.5.5 0 0 1-.3.9H3a.5.5 0 0 1-.3-.9l1.838-1.379c.16-.12.343-.207.537-.255L6.5 13.11v-2.173c-.955-.234-2.043-1.146-2.833-3.012a3 3 0 1 1-1.132-5.89A33 33 0 0 1 2.5.5m.099 2.54a2 2 0 0 0 .72 3.935c-.333-1.05-.588-2.346-.72-3.935m10.083 3.935a2 2 0 0 0 .72-3.935c-.133 1.59-.388 2.885-.72 3.935"/>
-</svg>
+                <img src="{{ asset('img/rudo.png') }}" alt="Logo EPIM">
             </div>
             <div class="navbar-brand-text">
                 <span>EXPO PEKAN ILMIAH MAHASISWA</span>
@@ -1408,16 +1407,16 @@
                             <img src="{{ asset('images/image.png') }}" alt="EPIM 1">
                         </div>
                         <div class="hero-slide-item">
-                            <img src="{{ asset('images/epim.png') }}" alt="EPIM 2">
+                            <img src="{{ asset('images/DSC02634.JPG') }}" alt="EPIM 2">
                         </div>
                         <div class="hero-slide-item">
-                            <img src="{{ asset('images/poster_ai.png') }}" alt="EPIM 3">
+                            <img src="{{ asset('images/DSC02839.JPG') }}" alt="EPIM 3">
                         </div>
                         <div class="hero-slide-item">
-                            <img src="{{ asset('images/videografi.jpeg') }}" alt="EPIM 4">
+                            <img src="{{ asset('images/DSC02847.JPG') }}" alt="EPIM 4">
                         </div>
                         <div class="hero-slide-item">
-                            <img src="{{ asset('images/LogoEPIM.png') }}" alt="EPIM 5">
+                            <img src="{{ asset('images/DSC02852.JPG') }}" alt="EPIM 5">
                         </div>
                     </div>
                     <button class="hero-slider-btn hero-slider-btn-prev" id="heroSliderPrev"><i class="fas fa-chevron-left"></i></button>
@@ -1504,50 +1503,135 @@
         </div>
     </section>
 
-    {{-- ===== BENEFITS ===== --}}
-    <section class="benefits">
-        <div class="section-header">
-            <div class="section-eyebrow-center">
-                <i class="fas fa-bolt"></i> KEUNTUNGAN <i class="fas fa-bolt"></i>
+    {{-- ===== TIMELINE ===== --}}
+    @php
+    $categories = [
+        'videography' => [
+            'name' => 'Videography & Desain Poster',
+            'icon' => 'fas fa-video',
+            'schedule' => [
+                [
+                    'title' => 'Pendaftaran Lomba & Pengumpulan Proposal',
+                    'date' => '23 Juni 2026',
+                    'desc' => 'Pembukaan pendaftaran resmi Lomba dan Pengumpulan Proposal',
+                    'status' => 'upcoming',
+                ],
+                [
+                    'title' => 'Penutupan Pendaftaran',
+                    'date' => '13 Agustus 2026',
+                    'desc' => 'Batas akhir pendaftaran Lomba',
+                    'status' => 'upcoming',
+                ],
+                [
+                    'title' => 'Pengumuman Juara',
+                    'date' => '24 Agustus 2026',
+                    'desc' => 'Pengumuman pemenang Lomba Videography dan Desain Poster',
+                    'status' => 'upcoming',
+                ],
+            ]
+        ],
+        'packaging' => [
+            'name' => 'Design Packaging & Web Programming',
+            'icon' => 'fas fa-box-open',
+            'schedule' => [
+                [
+                    'title' => 'Pendaftaran Lomba & Pengumpulan Proposal',
+                    'date' => '23 Juni 2026 ',
+                    'desc' => 'Pendaftaran & pengumpulan proposal Design Packaging dan Web Programming',
+                    'status' => 'upcoming',
+                ],
+                [
+                    'title' => 'Batas Akhir Pendaftaran',
+                    'date' => '13 Agustus 2026',
+                    'desc' => 'Batas waktu pendaftaran Design Packaging dan Web Programming',
+                    'status' => 'upcoming',
+                ],
+                [
+                    'title' => 'Pengumuman Finalis',
+                    'date' => '17 Agustus 2026',
+                    'desc' => 'Pengumuman peserta yang lolos ke Babak Final',
+                    'status' => 'upcoming',
+                ],
+                [
+                    'title' => 'Technical Meeting',
+                    'date' => '18 Agustus 2026',
+                    'desc' => 'Penjelasan teknis babak final',
+                    'status' => 'upcoming',
+                ],
+                [
+                    'title' => 'Babak Final',
+                    'date' => '23 Agustus 2026',
+                    'desc' => 'Babak final kompetisi Design Packaging dan Web Programming, Offline di Politeknik Negeri Jember ',
+                    'status' => 'upcoming',
+                ],
+                [
+                    'title' => 'Pengumuman Juara',
+                    'date' => '24 Agustus 2026',
+                    'desc' => 'Pengumuman pemenang Lomba Design Packaging dan Web Programing',
+                    'status' => 'upcoming',
+                ],
+            ]
+        ],
+    ];
+    @endphp
+
+    <section class="timeline" id="timeline">
+        <div class="timeline-inner">
+            <div class="section-header">
+                <div class="section-eyebrow-center">
+                    <i class="fas fa-calendar"></i> JADWAL EVENT <i class="fas fa-calendar"></i>
+                </div>
+                <h2 class="section-title">TIMELINE <span>EVENT</span></h2>
+                <p class="section-subtitle">Catat tanggal penting untuk setiap tahapan kompetisi</p>
             </div>
-            <h2 class="section-title">Apa yang <span>Kamu Dapatkan?</span></h2>
-            <p class="section-subtitle">
-                Bergabunglah dengan ratusan peserta lainnya dan raih kesempatan untuk
-                mengembangkan skill dan memenangkan hadiah menarik!
-            </p>
-        </div>
-        <div class="benefits-grid">
-            <div class="benefit-card fade-up">
-                <span class="benefit-icon">🏆</span>
-                <div class="benefit-title">Total Hadiah 30 Juta</div>
-                <p class="benefit-desc">Hadiah menarik untuk juara 1, 2, 3 di setiap kategori lomba</p>
+
+            <div class="timeline-tabs">
+                @foreach($categories as $key => $category)
+                <button class="timeline-tab {{ $loop->first ? 'active' : ''}}" data-target="{{ $key }}">
+                    <i class="{{ $category['icon'] }}"></i>
+                    {{ $category['name'] }}
+                </button>
+                @endforeach
             </div>
-            <div class="benefit-card fade-up">
-                <span class="benefit-icon">📜</span>
-                <div class="benefit-title">Sertifikat Resmi</div>
-                <p class="benefit-desc">Sertifikat peserta dan pemenang yang dapat digunakan untuk portofolio</p>
+
+            @foreach($categories as $key => $category)
+            <div class="timeline-content {{ $loop->first ? 'active' : ''}}" id="timeline-{{ $key }}">
+                <div class="timeline-list">
+                    @foreach($category['schedule'] as $item)
+                    <div class="timeline-item">
+                        <div @class([
+                            'tl-icon',
+                            'done' => $item['status'] === 'done',
+                            'active' => $item['status'] === 'active',
+                            'upcoming' => $item['status'] === 'upcoming'
+                        ])>
+                            @if($item['status'] === 'done')
+                                ✓
+                            @elseif($item['status'] === 'active')
+                                🔥
+                            @else
+                                📅
+                            @endif
+                        </div>
+                        <div @class([
+                            'tl-card',
+                            'active' => $item['status'] === 'active'
+                        ])>
+                            <div class="tl-date">{{ $item['date'] }}</div>
+                            <div class="tl-title">{{ $item['title'] }}</div>
+                            <div class="tl-desc">{{ $item['desc'] }}</div>
+                            @if($item['status'] === 'done')
+                                <span class="tl-badge done">SELESAI</span>
+                            @elseif($item['status'] === 'active')
+                                <span class="tl-badge active">AKTIF SEKARANG</span>
+                            @endif
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
             </div>
-            <div class="benefit-card fade-up">
-                <span class="benefit-icon">🤝</span>
-                <div class="benefit-title">Networking Luas</div>
-                <p class="benefit-desc">Kesempatan bertemu dan berkolaborasi dengan mahasiswa se-Indonesia</p>
-            </div>
-            <div class="benefit-card fade-up">
-                <span class="benefit-icon">⭐</span>
-                <div class="benefit-title">Pengalaman Berharga</div>
-                <p class="benefit-desc">Asah kemampuan dan tingkatkan kepercayaan diri melalui kompetisi nyata</p>
-            </div>
-            <div class="benefit-card fade-up">
-                <span class="benefit-icon">🤖</span>
-                <div class="benefit-title">Juri Profesional</div>
-                <p class="benefit-desc">Dinilai langsung oleh para profesional dan pakar di bidangnya</p>
-            </div>
-            <div class="benefit-card fade-up">
-                <span class="benefit-icon">🚀</span>
-                <div class="benefit-title">Karier Lebih Baik</div>
-                <p class="benefit-desc">Portofolio kompetisi yang dapat memperkuat profil profesional kamu</p>
-            </div>
-        </div>
+            @endforeach
+
     </section>
 
     {{-- ===== GALLERY SLIDER ===== --}}
@@ -1732,135 +1816,51 @@
         </div>
     </section>
 
-    {{-- ===== TIMELINE ===== --}}
-    @php
-    $categories = [
-        'videography' => [
-            'name' => 'Videography & Desain Poster',
-            'icon' => 'fas fa-video',
-            'schedule' => [
-                [
-                    'title' => 'Pendaftaran Lomba & Pengumpulan Proposal',
-                    'date' => '23 Juni 2026',
-                    'desc' => 'Pembukaan pendaftaran resmi Lomba dan Pengumpulan Proposal',
-                    'status' => 'upcoming',
-                ],
-                [
-                    'title' => 'Penutupan Pendaftaran',
-                    'date' => '13 Agustus 2026',
-                    'desc' => 'Batas akhir pendaftaran Lomba',
-                    'status' => 'upcoming',
-                ],
-                [
-                    'title' => 'Pengumuman Juara',
-                    'date' => '24 Agustus 2026',
-                    'desc' => 'Pengumuman pemenang Lomba Videography dan Desain Poster',
-                    'status' => 'upcoming',
-                ],
-            ]
-        ],
-        'packaging' => [
-            'name' => 'Design Packaging & Web Programming',
-            'icon' => 'fas fa-box-open',
-            'schedule' => [
-                [
-                    'title' => 'Pendaftaran Lomba & Pengumpulan Proposal',
-                    'date' => '23 Juni 2026 ',
-                    'desc' => 'Pendaftaran & pengumpulan proposal Design Packaging dan Web Programming',
-                    'status' => 'upcoming',
-                ],
-                [
-                    'title' => 'Batas Akhir Pendaftaran',
-                    'date' => '13 Agustus 2026',
-                    'desc' => 'Batas waktu pendaftaran Design Packaging dan Web Programming',
-                    'status' => 'upcoming',
-                ],
-                [
-                    'title' => 'Pengumuman Finalis',
-                    'date' => '17 Agustus 2026',
-                    'desc' => 'Pengumuman peserta yang lolos ke Babak Final',
-                    'status' => 'upcoming',
-                ],
-                [
-                    'title' => 'Technical Meeting',
-                    'date' => '18 Agustus 2026',
-                    'desc' => 'Penjelasan teknis babak final',
-                    'status' => 'upcoming',
-                ],
-                [
-                    'title' => 'Babak Final',
-                    'date' => '23 Agustus 2026',
-                    'desc' => 'Babak final kompetisi Design Packaging dan Web Programming, Offline di Politeknik Negeri Jember ',
-                    'status' => 'upcoming',
-                ],
-                [
-                    'title' => 'Pengumuman Juara',
-                    'date' => '24 Agustus 2026',
-                    'desc' => 'Pengumuman pemenang Lomba Design Packaging dan Web Programing',
-                    'status' => 'upcoming',
-                ],
-            ]
-        ],
-    ];
-    @endphp
 
-    <section class="timeline" id="timeline">
-        <div class="timeline-inner">
-            <div class="section-header">
-                <div class="section-eyebrow-center">
-                    <i class="fas fa-calendar"></i> JADWAL EVENT <i class="fas fa-calendar"></i>
-                </div>
-                <h2 class="section-title">TIMELINE <span>EVENT</span></h2>
-                <p class="section-subtitle">Catat tanggal penting untuk setiap tahapan kompetisi</p>
+    {{-- ===== BENEFITS ===== --}}
+    <section class="benefits">
+        <div class="section-header">
+            <div class="section-eyebrow-center">
+                <i class="fas fa-bolt"></i> KEUNTUNGAN <i class="fas fa-bolt"></i>
             </div>
-
-            <div class="timeline-tabs">
-                @foreach($categories as $key => $category)
-                <button class="timeline-tab {{ $loop->first ? 'active' : ''}}" data-target="{{ $key }}">
-                    <i class="{{ $category['icon'] }}"></i>
-                    {{ $category['name'] }}
-                </button>
-                @endforeach
+            <h2 class="section-title">Apa yang <span>Kamu Dapatkan?</span></h2>
+            <p class="section-subtitle">
+                Bergabunglah dengan ratusan peserta lainnya dan raih kesempatan untuk
+                mengembangkan skill dan memenangkan hadiah menarik!
+            </p>
+        </div>
+        <div class="benefits-grid">
+            <div class="benefit-card fade-up">
+                <span class="benefit-icon">🏆</span>
+                <div class="benefit-title">Total Hadiah 30 Juta</div>
+                <p class="benefit-desc">Hadiah menarik untuk juara 1, 2, 3 di setiap kategori lomba</p>
             </div>
-
-            @foreach($categories as $key => $category)
-            <div class="timeline-content {{ $loop->first ? 'active' : ''}}" id="timeline-{{ $key }}">
-                <div class="timeline-list">
-                    @foreach($category['schedule'] as $item)
-                    <div class="timeline-item">
-                        <div @class([
-                            'tl-icon',
-                            'done' => $item['status'] === 'done',
-                            'active' => $item['status'] === 'active',
-                            'upcoming' => $item['status'] === 'upcoming'
-                        ])>
-                            @if($item['status'] === 'done')
-                                ✓
-                            @elseif($item['status'] === 'active')
-                                🔥
-                            @else
-                                📅
-                            @endif
-                        </div>
-                        <div @class([
-                            'tl-card',
-                            'active' => $item['status'] === 'active'
-                        ])>
-                            <div class="tl-date">{{ $item['date'] }}</div>
-                            <div class="tl-title">{{ $item['title'] }}</div>
-                            <div class="tl-desc">{{ $item['desc'] }}</div>
-                            @if($item['status'] === 'done')
-                                <span class="tl-badge done">SELESAI</span>
-                            @elseif($item['status'] === 'active')
-                                <span class="tl-badge active">AKTIF SEKARANG</span>
-                            @endif
-                        </div>
-                    </div>
-                    @endforeach
-                </div>
+            <div class="benefit-card fade-up">
+                <span class="benefit-icon">📜</span>
+                <div class="benefit-title">Sertifikat Resmi</div>
+                <p class="benefit-desc">Sertifikat peserta dan pemenang yang dapat digunakan untuk portofolio</p>
             </div>
-            @endforeach
-
+            <div class="benefit-card fade-up">
+                <span class="benefit-icon">🤝</span>
+                <div class="benefit-title">Networking Luas</div>
+                <p class="benefit-desc">Kesempatan bertemu dan berkolaborasi dengan mahasiswa se-Indonesia</p>
+            </div>
+            <div class="benefit-card fade-up">
+                <span class="benefit-icon">⭐</span>
+                <div class="benefit-title">Pengalaman Berharga</div>
+                <p class="benefit-desc">Asah kemampuan dan tingkatkan kepercayaan diri melalui kompetisi nyata</p>
+            </div>
+            <div class="benefit-card fade-up">
+                <span class="benefit-icon">🤖</span>
+                <div class="benefit-title">Juri Profesional</div>
+                <p class="benefit-desc">Dinilai langsung oleh para profesional dan pakar di bidangnya</p>
+            </div>
+            <div class="benefit-card fade-up">
+                <span class="benefit-icon">🚀</span>
+                <div class="benefit-title">Karier Lebih Baik</div>
+                <p class="benefit-desc">Portofolio kompetisi yang dapat memperkuat profil profesional kamu</p>
+            </div>
+        </div>
     </section>
 
     {{-- ===== FOOTER ===== --}}
@@ -1868,7 +1868,7 @@
         <div class="footer-inner">
             <div>
                 <div class="footer-brand">
-                    <img src="{{ asset('images/logo-epim.png') }}" alt="EPIM Logo" class="footer-logo"
+                    <img src="{{ asset('img/logo-epim.png') }}" alt="EPIM Logo" class="footer-logo"
                          onerror="this.style.display='none'">
                     <div>
                         <div class="footer-brand-name">EPIM.TI</div>

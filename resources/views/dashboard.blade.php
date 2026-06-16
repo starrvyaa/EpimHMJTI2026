@@ -5,10 +5,9 @@
 @section('pageTitle', 'Dashboard Overview')
 
 @section('extraCss')
-<style>
-    .grid {
+    .dashboard-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        grid-template-columns: repeat(2, 1fr);
         gap: 1.5rem;
     }
     .card {
@@ -55,13 +54,12 @@
         background: #f3f4f6;
     }
     @media (max-width: 768px) {
-        .grid { grid-template-columns: 1fr; }
+        .dashboard-grid { grid-template-columns: 1fr; }
     }
-</style>
 @endsection
 
 @section('content')
-<div class="grid">
+<div class="dashboard-grid">
     <div class="card orange">
         <div>
             <h3>Web Programming</h3>
