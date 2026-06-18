@@ -115,12 +115,12 @@
                 <div class="setting-desc">Tutup akses pendaftaran lomba baru oleh peserta</div>
             </div>
             <div class="toggle-wrap">
-                <span class="toggle-status {{ ($data->status_pendaftaran_ditutup ?? 0) ? 'on' : 'off' }}">
-                    {{ ($data->status_pendaftaran_ditutup ?? 0) ? 'BUKA' : 'TUTUP' }}
+                <span class="toggle-status {{ ($data->status_pendaftaran_ditutup ?? 0) ? 'off' : 'on' }}">
+                    {{ ($data->status_pendaftaran_ditutup ?? 0) ? 'TUTUP' : 'BUKA' }}
                 </span>
                 <label class="toggle">
-                    <input type="checkbox" name="tutup_pendaftaran" value="on" id="togPendaftaran"
-                        {{ ($data->status_pendaftaran_ditutup ?? 0) ? 'checked' : '' }}>
+                    <input type="checkbox" name="status_pendaftaran_buka" value="on" id="togPendaftaran"
+                        {{ !($data->status_pendaftaran_ditutup ?? 0) ? 'checked' : '' }}>
                     <span class="slider"></span>
                 </label>
             </div>
@@ -132,12 +132,12 @@
                 <div class="setting-desc">Tutup akses upload proposal dan karya oleh peserta</div>
             </div>
             <div class="toggle-wrap">
-                <span class="toggle-status {{ ($data->status_upload_postervideo_ditutup ?? 0) ? 'on' : 'off' }}">
-                    {{ ($data->status_upload_postervideo_ditutup ?? 0) ? 'BUKA' : 'TUTUP' }}
+                <span class="toggle-status {{ ($data->status_upload_postervideo_ditutup ?? 0) ? 'off' : 'on' }}">
+                    {{ ($data->status_upload_postervideo_ditutup ?? 0) ? 'TUTUP' : 'BUKA' }}
                 </span>
                 <label class="toggle">
-                    <input type="checkbox" name="status_upload_postervideo_ditutup" value="on" id="togUpload"
-                        {{ ($data->status_upload_postervideo_ditutup ?? 0) ? 'checked' : '' }}>
+                    <input type="checkbox" name="status_upload_postervideo_buka" value="on" id="togUpload"
+                        {{ !($data->status_upload_postervideo_ditutup ?? 0) ? 'checked' : '' }}>
                     <span class="slider"></span>
                 </label>
             </div>
@@ -153,7 +153,7 @@
                     {{ ($data->status_pengumpulan_karya ?? 0) ? 'BUKA' : 'TUTUP' }}
                 </span>
                 <label class="toggle">
-                    <input type="checkbox" name="status_pengumpulan_karya" value="on" id="togKarya"
+                    <input type="checkbox" name="status_pengumpulan_karya_buka" value="on" id="togKarya"
                         {{ ($data->status_pengumpulan_karya ?? 0) ? 'checked' : '' }}>
                     <span class="slider"></span>
                 </label>
