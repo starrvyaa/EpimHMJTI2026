@@ -13,6 +13,11 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
+// Halaman Template
+Route::get('/template', function () {
+    return view('template');
+});
+
 
 // 2. ROUTE YANG BUTUH LOGIN (Semua disatukan di sini agar rapi)
 Route::middleware(['auth'])->group(function () {

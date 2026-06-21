@@ -1479,6 +1479,7 @@
         <ul class="navbar-nav">
             <li><a href="#beranda" class="active">BERANDA</a></li>
             <li><a href="#lomba">LOMBA</a></li>
+            <li><a href="{{ url('/template') }}">TEMPLATE</a></li>
             <li><a href="#timeline">TIMELINE</a></li>
             @guest
                 <li><a href="{{ route('login') }}" class="btn-login">Login</a></li>
@@ -1520,6 +1521,9 @@
                     <a href="{{ url('/lomba') }}" class="btn-outline">
                         SUBMIT KARYA
                     </a>
+                    {{-- <a href="https://drive.google.com/drive/folders/1x07zL_FzBVwIIwEdqBpsiQXYE9ODxItl" target="_blank" rel="noopener noreferrer" class="btn-outline" style="border-color:var(--orange);color:var(--orange);">
+                        <i class="fas fa-download"></i> GUIDEBOOK
+                    </a> --}}
                 </div>
             </div>
             <div class="hero-image-wrap fade-up">
@@ -1835,6 +1839,12 @@
                             <a href="javascript:void(0)" onclick="openWModal('wmodalPackaging')" class="btn-detail">Detail Lomba</a>
                             <a href="{{ url('/lomba') }}" class="btn-daftar">Daftar</a>
                         </div>
+                        <div style="margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+                            <span style="font-size:0.78rem;color:var(--text-gray);"><i class="fas fa-book"></i> Guidebook</span>
+                            <a href="https://drive.google.com/drive/folders/1x07zL_FzBVwIIwEdqBpsiQXYE9ODxItl" target="_blank" rel="noopener noreferrer" style="font-size:0.75rem;color:var(--orange);font-weight:600;text-decoration:none;">
+                                <i class="fas fa-download"></i> Download
+                            </a>
+                        </div>
                     </div>
                 </div>
 
@@ -1866,6 +1876,12 @@
                         <div class="lomba-actions">
                             <a href="javascript:void(0)" onclick="openWModal('wmodalWebProg')" class="btn-detail">Detail Lomba</a>
                             <a href="{{ url('/lomba') }}" class="btn-daftar">Daftar</a>
+                        </div>
+                        <div style="margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+                            <span style="font-size:0.78rem;color:var(--text-gray);"><i class="fas fa-book"></i> Guidebook</span>
+                            <a href="https://drive.google.com/drive/folders/1x07zL_FzBVwIIwEdqBpsiQXYE9ODxItl" target="_blank" rel="noopener noreferrer" style="font-size:0.75rem;color:var(--orange);font-weight:600;text-decoration:none;">
+                                <i class="fas fa-download"></i> Download
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -1899,6 +1915,12 @@
                             <a href="javascript:void(0)" onclick="openWModal('wmodalPoster')" class="btn-detail">Detail Lomba</a>
                             <a href="{{ url('/lomba') }}" class="btn-daftar">Daftar</a>
                         </div>
+                        <div style="margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+                            <span style="font-size:0.78rem;color:var(--text-gray);"><i class="fas fa-book"></i> Guidebook</span>
+                            <a href="https://drive.google.com/drive/folders/1x07zL_FzBVwIIwEdqBpsiQXYE9ODxItl" target="_blank" rel="noopener noreferrer" style="font-size:0.75rem;color:var(--orange);font-weight:600;text-decoration:none;">
+                                <i class="fas fa-download"></i> Download
+                            </a>
+                        </div>
                     </div>
                 </div>
 
@@ -1930,6 +1952,12 @@
                         <div class="lomba-actions">
                             <a href="javascript:void(0)" onclick="openWModal('wmodalVideography')" class="btn-detail">Detail Lomba</a>
                             <a href="{{ url('/lomba') }}" class="btn-daftar">Daftar</a>
+                        </div>
+                        <div style="margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+                            <span style="font-size:0.78rem;color:var(--text-gray);"><i class="fas fa-book"></i> Guidebook</span>
+                            <a href="https://drive.google.com/drive/folders/1x07zL_FzBVwIIwEdqBpsiQXYE9ODxItl" target="_blank" rel="noopener noreferrer" style="font-size:0.75rem;color:var(--orange);font-weight:600;text-decoration:none;">
+                                <i class="fas fa-download"></i> Download
+                            </a>
                         </div>
                     </div>
                 </div>

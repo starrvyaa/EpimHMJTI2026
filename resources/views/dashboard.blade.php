@@ -67,7 +67,7 @@
         </div>
         <div class="btn-group">
             <button type="button" class="btn btn-white" onclick="openModal('modalWebProgramming')">Selengkapnya</button>
-            <a href="#" class="btn btn-white">Guidebook</a>
+            <a href="https://drive.google.com/drive/folders/1x07zL_FzBVwIIwEdqBpsiQXYE9ODxItl" target="_blank" rel="noopener noreferrer" class="btn btn-white">Guidebook</a>
         </div>
     </div>
 
@@ -78,7 +78,7 @@
         </div>
         <div class="btn-group">
             <button type="button" class="btn btn-outline" onclick="openModal('modalPackaging')">Selengkapnya</button>
-            <a href="#" class="btn btn-outline">Guidebook</a>
+            <a href="https://drive.google.com/drive/folders/1x07zL_FzBVwIIwEdqBpsiQXYE9ODxItl" target="_blank" rel="noopener noreferrer" class="btn btn-outline">Guidebook</a>
         </div>
     </div>
 
@@ -89,7 +89,7 @@
         </div>
         <div class="btn-group">
             <button type="button" class="btn btn-white" onclick="openModal('modalPoster')">Selengkapnya</button>
-            <a href="#" class="btn btn-white">Guidebook</a>
+            <a href="https://drive.google.com/drive/folders/1x07zL_FzBVwIIwEdqBpsiQXYE9ODxItl" target="_blank" rel="noopener noreferrer" class="btn btn-white">Guidebook</a>
         </div>
     </div>
 
@@ -100,7 +100,7 @@
         </div>
         <div class="btn-group">
             <button type="button" class="btn btn-outline" onclick="openModal('modalVideography')">Selengkapnya</button>
-            <a href="#" class="btn btn-outline">Guidebook</a>
+            <a href="https://drive.google.com/drive/folders/1x07zL_FzBVwIIwEdqBpsiQXYE9ODxItl" target="_blank" rel="noopener noreferrer" class="btn btn-outline">Guidebook</a>
         </div>
     </div>
 </div>
