@@ -192,69 +192,52 @@
         @endif
     </div>
 
-    {{-- Admin: Filter Kategori --}}
+    {{-- Admin: Filter Kategori & Status --}}
     @if(auth()->user()->role == 'admin')
     <form method="GET" action="{{ route('Lomba.peserta.index') }}" style="margin-bottom:1.5rem; display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+        <!-- Filter Kategori -->
         <label style="color:#9CA3AF; font-size:0.85rem; font-weight:600;">
-            <i class="fa-solid fa-filter"></i> Filter Kategori:
+            <i class="fa-solid fa-filter"></i> Kategori:
         </label>
-        <select name="filter_kategori" onchange="this.form.submit()" style="padding:0.6rem 1rem; background:#222; border:1px solid rgba(255,255,255,0.1); border-radius:10px; color:#fff; outline:none; min-width:200px;">
+        <select name="filter_kategori" onchange="this.form.submit()" style="padding:0.6rem 1rem; background:#222; border:1px solid rgba(255,255,255,0.1); border-radius:10px; color:#fff; outline:none; min-width:180px;">
             <option value="">— Semua Kategori —</option>
             @foreach($listKategori as $kat)
                 <option value="{{ $kat->id }}" {{ ($filterKategori ?? '') == $kat->id ? 'selected' : '' }}>{{ $kat->nama_lomba }}</option>
             @endforeach
         </select>
-        @if($filterKategori)
+
+        <!-- Filter Status -->
+        <label style="color:#9CA3AF; font-size:0.85rem; font-weight:600; margin-left:8px;">
+            <i class="fa-solid fa-circle-info"></i> Status:
+        </label>
+        <select name="filter_status" onchange="this.form.submit()" style="padding:0.6rem 1rem; background:#222; border:1px solid rgba(255,255,255,0.1); border-radius:10px; color:#fff; outline:none; min-width:180px;">
+            <option value="">— Semua Status —</option>
+            <option value="pending" {{ ($filterStatus ?? '') == 'pending' ? 'selected' : '' }}>Terdaftar (Pending)</option>
+            <option value="lolos" {{ ($filterStatus ?? '') == 'lolos' ? 'selected' : '' }}>Lolos</option>
+            <option value="tidak_lolos" {{ ($filterStatus ?? '') == 'tidak_lolos' ? 'selected' : '' }}>Tidak Lolos</option>
+        </select>
+
+        <!-- Search Input -->
+        <div style="position: relative; display: inline-flex; align-items: center; margin-left:8px;">
+            <input type="text" name="search_tim" placeholder="Cari nama tim..." value="{{ request('search_tim') }}" 
+                   style="padding: 0.6rem 1rem 0.6rem 2.2rem; background: #222; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: #fff; outline: none; min-width: 220px;">
+            <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 0.8rem; color: #6B7280; font-size: 0.85rem;"></i>
+        </div>
+
+        <button type="submit" class="btn btn-orange" style="padding: 0.6rem 1.2rem; border-radius: 10px; font-weight: 600; border: none; cursor: pointer;">
+            Cari
+        </button>
+
+        @if($filterKategori || $filterStatus || request('search_tim'))
             <a href="{{ route('Lomba.peserta.index') }}" style="color:#9CA3AF; font-size:0.8rem; text-decoration:none;">
                 <i class="fa-solid fa-xmark"></i> Reset
             </a>
         @endif
 
-        <a href="{{ route('admin.lomba.export', ['filter_kategori' => request('filter_kategori')]) }}" 
-           class="btn" 
-           style="background: #10B981; color: white; padding: 0.6rem 1.2rem; border-radius: 10px; text-decoration: none; font-size: 0.85rem; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; border: none; transition: 0.2s;">
-            <i class="fa-solid fa-file-excel"></i> Export Excel
-        </a>
-
         <span style="color:#6B7280; font-size:0.8rem; margin-left:auto;">
             <i class="fa-solid fa-list"></i> {{ $datas->total() ?? $datas->count() }} data
         </span>
     </form>
-    @endif
-
-    @if(auth()->user()->role == 'admin')
-    <div style="background: rgba(66, 133, 244, 0.08); border: 1px solid rgba(66, 133, 244, 0.2); border-radius: 12px; padding: 1.2rem; margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 8px;">
-        <div style="display: flex; align-items: center; gap: 8px; color: #60A5FA; font-weight: 700; font-size: 0.9rem; font-family: 'Montserrat', sans-serif;">
-            <i class="fa-brands fa-google-drive"></i> Integrasi Google Sheets Real-time
-        </div>
-        <p style="margin: 0; color: #9CA3AF; font-size: 0.8rem; line-height: 1.5;">
-            Salin rumus di bawah ini dan tempelkan (*paste*) di sel **A1** pada Google Spreadsheet Anda. Data akan ter-update secara otomatis setiap kali ada pembaruan di website.
-        </p>
-        <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px; flex-wrap: wrap;">
-            <input type="text" readonly id="gSheetsFormula" 
-                   value='=IMPORTDATA("{{ route("lomba.export.sheets", ["token" => $exportToken, "filter_kategori" => request("filter_kategori")]) }}")'
-                   style="flex: 1; padding: 0.65rem 0.8rem; background: #151515; border: 1px solid rgba(66, 133, 244, 0.3); border-radius: 8px; color: #34D399; font-family: monospace; font-size: 0.78rem; outline: none; min-width: 280px;">
-            <button type="button" class="btn" onclick="copyGSheetsFormula()" 
-                    style="background: #4285F4; color: white; padding: 0.65rem 1.2rem; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 6px; transition: background 0.2s;">
-                <i class="fa-solid fa-copy"></i> <span id="copyText">Salin Rumus</span>
-            </button>
-        </div>
-    </div>
-
-    <script>
-        function copyGSheetsFormula() {
-            var copyText = document.getElementById("gSheetsFormula");
-            copyText.select();
-            copyText.setSelectionRange(0, 99999);
-            navigator.clipboard.writeText(copyText.value).then(function() {
-                var btnText = document.getElementById("copyText");
-                btnText.innerText = "Tersalin!";
-                setTimeout(function() {
-                    btnText.innerText = "Salin Rumus";
-                }, 2000);
-            });
-        }
-    </script>
     @endif
 
     <div class="table-responsive">
@@ -286,8 +269,8 @@
                 @forelse ($datas as $data)
                     @php
                         $isLocked = false;
-                        $uploadTutup = auth()->user()->role != 'admin' && ($pengaturan->status_upload_postervideo_ditutup ?? false);
-                        $editAksiTutup = auth()->user()->role != 'admin' && (($pengaturan->status_pendaftaran_ditutup ?? false) || ($pengaturan->status_upload_postervideo_ditutup ?? false));
+                        $uploadTutup = ($pengaturan->status_upload_postervideo_ditutup ?? false);
+                        $editAksiTutup = (($pengaturan->status_pendaftaran_ditutup ?? false) || ($pengaturan->status_upload_postervideo_ditutup ?? false));
                     @endphp
                     <tr>
                         <td>{{ $loop->iteration }}</td>
@@ -311,14 +294,14 @@
                                 $klBadge = match($kl) {
                                     'lolos' => ['bg'=>'rgba(16,185,129,0.15)','color'=>'#10B981','text'=>'Lolos'],
                                     'tidak_lolos' => ['bg'=>'rgba(239,68,68,0.15)','color'=>'#EF4444','text'=>'Tidak Lolos'],
-                                    default => ['bg'=>'rgba(245,158,11,0.15)','color'=>'#F59E0B','text'=>'Pending'],
+                                    default => ['bg'=>'rgba(245,158,11,0.15)','color'=>'#F59E0B','text'=>'Terdaftar'],
                                 };
                             @endphp
                             <span style="display:inline-block; padding:4px 10px; border-radius:6px; font-size:0.72rem; font-weight:600; background:{{ $klBadge['bg'] }}; color:{{ $klBadge['color'] }};">
                                 {{ $klBadge['text'] }}
                             </span>
-                            @if($kl == 'lolos')
-                                @if(auth()->user()->role != 'admin')
+                            @if(auth()->user()->role != 'admin')
+                                @if($kl == 'lolos')
                                 <div style="margin-top:4px;">
                                     <a href="{{ route('tiket.finalis') }}" style="font-size:0.7rem; color:#10B981; text-decoration:none;">
                                         <i class="fa-solid fa-ticket"></i> Cetak Tiket
@@ -329,20 +312,14 @@
                             @if(auth()->user()->role == 'admin')
                                 <div style="display:flex; gap:4px; margin-top:6px;">
                                     @if($kl != 'lolos')
-                                    <form action="{{ route('admin.kelulusan.atur', [$data->id, 'lolos']) }}" method="POST" style="display:inline;">
-                                        @csrf @method('PATCH')
-                                        <button type="submit" class="btn" style="padding:3px 8px; font-size:0.65rem; background:#10B981; color:#fff; border:none; border-radius:4px; cursor:pointer;">
-                                            Loloskan
-                                        </button>
-                                    </form>
+                                    <button type="button" class="btn" onclick="openModal('modalLoloskan{{ $data->id }}')" style="padding:3px 8px; font-size:0.65rem; background:#10B981; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                                        Loloskan
+                                    </button>
                                     @endif
                                     @if($kl != 'tidak_lolos' && $kl != 'pending')
-                                    <form action="{{ route('admin.kelulusan.atur', [$data->id, 'tidak_lolos']) }}" method="POST" style="display:inline;">
-                                        @csrf @method('PATCH')
-                                        <button type="submit" class="btn" style="padding:3px 8px; font-size:0.65rem; background:#EF4444; color:#fff; border:none; border-radius:4px; cursor:pointer;">
-                                            Gugurkan
-                                        </button>
-                                    </form>
+                                    <button type="button" class="btn" onclick="openModal('modalGugurkan{{ $data->id }}')" style="padding:3px 8px; font-size:0.65rem; background:#EF4444; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                                        Gugurkan
+                                    </button>
                                     @endif
                                 </div>
                             @endif
@@ -432,18 +409,19 @@
                             @if(in_array($data->id_lomba, [1, 3]))
                                 <span style="color:#6B7280; font-size:0.78rem;">—</span>
                             @else
-                                @if(auth()->user()->role != 'admin')
                                     @php
                                         $idLomba = $data->id_lomba;
                                         $hasGambar = $data->gambar_karya;
                                         $hasLinkVideo = $data->link_video_karya;
                                         $hasSpecificKarya = ($idLomba == 2 && $hasGambar) || ($idLomba == 4 && $hasLinkVideo);
                                         $karyaSubmitted = $data->judul_karya && $hasSpecificKarya;
-                                        $karyaEditBuka = ($pengaturan->status_pengumpulan_karya ?? 0) && !$uploadTutup;
+                                        $karyaEditBuka = ($pengaturan->status_pengumpulan_karya ?? 0);
+                                        $adminOrNotExpired = auth()->user()->role == 'admin' || !$isExpired;
+                                        $adminOrNotClosed = !$uploadTutup;
                                     @endphp
                                     @if(false)
                                         <span style="color:#6B7280; font-size:0.78rem;"><i class="fa-solid fa-lock"></i></span>
-                                    @elseif($isExpired)
+                                    @elseif(!$adminOrNotExpired)
                                         <span style="color:#EF4444; font-size:0.78rem;"><i class="fa-solid fa-clock"></i> Ditutup</span>
                                     @elseif($karyaSubmitted)
                                         <div style="display:flex; flex-direction:column; gap:2px;">
@@ -461,27 +439,13 @@
                                                 </button>
                                             @endif
                                         </div>
-                                    @elseif($uploadTutup)
+                                    @elseif(!$adminOrNotClosed)
                                         <span style="color:#EF4444; font-size:0.78rem;"><i class="fa-solid fa-ban"></i> Upload ditutup</span>
                                     @else
                                         <button class="btn btn-orange" style="padding:5px 10px; font-size:0.78rem;" onclick="openModal('modalKarya{{ $data->id }}')">
                                             <i class="fa-solid fa-upload"></i> Kumpulkan Karya
                                         </button>
                                     @endif
-                                @else
-                                    @if($data->judul_karya)
-                                        <div style="display:flex; flex-direction:column; gap:2px;">
-                                            <span style="color:#10B981; font-size:0.78rem;">
-                                                <i class="fa-solid fa-check-circle"></i> Terkumpul
-                                            </span>
-                                            <span style="color:#F97316; font-size:0.82rem; font-weight:600;">
-                                                <i class="fa-solid fa-quote-left"></i> {{ $data->judul_karya }}
-                                            </span>
-                                        </div>
-                                    @else
-                                        <span style="color:#6B7280; font-size:0.78rem;">—</span>
-                                    @endif
-                                @endif
                             @endif
                         </td>
 
@@ -507,21 +471,38 @@
                         <td>
                             <div class="action-icons">
                                 <button class="icon-btn" style="color:#60A5FA; display:flex; align-items:center;" onclick="openModal('modalDetail{{ $data->id }}')" title="Detail">
-                                    <i class="fa-solid fa-eye"></i><span style="margin-left:5px; font-weight:600; font-size:0.78rem;">Detail</span>
+                                    <span style="margin-left:5px; font-weight:600; font-size:0.78rem;">Detail</span>
                                 </button>
-                                <a href="https://wa.me/{{ $data->hp_ketua }}" target="_blank" class="icon-btn" style="color:#25D366" title="WhatsApp">
-                                    <i class="fa-brands fa-whatsapp"></i>
-                                </a>
-                                @if(auth()->user()->role != 'admin')
-                                    @if(!$editAksiTutup)
+                                @if(auth()->user()->role == 'admin')
+                                    <a href="https://wa.me/{{ $data->hp_ketua }}" target="_blank" class="icon-btn" style="color:#25D366" title="Hubungi Ketua (WhatsApp)">
+                                        <i class="fa-brands fa-whatsapp"></i>
+                                    </a>
+                                @else
+                                    @php
+                                        $waMap = [
+                                            1 => 'EPIM2026-WEB', 
+                                            2 => 'Ia29F8LBbqR0Q69xF6zVor', 
+                                            3 => 'EPIM2026-PACKAGING', 
+                                            4 => 'Ia29F8LBbqR0Q69xF6zVor',
+                                            5 => 'Ia29F8LBbqR0Q69xF6zVor'
+                                        ];
+                                        $waCode = $waMap[$data->id_lomba] ?? 'EPIM2026';
+                                        $waGroupLink = 'https://chat.whatsapp.com/' . $waCode;
+                                    @endphp
+                                    @if(($data->status_kelulusan ?? 'pending') != 'tidak_lolos')
+                                        <a href="{{ $waGroupLink }}" target="_blank" rel="noopener noreferrer" class="icon-btn" style="color:#25D366" title="Gabung Grup WhatsApp Kategori">
+                                            <i class="fa-brands fa-whatsapp"></i>
+                                        </a>
+                                    @endif
+                                @endif
+                                @if(!$editAksiTutup)
                                     <button class="icon-btn" style="color:#F97316" onclick="openModal('modalEditBukti{{ $data->id }}')" title="Edit Bukti">
                                         <i class="fa-solid fa-file-pen"></i>
                                     </button>
-                                    @else
+                                @else
                                     <button class="icon-btn" style="color:#4B5563; cursor:not-allowed;" title="Edit Ditutup" disabled>
                                         <i class="fa-solid fa-lock"></i>
                                     </button>
-                                    @endif
                                 @endif
                                 @if(auth()->user()->role == 'admin')
                                 <button type="button" class="icon-btn" style="color:#EF4444" onclick="openModal('modalHapusPendaftaran{{ $data->id }}')" title="Hapus">
@@ -554,7 +535,7 @@
                 @if($datas->onFirstPage())
                     <span style="padding:6px 12px; background:#222; color:#6B7280; border-radius:8px; font-size:0.8rem;">« Prev</span>
                 @else
-                    <a href="{{ $datas->previousPageUrl() }}&filter_kategori={{ $filterKategori }}" style="padding:6px 12px; background:#333; color:#fff; border-radius:8px; font-size:0.8rem; text-decoration:none;">« Prev</a>
+                    <a href="{{ $datas->previousPageUrl() }}" style="padding:6px 12px; background:#333; color:#fff; border-radius:8px; font-size:0.8rem; text-decoration:none;">« Prev</a>
                 @endif
 
                 @php
@@ -567,12 +548,12 @@
                     @if($i == $currentPage)
                         <span style="padding:6px 14px; background:#F97316; color:#fff; border-radius:8px; font-size:0.8rem; font-weight:700;">{{ $i }}</span>
                     @else
-                        <a href="{{ $datas->url($i) }}&filter_kategori={{ $filterKategori }}" style="padding:6px 14px; background:#333; color:#9CA3AF; border-radius:8px; font-size:0.8rem; text-decoration:none;">{{ $i }}</a>
+                        <a href="{{ $datas->url($i) }}" style="padding:6px 14px; background:#333; color:#9CA3AF; border-radius:8px; font-size:0.8rem; text-decoration:none;">{{ $i }}</a>
                     @endif
                 @endfor
 
                 @if($datas->hasMorePages())
-                    <a href="{{ $datas->nextPageUrl() }}&filter_kategori={{ $filterKategori }}" style="padding:6px 12px; background:#333; color:#fff; border-radius:8px; font-size:0.8rem; text-decoration:none;">Next »</a>
+                    <a href="{{ $datas->nextPageUrl() }}" style="padding:6px 12px; background:#333; color:#fff; border-radius:8px; font-size:0.8rem; text-decoration:none;">Next »</a>
                 @else
                     <span style="padding:6px 12px; background:#222; color:#6B7280; border-radius:8px; font-size:0.8rem;">Next »</span>
                 @endif
@@ -805,7 +786,40 @@
         </div>
     </div>
 
-    @if(auth()->user()->role != 'admin')
+    <div id="modalLoloskan{{ $data->id }}" class="modal">
+        <div class="modal-content" style="text-align:center; max-width:450px;">
+            <i class="fa-solid fa-circle-check" style="font-size:3rem; color:#10B981; margin-bottom:15px;"></i>
+            <h3>Loloskan Peserta?</h3>
+            <p style="color:#9CA3AF; font-size:0.9rem; line-height:1.6; margin:10px 0 0;">
+                Apakah Anda yakin ingin meloloskan tim <strong style="color:#fff;">{{ $data->tim->nama_tim ?? 'ini' }}</strong>?
+            </p>
+            <form action="{{ route('admin.kelulusan.atur', [$data->id, 'lolos']) }}" method="POST">
+                @csrf @method('PATCH')
+                <div style="display:flex; gap:10px; margin-top:20px;">
+                    <button type="button" class="btn btn-outline" style="flex:1" onclick="closeModal('modalLoloskan{{ $data->id }}')">Batal</button>
+                    <button type="submit" class="btn" style="flex:1; background:#10B981;">Ya, Loloskan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modalGugurkan{{ $data->id }}" class="modal">
+        <div class="modal-content" style="text-align:center; max-width:450px;">
+            <i class="fa-solid fa-circle-xmark" style="font-size:3rem; color:#EF4444; margin-bottom:15px;"></i>
+            <h3>Gugurkan Peserta?</h3>
+            <p style="color:#9CA3AF; font-size:0.9rem; line-height:1.6; margin:10px 0 0;">
+                Apakah Anda yakin ingin menggugurkan tim <strong style="color:#fff;">{{ $data->tim->nama_tim ?? 'ini' }}</strong>?
+            </p>
+            <form action="{{ route('admin.kelulusan.atur', [$data->id, 'tidak_lolos']) }}" method="POST">
+                @csrf @method('PATCH')
+                <div style="display:flex; gap:10px; margin-top:20px;">
+                    <button type="button" class="btn btn-outline" style="flex:1" onclick="closeModal('modalGugurkan{{ $data->id }}')">Batal</button>
+                    <button type="submit" class="btn btn-danger" style="flex:1; background:#EF4444;">Ya, Gugurkan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div id="modalEditBukti{{ $data->id }}" class="modal">
         <div class="modal-content">
             <h3 style="color:#F97316; font-family:'Montserrat'; margin-bottom:15px;">Edit Bukti Pendaftaran</h3>
@@ -854,7 +868,6 @@
             </form>
         </div>
     </div>
-    @endif
 
     <div id="modalHapusProposal{{ $data->id }}" class="modal">
         <div class="modal-content" style="text-align:center;">
@@ -911,7 +924,7 @@
 {{-- Modal Karya per peserta --}}
 @foreach ($datas as $data)
     @php $idLomba = $data->id_lomba; @endphp
-    @if(auth()->user()->role != 'admin' && ($data->status_pembayaran ?? 'pending') == 'verified' && !$isExpired && !($pengaturan->status_upload_postervideo_ditutup ?? false)
+    @if((auth()->user()->role == 'admin' || (($data->status_pembayaran ?? 'pending') == 'verified' && !$isExpired && !($pengaturan->status_upload_postervideo_ditutup ?? false)))
         && !(($idLomba == 1 && $data->judul_karya) || ($idLomba == 2 && $data->gambar_karya) || ($idLomba == 3 && $data->judul_karya) || ($idLomba == 4 && $data->link_video_karya)))
     <div id="modalKarya{{ $data->id }}" class="modal">
         <div class="modal-content">
@@ -922,6 +935,7 @@
             </div>
             <form action="{{ route('karya.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
+                <input type="hidden" name="pendaftar_id" value="{{ $data->id }}">
                 <div class="form-group">
                     <label>Judul Karya <span style="color:#EF4444;">*</span></label>
                     <input type="text" name="judul_karya" class="form-control" placeholder="Masukkan judul karya" required>
@@ -976,7 +990,7 @@
 {{-- Modal Edit Karya per peserta --}}
 @foreach ($datas as $data)
     @php $ekIdLomba = $data->id_lomba; @endphp
-    @if(auth()->user()->role != 'admin' && $data->judul_karya && ($pengaturan->status_pengumpulan_karya ?? 0) && !$uploadTutup)
+    @if($data->judul_karya && (auth()->user()->role == 'admin' || ($pengaturan->status_pengumpulan_karya ?? 0)))
     <div id="modalEditKarya{{ $data->id }}" class="modal">
         <div class="modal-content">
             <h3 style="color:#F97316; font-family:'Montserrat'; margin-bottom:4px;">Edit Karya</h3>
@@ -1235,7 +1249,7 @@
 
                 <!-- Bukti Sosmed -->
                 <div class="form-group">
-                    <label>Upload Bukti Follow Sosmed EPIM <span style="color:#EF4444;">*</span> (PDF/JPG/PNG, maks 2MB)</label>
+                    <label>Upload Bukti Follow Instagram @hmjti_polije & @epim_polije, YouTube @hmjtipolije, serta TikTok @hmjti_polije <span style="color:#EF4444;">*</span> (PDF/JPG/PNG, maks 2MB)</label>
                     <input type="file" name="bukti_sosmed" class="form-control" required accept=".pdf,.jpg,.jpeg,.png">
                     @error('bukti_sosmed') <span class="form-error">{{ $message }}</span> @enderror
                 </div>

@@ -18,8 +18,6 @@ Route::get('/template', function () {
     return view('template');
 });
 
-Route::get('/lomba/export-sheets', [LombaController::class, 'exportGoogleSheets'])->name('lomba.export.sheets');
-
 
 // 2. ROUTE YANG BUTUH LOGIN (Semua disatukan di sini agar rapi)
 Route::middleware(['auth'])->group(function () {
@@ -65,9 +63,6 @@ Route::middleware(['auth'])->group(function () {
 
         Route::patch('/admin/kelulusan/{id}/{status}', [LombaController::class, 'aturKelulusan'])
             ->name('admin.kelulusan.atur');
-
-        Route::get('/admin/lomba/export', [LombaController::class, 'exportExcel'])
-            ->name('admin.lomba.export');
 
         // Pengaturan (Setting) — Admin only
         Route::get('/pengaturan', [PengaturanController::class, 'index'])->name('Pengaturan.index');

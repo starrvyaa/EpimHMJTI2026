@@ -38,7 +38,7 @@ class KaryaController extends Controller
         $now = now()->setTimezone('Asia/Jakarta');
         $deadline = \Carbon\Carbon::parse(self::DEADLINE, 'Asia/Jakarta');
 
-        if ($now->gt($deadline)) {
+        if ($user->role !== 'admin' && $now->gt($deadline)) {
             return back()->with('error', 'Batas waktu pengumpulan karya sudah berakhir (13 Agustus 2026 pukul 23:59 WIB).');
         }
 
@@ -48,10 +48,16 @@ class KaryaController extends Controller
             return back()->with('error', 'Maaf, pengumpulan karya/proposal saat ini sudah ditutup oleh Admin.');
         }
 
-        $pendaftar = Pendaftar::with('tim', 'kategori')
-            ->where('user_id', $user->id)
-            ->where('status_pembayaran', 'verified')
-            ->firstOrFail();
+        if ($user->role === 'admin' && $request->filled('pendaftar_id')) {
+            $pendaftar = Pendaftar::with('tim', 'kategori')
+                ->where('id', $request->pendaftar_id)
+                ->firstOrFail();
+        } else {
+            $pendaftar = Pendaftar::with('tim', 'kategori')
+                ->where('user_id', $user->id)
+                ->where('status_pembayaran', 'verified')
+                ->firstOrFail();
+        }
 
         $idLomba = $pendaftar->id_lomba;
         $tim = $pendaftar->tim;
@@ -125,7 +131,7 @@ class KaryaController extends Controller
         $now = now()->setTimezone('Asia/Jakarta');
         $deadline = \Carbon\Carbon::parse(self::DEADLINE, 'Asia/Jakarta');
 
-        if ($now->gt($deadline)) {
+        if ($user->role !== 'admin' && $now->gt($deadline)) {
             return back()->with('error', 'Batas waktu pengumpulan karya sudah berakhir (13 Agustus 2026 pukul 23:59 WIB).');
         }
 
@@ -135,11 +141,13 @@ class KaryaController extends Controller
             return back()->with('error', 'Maaf, pengumpulan karya saat ini sedang ditutup oleh Admin.');
         }
 
-        $pendaftar = Pendaftar::with('tim', 'kategori')
-            ->where('id', $id)
-            ->where('user_id', $user->id)
-            ->where('status_pembayaran', 'verified')
-            ->firstOrFail();
+        $query = Pendaftar::with('tim', 'kategori')->where('id', $id);
+        
+        if ($user->role !== 'admin') {
+            $query->where('user_id', $user->id)->where('status_pembayaran', 'verified');
+        }
+
+        $pendaftar = $query->firstOrFail();
 
         $idLomba = $pendaftar->id_lomba;
         $rules = [];

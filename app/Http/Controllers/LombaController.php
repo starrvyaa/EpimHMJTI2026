@@ -24,6 +24,17 @@ class LombaController extends Controller
             if ($request->filled('filter_kategori')) {
                 $query->where('id_lomba', $request->filter_kategori);
             }
+            // Filter by status
+            if ($request->filled('filter_status')) {
+                $query->where('status_kelulusan', $request->filter_status);
+            }
+            // Search by nama_tim
+            if ($request->filled('search_tim')) {
+                $search = $request->search_tim;
+                $query->whereHas('tim', function ($q) use ($search) {
+                    $q->where('nama_tim', 'like', '%' . $search . '%');
+                });
+            }
             $query->orderBy('updated_at', 'desc');
             $datas = $query->paginate(10)->withQueryString();
         } else {
@@ -54,6 +65,7 @@ class LombaController extends Controller
         $userHasPendaftaran = Pendaftar::where('user_id', $user->id)->exists();
 
         $filterKategori = $request->filter_kategori;
+        $filterStatus = $request->filter_status;
 
         // Check if user has any pendaftaran with incomplete karya (for alert logic)
         $userHasUnsubmittedKarya = false;
@@ -74,9 +86,7 @@ class LombaController extends Controller
             }
         }
 
-        $exportToken = substr(hash('sha256', config('app.key') ?? 'fallback-key-epim-2026'), 0, 16);
-
-        return view('lomba.index', compact('listKategori', 'datas', 'pengaturan', 'deadline', 'isExpired', 'filterKategori', 'userHasPendaftaran', 'userHasUnsubmittedKarya', 'exportToken'));
+        return view('lomba.index', compact('listKategori', 'datas', 'pengaturan', 'deadline', 'isExpired', 'filterKategori', 'filterStatus', 'userHasPendaftaran', 'userHasUnsubmittedKarya'));
     }
 
     public function store(Request $request)
@@ -285,7 +295,7 @@ class LombaController extends Controller
     {
         // ► GATEKEEP: cek upload proposal ditutup
         $pengaturan = Pengaturan::first();
-        if ($pengaturan && $pengaturan->status_upload_postervideo_ditutup && auth()->user()->role !== 'admin') {
+        if ($pengaturan && $pengaturan->status_upload_postervideo_ditutup) {
             return back()->with('error', 'Maaf, pengumpulan proposal saat ini sudah ditutup oleh Admin.');
         }
 
@@ -323,7 +333,7 @@ class LombaController extends Controller
     {
         // ► GATEKEEP: cek upload ditutup
         $pengaturan = Pengaturan::first();
-        if ($pengaturan && $pengaturan->status_upload_postervideo_ditutup && auth()->user()->role !== 'admin') {
+        if ($pengaturan && $pengaturan->status_upload_postervideo_ditutup) {
             return back()->with('error', 'Maaf, penghapusan berkas saat ini sudah ditutup oleh Admin.');
         }
 
@@ -353,7 +363,7 @@ class LombaController extends Controller
     {
         // ► GATEKEEP: cek upload ditutup
         $pengaturan = Pengaturan::first();
-        if ($pengaturan && $pengaturan->status_upload_postervideo_ditutup && auth()->user()->role !== 'admin') {
+        if ($pengaturan && $pengaturan->status_upload_postervideo_ditutup) {
             return back()->with('error', 'Maaf, pengumpulan berkas saat ini sudah ditutup oleh Admin.');
         }
 
@@ -389,7 +399,7 @@ class LombaController extends Controller
     {
         // ► GATEKEEP: cek upload ditutup
         $pengaturan = Pengaturan::first();
-        if ($pengaturan && $pengaturan->status_upload_postervideo_ditutup && auth()->user()->role !== 'admin') {
+        if ($pengaturan && $pengaturan->status_upload_postervideo_ditutup) {
             return back()->with('error', 'Maaf, penghapusan berkas saat ini sudah ditutup oleh Admin.');
         }
 
@@ -553,7 +563,7 @@ class LombaController extends Controller
     {
         // ► GATEKEEP: cek pendaftaran ditutup
         $pengaturan = Pengaturan::first();
-        if ($pengaturan && ($pengaturan->status_pendaftaran_ditutup || $pengaturan->status_upload_postervideo_ditutup) && auth()->user()->role !== 'admin') {
+        if ($pengaturan && ($pengaturan->status_pendaftaran_ditutup || $pengaturan->status_upload_postervideo_ditutup)) {
             return back()->with('error', 'Maaf, pengeditan berkas pendaftaran saat ini sudah ditutup oleh Admin.');
         }
 
@@ -628,176 +638,5 @@ class LombaController extends Controller
         }
 
         return back()->with('info', 'Tidak ada berkas yang diubah.');
-    }
-
-    public function exportExcel(Request $request)
-    {
-        if (auth()->user()->role !== 'admin') {
-            abort(403, 'Akses tidak sah.');
-        }
-
-        $query = Pendaftar::with('tim', 'kategori', 'user');
-
-        if ($request->filled('filter_kategori')) {
-            $query->where('id_lomba', $request->filter_kategori);
-        }
-
-        $datas = $query->orderBy('updated_at', 'desc')->get();
-
-        $fileName = 'data-peserta-lomba-' . date('Y-m-d_H-i-s') . '.csv';
-
-        $headers = [
-            'Content-type'        => 'text/csv',
-            'Content-Disposition' => "attachment; filename=\"$fileName\"",
-            'Pragma'              => 'no-cache',
-            'Cache-Control'       => 'must-revalidate, post-check=0, pre-check=0',
-            'Expires'             => '0'
-        ];
-
-        $callback = function() use ($datas) {
-            $file = fopen('php://output', 'w');
-            
-            // UTF-8 BOM agar Excel membaca karakter spesial dengan benar
-            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
-
-            // Header kolom
-            fputcsv($file, [
-                'No',
-                'Kategori Lomba',
-                'Nama Tim',
-                'Asal Sekolah / Institusi',
-                'Guru Pembimbing',
-                'Nama Ketua',
-                'NIS/NIM Ketua',
-                'No WA Ketua',
-                'Anggota 1',
-                'Anggota 2',
-                'Anggota 3',
-                'Judul Karya',
-                'Subtema',
-                'Link/File Proposal',
-                'Link/File Orisinalitas',
-                'Link/File Karya'
-            ], ';');
-
-            foreach ($datas as $index => $row) {
-                // Tentukan link/file karya sesuai kategori lomba
-                $karyaLink = '-';
-                if ($row->gambar_karya) {
-                    $karyaLink = asset('uploads/karya/' . $row->gambar_karya);
-                } elseif ($row->link_video_karya) {
-                    $karyaLink = $row->link_video_karya;
-                }
-
-                fputcsv($file, [
-                    $index + 1,
-                    $row->kategori->nama_lomba ?? '-',
-                    $row->tim->nama_tim ?? '-',
-                    $row->tim->asal_sekolah ?? '-',
-                    $row->tim->guru_pembimbing ?? '-',
-                    $row->nama_ketua ?? '-',
-                    $row->nis_nim_ketua ?? '-',
-                    $row->hp_ketua ?? '-',
-                    $row->anggota_1 ? $row->anggota_1 . ' (NIS: ' . ($row->anggota_nis_1 ?? '-') . ' | WA: ' . ($row->hp_1 ?? '-') . ')' : '-',
-                    $row->anggota_2 ? $row->anggota_2 . ' (NIS: ' . ($row->anggota_nis_2 ?? '-') . ' | WA: ' . ($row->hp_2 ?? '-') . ')' : '-',
-                    $row->anggota_3 ? $row->anggota_3 . ' (NIS: ' . ($row->anggota_nis_3 ?? '-') . ' | WA: ' . ($row->hp_3 ?? '-') . ')' : '-',
-                    $row->judul_karya ?? '-',
-                    $row->subtema ?? '-',
-                    $row->proposal ? asset('uploads/proposal/' . $row->proposal) : '-',
-                    $row->orisinalitas ? asset('uploads/orisinalitas/' . $row->orisinalitas) : '-',
-                    $karyaLink
-                ], ';');
-            }
-
-            fclose($file);
-        };
-
-        return response()->stream($callback, 200, $headers);
-    }
-
-    public function exportGoogleSheets(Request $request)
-    {
-        $expectedToken = substr(hash('sha256', config('app.key') ?? 'fallback-key-epim-2026'), 0, 16);
-        if ($request->input('token') !== $expectedToken) {
-            abort(403, 'Token ekspor tidak valid atau kadaluarsa.');
-        }
-
-        $query = Pendaftar::with('tim', 'kategori', 'user');
-
-        if ($request->filled('filter_kategori')) {
-            $query->where('id_lomba', $request->filter_kategori);
-        }
-
-        $datas = $query->orderBy('updated_at', 'desc')->get();
-
-        $fileName = 'data-peserta-lomba-' . date('Y-m-d_H-i-s') . '.csv';
-
-        $headers = [
-            'Content-type'        => 'text/csv; charset=UTF-8',
-            'Content-Disposition' => "attachment; filename=\"$fileName\"",
-            'Pragma'              => 'no-cache',
-            'Cache-Control'       => 'must-revalidate, post-check=0, pre-check=0',
-            'Expires'             => '0'
-        ];
-
-        $callback = function() use ($datas) {
-            $file = fopen('php://output', 'w');
-            
-            // UTF-8 BOM agar Google Sheets membaca karakter dengan benar
-            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
-
-            // Header kolom menggunakan koma (,) agar dideteksi Google Sheets dengan tepat
-            fputcsv($file, [
-                'No',
-                'Kategori Lomba',
-                'Nama Tim',
-                'Asal Sekolah / Institusi',
-                'Guru Pembimbing',
-                'Nama Ketua',
-                'NIS/NIM Ketua',
-                'No WA Ketua',
-                'Anggota 1',
-                'Anggota 2',
-                'Anggota 3',
-                'Judul Karya',
-                'Subtema',
-                'Link/File Proposal',
-                'Link/File Orisinalitas',
-                'Link/File Karya'
-            ], ',');
-
-            foreach ($datas as $index => $row) {
-                // Tentukan link/file karya sesuai kategori lomba
-                $karyaLink = '-';
-                if ($row->gambar_karya) {
-                    $karyaLink = asset('uploads/karya/' . $row->gambar_karya);
-                } elseif ($row->link_video_karya) {
-                    $karyaLink = $row->link_video_karya;
-                }
-
-                fputcsv($file, [
-                    $index + 1,
-                    $row->kategori->nama_lomba ?? '-',
-                    $row->tim->nama_tim ?? '-',
-                    $row->tim->asal_sekolah ?? '-',
-                    $row->tim->guru_pembimbing ?? '-',
-                    $row->nama_ketua ?? '-',
-                    $row->nis_nim_ketua ?? '-',
-                    $row->hp_ketua ?? '-',
-                    $row->anggota_1 ? $row->anggota_1 . ' (NIS: ' . ($row->anggota_nis_1 ?? '-') . ' | WA: ' . ($row->hp_1 ?? '-') . ')' : '-',
-                    $row->anggota_2 ? $row->anggota_2 . ' (NIS: ' . ($row->anggota_nis_2 ?? '-') . ' | WA: ' . ($row->hp_2 ?? '-') . ')' : '-',
-                    $row->anggota_3 ? $row->anggota_3 . ' (NIS: ' . ($row->anggota_nis_3 ?? '-') . ' | WA: ' . ($row->hp_3 ?? '-') . ')' : '-',
-                    $row->judul_karya ?? '-',
-                    $row->subtema ?? '-',
-                    $row->proposal ? asset('uploads/proposal/' . $row->proposal) : '-',
-                    $row->orisinalitas ? asset('uploads/orisinalitas/' . $row->orisinalitas) : '-',
-                    $karyaLink
-                ], ',');
-            }
-
-            fclose($file);
-        };
-
-        return response()->stream($callback, 200, $headers);
     }
 }
