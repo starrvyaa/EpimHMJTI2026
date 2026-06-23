@@ -209,10 +209,52 @@
                 <i class="fa-solid fa-xmark"></i> Reset
             </a>
         @endif
+
+        <a href="{{ route('admin.lomba.export', ['filter_kategori' => request('filter_kategori')]) }}" 
+           class="btn" 
+           style="background: #10B981; color: white; padding: 0.6rem 1.2rem; border-radius: 10px; text-decoration: none; font-size: 0.85rem; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; border: none; transition: 0.2s;">
+            <i class="fa-solid fa-file-excel"></i> Export Excel
+        </a>
+
         <span style="color:#6B7280; font-size:0.8rem; margin-left:auto;">
             <i class="fa-solid fa-list"></i> {{ $datas->total() ?? $datas->count() }} data
         </span>
     </form>
+    @endif
+
+    @if(auth()->user()->role == 'admin')
+    <div style="background: rgba(66, 133, 244, 0.08); border: 1px solid rgba(66, 133, 244, 0.2); border-radius: 12px; padding: 1.2rem; margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 8px;">
+        <div style="display: flex; align-items: center; gap: 8px; color: #60A5FA; font-weight: 700; font-size: 0.9rem; font-family: 'Montserrat', sans-serif;">
+            <i class="fa-brands fa-google-drive"></i> Integrasi Google Sheets Real-time
+        </div>
+        <p style="margin: 0; color: #9CA3AF; font-size: 0.8rem; line-height: 1.5;">
+            Salin rumus di bawah ini dan tempelkan (*paste*) di sel **A1** pada Google Spreadsheet Anda. Data akan ter-update secara otomatis setiap kali ada pembaruan di website.
+        </p>
+        <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px; flex-wrap: wrap;">
+            <input type="text" readonly id="gSheetsFormula" 
+                   value='=IMPORTDATA("{{ route("lomba.export.sheets", ["token" => $exportToken, "filter_kategori" => request("filter_kategori")]) }}")'
+                   style="flex: 1; padding: 0.65rem 0.8rem; background: #151515; border: 1px solid rgba(66, 133, 244, 0.3); border-radius: 8px; color: #34D399; font-family: monospace; font-size: 0.78rem; outline: none; min-width: 280px;">
+            <button type="button" class="btn" onclick="copyGSheetsFormula()" 
+                    style="background: #4285F4; color: white; padding: 0.65rem 1.2rem; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 6px; transition: background 0.2s;">
+                <i class="fa-solid fa-copy"></i> <span id="copyText">Salin Rumus</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function copyGSheetsFormula() {
+            var copyText = document.getElementById("gSheetsFormula");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(copyText.value).then(function() {
+                var btnText = document.getElementById("copyText");
+                btnText.innerText = "Tersalin!";
+                setTimeout(function() {
+                    btnText.innerText = "Salin Rumus";
+                }, 2000);
+            });
+        }
+    </script>
     @endif
 
     <div class="table-responsive">
@@ -231,7 +273,7 @@
                         @if(auth()->user()->role == 'admin')
                             <th>Pendaftar (User)</th>
                         @endif
-                        <th>Kelulusan</th>
+                        <th>Status</th>
                         <th @if($colHideProposal) style="display:none;" @endif>Proposal</th>
                         <!-- <th @if($colHideSubtema) style="display:none;" @endif>Sub Tema</th> -->
                         <th>Orisinalitas</th>
@@ -1302,9 +1344,10 @@
 <script>
     const PAYMENT_MAP = {
         1: { label: 'Web Programming', nominal: 85000, bank: 'Mandiri', rekening: '9876-5432-1098', an: 'AGNESS SHERLYTA ANGG' },
-        2: { label: 'Design Poster', nominal: 55000, bank: 'Mandiri', rekening: '9876-5432-1098', an: 'AGNESS SHERLYTA ANGG' },
+        2: { label: 'Design Jaringan', nominal: 55000, bank: 'Mandiri', rekening: '9876-5432-1098', an: 'AGNESS SHERLYTA ANGG' },
         3: { label: 'Design Packaging', nominal: 60000, bank: 'Mandiri', rekening: '9876-5432-1098', an: 'AGNESS SHERLYTA ANGG' },
-        4: { label: 'Videography', nominal: 60000, bank: 'Mandiri', rekening: '9876-5432-1098', an: 'AGNESS SHERLYTA ANGG' },
+        4: { label: 'Cyber Security', nominal: 60000, bank: 'Mandiri', rekening: '9876-5432-1098', an: 'AGNESS SHERLYTA ANGG' },
+        5: { label: 'Videography', nominal: 60000, bank: 'Mandiri', rekening: '9876-5432-1098', an: 'AGNESS SHERLYTA ANGG' },
     };
     function openModal(id) {
         if(id === 'modalCreate') {

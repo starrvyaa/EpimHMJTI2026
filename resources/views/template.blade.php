@@ -295,11 +295,11 @@
                 @php
                     $driveLink = 'https://drive.google.com/drive/folders/1x07zL_FzBVwIIwEdqBpsiQXYE9ODxItl';
                     $files = [
-                        ['name' => 'Logo KMIPN VIII 2026', 'desc' => 'Format PNG & SVG — Resmi'],
-                        ['name' => 'Template Poster Lomba', 'desc' => 'Canva & PSD editable'],
+                        ['name' => 'Logo EPIM 2026', 'desc' => 'Format PNG & SVG — Resmi'],
+                        /* ['name' => 'Template Poster Lomba', 'desc' => 'Canva & PSD editable'], */
                         ['name' => 'Template Proposal', 'desc' => 'DOCX — Format proposal resmi'],
                         ['name' => 'Panduan Teknis Lomba', 'desc' => 'PDF — Buku panduan lengkap'],
-                        ['name' => 'Form Pendaftaran', 'desc' => 'PDF — Isi & upload kembali'],
+                        /* ['name' => 'Form Pendaftaran', 'desc' => 'PDF — Isi & upload kembali'], */
                         ['name' => 'Surat Pernyataan Orisinalitas', 'desc' => 'DOCX — Tanda tangan basah'],
                     ];
                 @endphp

@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
         *, *::before, *::after {
@@ -794,153 +795,266 @@
 
         .btn-daftar:hover { background: var(--orange); color: #fff; }
 
-        /* ===== TIMELINE ===== */
-        .timeline {
-            padding: 6rem 0;
-            background: var(--dark-section);
-        }
+       /* ===== TIMELINE SIMETRIS V2 ===== */
+.timeline {
+    padding: 6rem 0;
+    background: var(--dark);
+}
 
-        /* Tab Buttons */
-        .timeline-tabs {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-bottom: 3.5rem;
-        }
+/* Tab Buttons */
+.timeline-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 3.5rem;
+    flex-wrap: wrap; /* Supaya aman di mobile jika tab banyak */
+}
 
-        .timeline-tab {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid var(--border);
-            color: var(--text-gray);
-            padding: 0.75rem 1.75rem;
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 0.9rem;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+.timeline-tab {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border, rgba(255,255,255,0.1));
+    color: var(--text-gray, #94a3b8);
+    padding: 0.75rem 1.75rem;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
-        .timeline-tab:hover, .timeline-tab.active {
-            background: var(--orange);
-            color: #fff;
-            border-color: var(--orange);
-            box-shadow: 0 10px 20px rgba(249, 115, 22, 0.2);
-            transform: translateY(-2px);
-        }
+.timeline-tab:hover, .timeline-tab.active {
+    background: var(--orange, #ea580c);
+    color: #fff;
+    border-color: var(--orange, #ea580c);
+    box-shadow: 0 10px 20px rgba(249, 115, 22, 0.2);
+    transform: translateY(-2px);
+}
 
-        /* Timeline Content Toggle */
-        .timeline-content {
-            display: none;
-        }
-        .timeline-content.active {
-            display: block;
-            animation: fadeIn 0.5s ease-in-out;
-        }
+/* Content Animation */
+.timeline-content {
+    display: none;
+}
+.timeline-content.active {
+    display: block;
+    animation: fadeIn 0.5s ease-in-out forwards;
+}
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 
-        .timeline-inner {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 0 3rem;
-        }
+.timeline-inner {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
 
-        .timeline-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0;
-            position: relative;
-        }
+.timeline-list {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
 
-        .timeline-list::before {
-            content: '';
-            position: absolute;
-            left: 28px;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: rgba(255,255,255,0.08);
-        }
+/* Garis Tengah Mobile (Lurus Pas ditengah Bulatan) */
+.timeline-list::before {
+    content: '';
+    position: absolute;
+    left: 29px; /* Setengah dari Lebar Ikon 58px */
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: rgba(255,255,255,0.1);
+    z-index: 0;
+}
 
-        .timeline-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 1.5rem;
-            padding: 1.25rem 0;
-        }
+.timeline-item {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1rem 0;
+    width: 100%;
+}
 
-        .tl-icon {
-            width: 58px;
-            height: 58px;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            font-size: 1.3rem;
-            position: relative;
-            z-index: 1;
-        }
+.tl-icon-wrap {
+    width: 58px;
+    height: 58px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    z-index: 2;
+}
 
-        .tl-icon.done { background: #10b981; }
-        .tl-icon.active { background: var(--orange); }
-        .tl-icon.upcoming { background: #1f2937; }
+.tl-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #27272a;
+    border: 3px solid #09090b; /* Sesuaikan dengan warna background utama website Anda */
+    color: #fff;
+    z-index: 2;
+}
 
-        .tl-card {
-            flex: 1;
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 1.25rem 1.5rem;
-            position: relative;
-            transition: border-color 0.3s;
-        }
+.tl-year-text {
+    font-size: 11px;
+    font-weight: 800;
+    color: #a1a1aa;
+}
 
-        .tl-card.active {
-            background: rgba(249,115,22,0.06);
-            border-color: rgba(249,115,22,0.3);
-        }
+/* Pewarnaan Status yang Jelas */
+.tl-icon.done { background: #10b981; box-shadow: 0 0 15px rgba(16, 185, 129, 0.3); }
+.tl-icon.active { background: var(--orange, #ea580c); box-shadow: 0 0 15px rgba(234, 88, 12, 0.4); }
+.tl-icon.upcoming { background: #64748b; }
 
-        .tl-date {
-            font-size: 0.72rem;
-            font-weight: 700;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: var(--orange);
-            margin-bottom: 0.25rem;
-        }
+.tl-card-side {
+    flex: 1;
+    z-index: 1;
+}
 
-        .tl-title {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 700;
-            font-size: 1.05rem;
-            margin-bottom: 0.25rem;
-        }
+.tl-card {
+    width: 100%;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border, rgba(255,255,255,0.08));
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.4);
+    transition: all 0.3s ease;
+}
 
-        .tl-desc {
-            color: var(--text-gray);
-            font-size: 0.82rem;
-        }
+.tl-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--orange, #ea580c);
+    background: rgba(255,255,255,0.04);
+}
 
-        .tl-badge {
-            position: absolute;
-            right: 1.25rem;
-            top: 50%;
-            transform: translateY(-50%);
-            padding: 0.25rem 0.75rem;
-            border-radius: 50px;
-            font-size: 0.68rem;
-            font-weight: 700;
-            letter-spacing: 0.06em;
-        }
+.tl-card-header {
+    background: linear-gradient(90deg, #1e3a8a, #3b82f6);
+    color: #fff;
+    padding: 0.65rem 1.25rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
 
-        .tl-badge.done { background: #10b981; color: #fff; }
-        .tl-badge.active { background: var(--orange); color: #fff; }
+.tl-card-header.last {
+    background: linear-gradient(90deg, #991b1b, #ef4444);
+}
+
+.tl-card-body {
+    padding: 1.25rem;
+    color: #fff;
+}
+
+/* Judul khusus mobile */
+.tl-mobile-title {
+    display: block;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
+.tl-mobile-desc {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 0.825rem;
+    color: var(--text-gray, #94a3b8);
+    margin-top: 0.5rem;
+    line-height: 1.5;
+}
+
+.tl-text-side { display: none; }
+.tl-card-body { display: block; padding: 1.25rem; }
+/* ===== BREAKPOINT DESKTOP (MIN-WIDTH: 769px) ===== */
+@media (min-width: 769px) {
+    .timeline-list::before {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    
+    .timeline-item {
+        display: grid;
+        grid-template-columns: 1fr 58px 1fr;
+        gap: 3rem;
+        align-items: center;
+        padding: 2rem 0;
+    }
+    
+    .tl-icon-wrap {
+        grid-column: 2;
+        justify-self: center;
+    }
+    
+    .tl-text-side {
+        display: block; /* Muncul di desktop */
+    }
+    
+    .tl-mobile-title {
+        display: none; /* Di dalam card tidak perlu judul lagi */
+    }
+    
+    .tl-mobile-desc {
+        margin-top: 0; /* Merapikan isi deskripsi di dalam card */
+    }
+
+    .tl-text-title {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 700;
+        font-size: 1.25rem;
+        color: #fff;
+        margin-bottom: 0.5rem;
+    }
+
+    .tl-text-desc {
+        font-size: 0.875rem;
+        color: var(--text-gray, #94a3b8);
+        line-height: 1.6;
+        max-width: 360px;
+    }
+
+    /* ITEM GANJIL: Teks Kiri, Card Kanan */
+    .timeline-item:nth-child(odd) .tl-text-side {
+        grid-column: 1;
+        text-align: right;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+    }
+    .timeline-item:nth-child(odd) .tl-card-side {
+        grid-column: 3;
+        display: flex;
+        justify-content: flex-start;
+    }
+
+    /* ITEM GENAP: Card Kiri, Teks Kanan */
+    .timeline-item:nth-child(even) .tl-card-side {
+        grid-column: 1;
+        display: flex;
+        justify-content: flex-end;
+    }
+    .timeline-item:nth-child(even) .tl-text-side {
+        grid-column: 3;
+        text-align: left;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .tl-card {
+        max-width: 400px; /* Batasi lebar card agar tidak terlalu mulur di layar besar */
+    }
+}
 
         /* ===== FOOTER ===== */
         .footer {
@@ -1478,7 +1592,7 @@
         </a>
         <ul class="navbar-nav">
             <li><a href="#beranda" class="active">BERANDA</a></li>
-            <li><a href="#lomba">LOMBA</a></li>
+  <li><a href="#lomba">LOMBA</a></li>
             <li><a href="{{ url('/template') }}">TEMPLATE</a></li>
             <li><a href="#timeline">TIMELINE</a></li>
             @guest
@@ -1533,16 +1647,16 @@
                             <img src="{{ asset('images/image.png') }}" alt="EPIM 1">
                         </div>
                         <div class="hero-slide-item">
-                            <img src="{{ asset('images/DSC02634.JPG') }}" alt="EPIM 2">
+                            <img src="{{ asset('images/DSC02634.avif') }}" alt="EPIM 2">
                         </div>
                         <div class="hero-slide-item">
-                            <img src="{{ asset('images/DSC02839.JPG') }}" alt="EPIM 3">
+                            <img src="{{ asset('images/DSC02839.avif') }}" alt="EPIM 3">
                         </div>
                         <div class="hero-slide-item">
-                            <img src="{{ asset('images/DSC02847.JPG') }}" alt="EPIM 4">
+                            <img src="{{ asset('images/DSC02847.avif') }}" alt="EPIM 4">
                         </div>
                         <div class="hero-slide-item">
-                            <img src="{{ asset('images/DSC02852.JPG') }}" alt="EPIM 5">
+                            <img src="{{ asset('images/DSC02852.avif') }}" alt="EPIM 5">
                         </div>
                     </div>
                     <button class="hero-slider-btn hero-slider-btn-prev" id="heroSliderPrev"><i class="fas fa-chevron-left"></i></button>
@@ -1629,137 +1743,138 @@
         </div>
     </section>
 
-    {{-- ===== TIMELINE ===== --}}
-    @php
-    $categories = [
-        'videography' => [
-            'name' => 'Videography & Desain Poster',
-            'icon' => 'fas fa-video',
-            'schedule' => [
-                [
-                    'title' => 'Pendaftaran Lomba & Pengumpulan Proposal',
-                    'date' => '23 Juni 2026',
-                    'desc' => 'Pembukaan pendaftaran resmi Lomba dan Pengumpulan Karya',
-                    'status' => 'upcoming',
-                ],
-                [
-                    'title' => 'Penutupan Pendaftaran',
-                    'date' => '22 Agustus 2026',
-                    'desc' => 'Batas akhir pendaftaran Lomba & Pengumpulan Karya',
-                    'status' => 'upcoming',
-                ],
-                [
-                    'title' => 'Puncak Acara(Pengumuman Juara)',
-                    'date' => '23 Agustus 2026',
-                    'desc' => 'Pengumuman pemenang Lomba Videography dan Desain Poster',
-                    'status' => 'upcoming',
-                ],
-            ]
+@php
+    // 1. Definisikan array data langsung di dalam Blade
+    $timelineData = [
+        [
+            "title" => "Launching EPIM 2026",
+            "subtitle" => "Pembukaan resmi kompetisi.",
+            "date" => "23 JUNI 2026",
+            "cardTitle" => "Launching EPIM 2026",
+            "cardSubtitle" => "",
+            "year" => "2026",
+            "isHighlight" => false
         ],
-        'packaging' => [
-            'name' => 'Desain Packaging & Web Programming',
-            'icon' => 'fas fa-box-open',
-            'schedule' => [
-                [
-                    'title' => 'Pendaftaran Lomba & Pengumpulan Proposal',
-                    'date' => '23 Juni 2026 ',
-                    'desc' => 'Pendaftaran & pengumpulan proposal Design Packaging dan Web Programming',
-                    'status' => 'upcoming',
-                ],
-                [
-                    'title' => 'Batas Akhir Pendaftaran & Pengumpulan Proposal',
-                    'date' => '8 Agustus 2026',
-                    'desc' => 'Batas akhir pendaftaran Design Packaging dan Web Programming, Pengumpulan Proposal',
-                    'status' => 'upcoming',
-                ],
-                [
-                    'title' => 'Pengumuman Finalis',
-                    'date' => '12 Agustus 2026',
-                    'desc' => 'Pengumuman peserta yang lolos ke Babak Final',
-                    'status' => 'upcoming',
-                ],
-                [
-                    'title' => 'Technical Meeting Finalis',
-                    'date' => '13 Agustus 2026',
-                    'desc' => 'Penjelasan teknis babak final',
-                    'status' => 'upcoming',
-                ],
-                [
-                    'title' => 'Babak Final',
-                    'date' => '22 Agustus 2026',
-                    'desc' => 'Babak final kompetisi Design Packaging dan Web Programming, Offline di Politeknik Negeri Jember ',
-                    'status' => 'upcoming',
-                ],
-                [
-                    'title' => 'Puncak Acara(Pengumuman Juara)',
-                    'date' => '23 Agustus 2026',
-                    'desc' => 'Pengumuman pemenang Lomba Design Packaging dan Web Programing',
-                    'status' => 'upcoming',
-                ],
-            ]
+        [
+            "title" => "Tahap Pendaftaran",
+            "subtitle" => "Pendaftaran dan Submit Proposal",
+            "date" => "23 JUNI - 8 AGUSTUS 2026",
+            "cardTitle" => "Pendaftaran dan Submit Proposal",
+            "cardSubtitle" => "",
+            "year" => "2026",
+            "isHighlight" => false
         ],
+        [
+            "title" => "Batas Akhir Submit Proposal",
+            "subtitle" => "Batas akhir penyerahan proposal tim.",
+            "date" => "8 Agustus 2026",
+            "cardTitle" => "Batas Akhir Submit Proposal",
+            "cardSubtitle" => "",
+            "year" => "2026",
+            "isHighlight" => false
+        ],
+        [
+            "title" => "Pengumuman Finalis",
+            "subtitle" => "Tim yang lolos menuju Polije.",
+            "date" => "12 AGUSTUS 2026",
+            "cardTitle" => "Pengumuman Finalis",
+            "cardSubtitle" => "",
+            "year" => "2026",
+            "isHighlight" => false
+        ],
+        [
+            "title" => "Technical Meeting Finalis",
+            "subtitle" => "Technical Meeting Finalis",
+            "date" => "13 AGUSTUS 2026",
+            "cardTitle" => "Technical Meeting Finalis",
+            "cardSubtitle" => "",
+            "year" => "2026",
+            "isHighlight" => false
+        ],
+        [
+            "title" => "Final Lomba",
+            "subtitle" => "Pelaksanaan Final Lomba",
+            "date" => "22 AGUSTUS 2026",
+            "cardTitle" => "Pelaksanaan Final Lomba",
+            "cardSubtitle" => "",
+            "year" => "2026",
+            "isHighlight" => false
+        ],
+        [
+            "title" => "Puncak Acara",
+            "subtitle" => "Berlokasi di kampus Politeknik Negeri Jember",
+            "date" => "20 Agustus 2026",
+            "cardTitle" => "Pelaksanaan Lomba (Onsite dan Online)",
+            "cardSubtitle" => "Berlokasi Di Politeknik Negeri Jember",
+            "year" => "🏆",
+            "isHighlight" => true
+        ]
     ];
-    @endphp
+@endphp
 
-    <section class="timeline" id="timeline">
-        <div class="timeline-inner">
-            <div class="section-header">
-                <div class="section-eyebrow-center">
-                    <i class="fas fa-calendar"></i> JADWAL EVENT <i class="fas fa-calendar"></i>
-                </div>
-                <h2 class="section-title">TIMELINE <span>EVENT</span></h2>
-                <p class="section-subtitle">Catat tanggal penting untuk setiap tahapan kompetisi</p>
+<section id="timeline" style="background-color: var(--dark);" class="font-sans antialiased text-gray-800">
+
+  <div class="max-w-6xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h1 class="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">TIMELINE KEGIATAN</h1>
+      <div class="mt-3 border-t-4 border-red-600 w-16 mx-auto rounded-full"></div>
+    </div>
+
+    <div class="relative">
+      <div class="absolute inset-0 flex justify-center pointer-events-none">
+        <div class="w-0.5 bg-gray-200 h-full"></div>
+      </div>
+      
+      @foreach($timelineData as $item)
+        @php
+          // Mengatur posisi otomatis zig-zag: Genap di Kiri, Ganjil di Kanan
+          $isLeft = $loop->index % 2 === 0;
+        @endphp
+
+        <div class="relative grid grid-cols-[1fr,auto,1fr] gap-x-4 md:gap-x-8 items-center min-h-[150px] {{ $item['isHighlight'] ? 'mt-8' : 'mt-4' }}">
+          
+          <div class="{{ $isLeft ? 'text-right' : 'text-left order-3' }}">
+            <h2 class="text-lg md:text-xl font-bold {{ $item['isHighlight'] ? 'text-red-600 text-2xl' : 'text-white' }}">
+              {{ $item['title'] }}
+            </h2>
+            <p class="text-xs md:text-sm text-white mt-1">{{ $item['subtitle'] }}</p>
+          </div>
+
+          <div class="relative flex items-center justify-center z-10 order-2">
+            @php
+              $badgeColor = $item['isHighlight'] ? 'bg-yellow-500' : ($loop->first ? 'bg-red-600' : 'bg-slate-700');
+            @endphp
+            <div class="w-16 h-16 {{ $badgeColor }} rounded-full flex items-center justify-center border-2 border-red shadow-md">
+              <span class="text-xs md:text-sm font-bold text-white tracking-wider">{{ $item['year'] }}</span>
+            </div>
+          </div>
+
+          <div class="order-1 {{ $isLeft ? 'order-3' : '' }} shadow-md overflow-hidden max-w-xl w-full {{ $isLeft ? 'justify-self-start' : 'justify-self-end' }}">
+            
+            {{-- Header Card --}}
+            <div class="{{ $item['isHighlight'] ? 'bg-red-800' : 'bg-orange-500' }} px-4 py-1.5 flex items-center space-x-2">
+              @if($item['isHighlight'])
+            @endif
+              <span class="text-[16px] font-bold text-white tracking-wide">{{ $item['date'] }}</span>
             </div>
 
-            <div class="timeline-tabs">
-                @foreach($categories as $key => $category)
-                <button class="timeline-tab {{ $loop->first ? 'active' : ''}}" data-target="{{ $key }}">
-                    <i class="{{ $category['icon'] }}"></i>
-                    {{ $category['name'] }}
-                </button>
-                @endforeach
+            {{-- Body Card --}}
+            <div class="{{ $item['isHighlight'] ? 'bg-red-50' : 'bg-gray-900' }} p-4">
+              <h3 class="text-xl md:text-lg font-semibold {{ $item['isHighlight'] ? 'text-red-900' : 'text-white' }}">
+                {{ $item['cardTitle'] }}
+              </h3>
+              @if($item['cardSubtitle'])
+                <p class="text-xs text-gray-700 mt-1">{{ $item['cardSubtitle'] }}</p>
+              @endif
             </div>
 
-            @foreach($categories as $key => $category)
-            <div class="timeline-content {{ $loop->first ? 'active' : ''}}" id="timeline-{{ $key }}">
-                <div class="timeline-list">
-                    @foreach($category['schedule'] as $item)
-                    <div class="timeline-item">
-                        <div @class([
-                            'tl-icon',
-                            'done' => $item['status'] === 'done',
-                            'active' => $item['status'] === 'active',
-                            'upcoming' => $item['status'] === 'upcoming'
-                        ])>
-                            @if($item['status'] === 'done')
-                                ✓
-                            @elseif($item['status'] === 'active')
-                                🔥
-                            @else
-                                📅
-                            @endif
-                        </div>
-                        <div @class([
-                            'tl-card',
-                            'active' => $item['status'] === 'active'
-                        ])>
-                            <div class="tl-date">{{ $item['date'] }}</div>
-                            <div class="tl-title">{{ $item['title'] }}</div>
-                            <div class="tl-desc">{{ $item['desc'] }}</div>
-                            @if($item['status'] === 'done')
-                                <span class="tl-badge done">SELESAI</span>
-                            @elseif($item['status'] === 'active')
-                                <span class="tl-badge active">AKTIF SEKARANG</span>
-                            @endif
-                        </div>
-                    </div>
-                    @endforeach
-                </div>
-            </div>
-            @endforeach
+          </div>
 
-    </section>
-
+        </div>
+      @endforeach
+    </div>
+  </div>
+</section>
     {{-- ===== GALLERY SLIDER ===== --}}
     <section class="gallery-slider">
         <div class="slider-section-inner">
@@ -1776,16 +1891,16 @@
                         <img src="{{ asset('images/image.png') }}" alt="Dokumentasi 1">
                     </div>
                     <div class="slide-item">
-                            <img src="{{ asset('images/DSC02634.JPG') }}" alt="EPIM 2">
+                            <img src="{{ asset('images/DSC02634.avif') }}" alt="EPIM 2">
                         </div>
                         <div class="slide-item">
-                            <img src="{{ asset('images/DSC02839.JPG') }}" alt="EPIM 3">
+                            <img src="{{ asset('images/DSC02839.avif') }}" alt="EPIM 3">
                         </div>
                         <div class="slide-item">
-                            <img src="{{ asset('images/DSC02847.JPG') }}" alt="EPIM 4">
+                            <img src="{{ asset('images/DSC02847.avif') }}" alt="EPIM 4">
                         </div>
                         <div class="slide-item">
-                            <img src="{{ asset('images/DSC02852.JPG') }}" alt="EPIM 5">
+                            <img src="{{ asset('images/DSC02852.avif') }}" alt="EPIM 5">
                         </div>
                 </div>
                 <button class="slider-btn slider-btn-prev" id="sliderPrev"><i class="fas fa-chevron-left"></i></button>
@@ -1809,159 +1924,143 @@
                 </p>
             </div>
             <div class="lomba-grid">
+                @php
+                $list_lomba = [
+                    [
+                        'id' => 'wmodalPackaging',
+                        'title' => 'Desain Packaging',
+                        'tag_class' => 'design',
+                        'tag_label' => 'design',
+                        'card_desc' => 'Desain kemasan sangat penting dalam mempengaruhi persepsi konsumen, menarik perhatian mereka, dan membedakan produk dari pesaing di rak toko.',
+                        'modal_desc' => 'Lomba Desain Kemasan Produk Kreatif bertujuan untuk menantang kreativitas dan ketajaman desain peserta dalam merancang kemasan produk yang estetik, inovatif, ramah lingkungan, serta memiliki nilai jual tinggi untuk sektor UMKM/industri.',
+                        'img' => asset('images/LogoEPIM.png'),
+                        'emoji' => '📦',
+                        'icon' => 'fas fa-cube',
+                        'biaya' => 'Rp 50.000',
+                        'hadiah' => 'Rp 3.000.000',
+                        'batas' => '15 Maret 2026',
+                        'tipe' => 'Individu',
+                        'deliverables' => 'Peserta wajib mengumpulkan proposal berisi cover dengan judul, nama, asal sekolah, serta penempatan logo Polije, JTI, EPIM, dan sekolah sesuai ketentuan, yang dilengkapi isi berupa deskripsi filosofi, elemen desain, target pasar, kelebihan kemasan, serta lampiran gambar dieline dan mockup packaging menyeluruh.',
+                        'deadline' => '23 Juni - 8 Agustus 2026',
+                        'prize' => 'Rp 3.000.000',
+                        'guidebook' => 'https://drive.google.com/drive/folders/1x07zL_FzBVwIIwEdqBpsiQXYE9ODxItl'
+                    ],
+                    [
+                        'id' => 'wmodalWebProg',
+                        'title' => 'Web Programming',
+                        'tag_class' => 'technology',
+                        'tag_label' => 'technology',
+                        'card_desc' => 'Front-end web programming fokus pada pembuatan tampilan yang menarik, responsif, dan fungsional untuk situs web.',
+                        'modal_desc' => 'Lomba Pemrograman Web menantang kreativitas dan ketangkasan tim dalam mengembangkan aplikasi web yang responsif, fungsional, dan inovatif untuk memecahkan permasalahan nyata di lingkungan sekolah atau masyarakat umum.',
+                        'img' => asset('images/webpro.webp'),
+                        'emoji' => '💻',
+                        'icon' => 'fas fa-code',
+                        'biaya' => 'Rp 75.000',
+                        'hadiah' => 'Rp 5.000.000',
+                        'batas' => '15 Maret 2026',
+                        'tipe' => 'Tim (Maks. 3 Orang)',
+                        'deliverables' => 'Peserta wajib mengumpulkan proposal proyek yang berisi draf rancangan sistem, flowchart sistem, serta desain awal website berupa wireframe atau mockup.',
+                        'deadline' => '23 Juni - 8 Agustus 2026',
+                        'prize' => 'Rp 3.000.000',
+                        'guidebook' => 'https://drive.google.com/drive/folders/1x07zL_FzBVwIIwEdqBpsiQXYE9ODxItl'
+                    ],
+                    [
+                        'id' => 'wmodalPoster',
+                        'title' => 'Desain Jaringan',
+                        'tag_class' => 'design',
+                        'tag_label' => 'design',
+                        'card_desc' => 'Ekspresikan kreativitas melalui desain visual yang menarik, komunikatif, dan berkarakter kuat dalam berbagai media.',
+                        'modal_desc' => 'Lomba Desain Jaringan mengajak peserta merancang infrastruktur jaringan komputer yang aman, handal, dan efisien untuk kebutuhan konektivitas modern.',
+                        'img' => asset('images/desjar.avif'),
+                        'emoji' => '🎨',
+                        'icon' => 'fas fa-image',
+                        'biaya' => 'Rp 50.000',
+                        'hadiah' => 'Rp 3.000.000',
+                        'batas' => '15 Maret 2026',
+                        'tipe' => 'Individu',
+                        'deliverables' => 'File desain topologi jaringan format PDF/Cisco Packet Tracer, lembar orisinalitas karya bermaterai.',
+                        'deadline' => '23 Juni - 8 Agustus 2026',
+                        'prize' => 'Rp 3.000.000',
+                        'guidebook' => 'https://drive.google.com/drive/folders/1x07zL_FzBVwIIwEdqBpsiQXYE9ODxItl'
+                    ],
+                    [
+                        'id' => 'wmodalCyber',
+                        'title' => 'Cyber Security',
+                        'tag_class' => 'cybersecurity',
+                        'tag_label' => 'cybersecurity',
+                        'card_desc' => 'Lomba ini berfokus pada keamanan siber, menguji ketangkasan dan analisis keamanan peserta.',
+                        'modal_desc' => 'Lomba Cyber Security ini berfokus pada keamanan siber, di mana peserta akan diuji kemampuannya dalam menghadapi berbagai tantangan keamanan siber.',
+                        'img' => asset('images/cyber.avif'),
+                        'emoji' => '🎨',
+                        'icon' => 'fas fa-shield-halved',
+                        'biaya' => 'Rp 50.000',
+                        'hadiah' => 'Rp 3.000.000',
+                        'batas' => '15 Maret 2026',
+                        'tipe' => 'Individu',
+                        'deliverables' => 'Laporan write-up penetrasi/analisis keamanan siber, lembar orisinalitas karya bermaterai.',
+                        'deadline' => '23 Juni - 8 Agustus 2026',
+                        'prize' => 'Rp 3.000.000',
+                        'guidebook' => 'https://drive.google.com/drive/folders/1x07zL_FzBVwIIwEdqBpsiQXYE9ODxItl'
+                    ],
+                    [
+                        'id' => 'wmodalVideography',
+                        'title' => 'Videography',
+                        'tag_class' => 'design',
+                        'tag_label' => 'videography',
+                        'card_desc' => 'Buat karya video kreatif yang memukau — ceritakan ide dan inovasi melalui visual bergerak yang impactful.',
+                        'modal_desc' => 'Lomba Pembuatan Video Pendek/Kreatif menantang sineas muda bercerita secara sinematik mengenai ide, inovasi, atau pesan sosial kemasyarakatan melalui visual bergerak yang menggugah emosi penonton.',
+                        'img' => asset('images/videografi.jpeg'),
+                        'emoji' => '🎥',
+                        'icon' => 'fas fa-video',
+                        'biaya' => 'Rp 50.000',
+                        'hadiah' => 'Rp 4.000.000',
+                        'batas' => '15 Maret 2026',
+                        'tipe' => 'Individu',
+                        'deliverables' => 'Peserta Lomba Videography wajib mengumpulkan video bertema "Innovative Visual Motion" berdurasi 2 hingga 5 menit format MP4 resolusi minimal 1080p dengan cara mencantumkan tautan Google Drive pribadi yang aksesnya telah diatur ke opsi “Siapa saja yang memiliki link dapat melihat”.',
+                        'deadline' => '23 Juni - 8 Agustus 2026',
+                        'prize' => 'Rp 3.000.000',
+                        'guidebook' => 'https://drive.google.com/drive/folders/1x07zL_FzBVwIIwEdqBpsiQXYE9ODxItl'
+                    ]
+                ];
+                @endphp
 
-                {{-- Card 1: Desain Packaging --}}
+                @foreach ($list_lomba as $lomba)
                 <div class="lomba-card">
                     <div class="lomba-card-img-wrap">
                         <img
-                            src="{{ asset('images/LogoEPIM.png') }}"
-                            alt="Desain Packaging"
+                            src="{{ $lomba['img'] }}"
+                            alt="{{ $lomba['title'] }}"
                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
                         >
-                        <div class="lomba-card-img-placeholder" style="display:none;">📦</div>
-                        <div class="lomba-card-icon"><i class="fas fa-cube"></i></div>
+                        <div class="lomba-card-img-placeholder" style="display:none;">{{ $lomba['emoji'] }}</div>
+                        <div class="lomba-card-icon"><i class="{{ $lomba['icon'] }}"></i></div>
                     </div>
                     <div class="lomba-card-body">
-                        <h3 class="lomba-card-title">Desain Packaging</h3>
-                        <span class="lomba-tag design">design</span>
+                        <h3 class="lomba-card-title">{{ $lomba['title'] }}</h3>
+                        <span class="lomba-tag {{ $lomba['tag_class'] }}">{{ $lomba['tag_label'] }}</span>
                         <p class="lomba-card-desc">
-                            Desain kemasan sangat penting dalam mempengaruhi persepsi konsumen,
-                            menarik perhatian mereka, dan membedakan produk dari pesaing di rak toko.
+                            {{ $lomba['card_desc'] }}
                         </p>
                         <div class="lomba-deadline">
                             <i class="fas fa-calendar"></i>
-                            Deadline: <strong>23 Juni - 8 Agustus 2026</strong>
+                            Deadline: <strong>{{ $lomba['deadline'] }}</strong>
                         </div>
                         <div class="lomba-prize">
-                            <i class="fas fa-trophy"></i> Rp 3.000.000
+                            <i class="fas fa-trophy"></i> {{ $lomba['prize'] }}
                         </div>
                         <div class="lomba-actions">
-                            <a href="javascript:void(0)" onclick="openWModal('wmodalPackaging')" class="btn-detail">Detail Lomba</a>
+                            <a href="javascript:void(0)" onclick="openWModal('{{ $lomba['id'] }}')" class="btn-detail">Detail Lomba</a>
                             <a href="{{ url('/lomba') }}" class="btn-daftar">Daftar</a>
                         </div>
                         <div style="margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
                             <span style="font-size:0.78rem;color:var(--text-gray);"><i class="fas fa-book"></i> Guidebook</span>
-                            <a href="https://drive.google.com/drive/folders/1x07zL_FzBVwIIwEdqBpsiQXYE9ODxItl" target="_blank" rel="noopener noreferrer" style="font-size:0.75rem;color:var(--orange);font-weight:600;text-decoration:none;">
+                            <a href="{{ $lomba['guidebook'] }}" target="_blank" rel="noopener noreferrer" style="font-size:0.75rem;color:var(--orange);font-weight:600;text-decoration:none;">
                                 <i class="fas fa-download"></i> Download
                             </a>
                         </div>
                     </div>
                 </div>
-
-                {{-- Card 2: Web Programming --}}
-                <div class="lomba-card">
-                    <div class="lomba-card-img-wrap">
-                        <img
-                            src="{{ asset('images/webpro.webp') }}"
-                            alt="Web Programming"
-                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-                        >
-                        <div class="lomba-card-img-placeholder" style="display:none;">💻</div>
-                        <div class="lomba-card-icon"><i class="fas fa-code"></i></div>
-                    </div>
-                    <div class="lomba-card-body">
-                        <h3 class="lomba-card-title">Web Programming</h3>
-                        <span class="lomba-tag technology">technology</span>
-                        <p class="lomba-card-desc">
-                            Front-end web programming fokus pada pembuatan tampilan yang menarik,
-                            responsif, dan fungsional untuk situs web.
-                        </p>
-                        <div class="lomba-deadline">
-                            <i class="fas fa-calendar"></i>
-                            Deadline: <strong>23 Juni - 8 Agustus 2026</strong>
-                        </div>
-                        <div class="lomba-prize">
-                            <i class="fas fa-trophy"></i> Rp 3.000.000
-                        </div>
-                        <div class="lomba-actions">
-                            <a href="javascript:void(0)" onclick="openWModal('wmodalWebProg')" class="btn-detail">Detail Lomba</a>
-                            <a href="{{ url('/lomba') }}" class="btn-daftar">Daftar</a>
-                        </div>
-                        <div style="margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
-                            <span style="font-size:0.78rem;color:var(--text-gray);"><i class="fas fa-book"></i> Guidebook</span>
-                            <a href="https://drive.google.com/drive/folders/1x07zL_FzBVwIIwEdqBpsiQXYE9ODxItl" target="_blank" rel="noopener noreferrer" style="font-size:0.75rem;color:var(--orange);font-weight:600;text-decoration:none;">
-                                <i class="fas fa-download"></i> Download
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- Card 3: Desain Grafis --}}
-                <div class="lomba-card">
-                    <div class="lomba-card-img-wrap">
-                        <img
-                            src="{{ asset('images/poster_ai.png') }}"
-                            alt="Desain Grafis"
-                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-                        >
-                        <div class="lomba-card-img-placeholder" style="display:none;">🎨</div>
-                        <div class="lomba-card-icon"><i class="fas fa-image"></i></div>
-                    </div>
-                    <div class="lomba-card-body">
-                        <h3 class="lomba-card-title">Desain Poster</h3>
-                        <span class="lomba-tag design">design</span>
-                        <p class="lomba-card-desc">
-                            Ekspresikan kreativitas melalui desain visual yang menarik,
-                            komunikatif, dan berkarakter kuat dalam berbagai media.
-                        </p>
-                        <div class="lomba-deadline">
-                            <i class="fas fa-calendar"></i>
-                            Deadline: <strong>23 Juni - 8 Agustus 2026</strong>
-                        </div>
-                        <div class="lomba-prize">
-                            <i class="fas fa-trophy"></i> Rp 3.000.000
-                        </div>
-                        <div class="lomba-actions">
-                            <a href="javascript:void(0)" onclick="openWModal('wmodalPoster')" class="btn-detail">Detail Lomba</a>
-                            <a href="{{ url('/lomba') }}" class="btn-daftar">Daftar</a>
-                        </div>
-                        <div style="margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
-                            <span style="font-size:0.78rem;color:var(--text-gray);"><i class="fas fa-book"></i> Guidebook</span>
-                            <a href="https://drive.google.com/drive/folders/1x07zL_FzBVwIIwEdqBpsiQXYE9ODxItl" target="_blank" rel="noopener noreferrer" style="font-size:0.75rem;color:var(--orange);font-weight:600;text-decoration:none;">
-                                <i class="fas fa-download"></i> Download
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- Card 4: Videography --}}
-                <div class="lomba-card">
-                    <div class="lomba-card-img-wrap">
-                        <img
-                            src="{{ asset('images/videografi.jpeg') }}"
-                            alt="Videography"
-                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-                        >
-                        <div class="lomba-card-img-placeholder" style="display:none;">🎥</div>
-                        <div class="lomba-card-icon"><i class="fas fa-video"></i></div>
-                    </div>
-                    <div class="lomba-card-body">
-                        <h3 class="lomba-card-title">Videography</h3>
-                        <span class="lomba-tag design">videography</span>
-                        <p class="lomba-card-desc">
-                            Buat karya video kreatif yang memukau — ceritakan ide dan
-                            inovasi melalui visual bergerak yang impactful.
-                        </p>
-                        <div class="lomba-deadline">
-                            <i class="fas fa-calendar"></i>
-                            Deadline: <strong>23 Juni - 8 Agustus 2026</strong>
-                        </div>
-                        <div class="lomba-prize">
-                            <i class="fas fa-trophy"></i> Rp 3.000.000
-                        </div>
-                        <div class="lomba-actions">
-                            <a href="javascript:void(0)" onclick="openWModal('wmodalVideography')" class="btn-detail">Detail Lomba</a>
-                            <a href="{{ url('/lomba') }}" class="btn-daftar">Daftar</a>
-                        </div>
-                        <div style="margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
-                            <span style="font-size:0.78rem;color:var(--text-gray);"><i class="fas fa-book"></i> Guidebook</span>
-                            <a href="https://drive.google.com/drive/folders/1x07zL_FzBVwIIwEdqBpsiQXYE9ODxItl" target="_blank" rel="noopener noreferrer" style="font-size:0.75rem;color:var(--orange);font-weight:600;text-decoration:none;">
-                                <i class="fas fa-download"></i> Download
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
+                @endforeach
             </div>
         </div>
     </section>
@@ -2296,141 +2395,40 @@
         });
     </script>
 
-    {{-- Modal Detail Desain Packaging --}}
-    <div id="wmodalPackaging" class="wmodal">
+    @foreach ($list_lomba as $m)
+    <div id="{{ $m['id'] }}" class="wmodal">
         <div class="wmodal-content">
-            <span class="wmodal-close" onclick="closeWModal('wmodalPackaging')">&times;</span>
-            <h3 class="wmodal-title">Desain Packaging</h3>
+            <span class="wmodal-close" onclick="closeWModal('{{ $m['id'] }}')">&times;</span>
+            <h3 class="wmodal-title">{{ $m['title'] }}</h3>
             <div class="wmodal-body">
-                <p>Lomba Desain Kemasan Produk Kreatif bertujuan untuk menantang kreativitas dan ketajaman desain peserta dalam merancang kemasan produk yang estetik, inovatif, ramah lingkungan, serta memiliki nilai jual tinggi untuk sektor UMKM/industri.</p>
+                <p>{{ $m['modal_desc'] }}</p>
                 <div class="wmodal-info-grid">
                     <div class="wmodal-info-item">
                         <label>Biaya Registrasi</label>
-                        <span>Rp 50.000</span>
+                        <span>{{ $m['biaya'] }}</span>
                     </div>
                     <div class="wmodal-info-item">
                         <label>Total Hadiah</label>
-                        <span style="color:#F97316;">Rp 3.000.000</span>
+                        <span style="color:#F97316;">{{ $m['hadiah'] }}</span>
                     </div>
                     <div class="wmodal-info-item">
                         <label>Batas Pendaftaran</label>
-                        <span>15 Maret 2026</span>
+                        <span>{{ $m['batas'] }}</span>
                     </div>
                     <div class="wmodal-info-item">
                         <label>Tipe Peserta</label>
-                        <span>Individu</span>
+                        <span>{{ $m['tipe'] }}</span>
                     </div>
                 </div>
-                <p style="font-size:0.85rem; color:#9CA3AF;"><strong>Deliverables:</strong> Proposal rancangan desain kemasan dalam format PDF, file gambar mock-up kemasan 3D, serta lembar orisinalitas karya bermaterai.</p>
+                <p style="font-size:0.85rem; color:#9CA3AF;"><strong>Deliverables:</strong> {{ $m['deliverables'] }}</p>
             </div>
             <div class="wmodal-actions">
-                <button class="btn btn-close" onclick="closeWModal('wmodalPackaging')">Tutup</button>
+                <button class="btn btn-close" onclick="closeWModal('{{ $m['id'] }}')">Tutup</button>
                 <a href="{{ url('/lomba') }}" class="btn btn-daftar">Daftar Sekarang</a>
             </div>
         </div>
     </div>
-
-    {{-- Modal Detail Web Programming --}}
-    <div id="wmodalWebProg" class="wmodal">
-        <div class="wmodal-content">
-            <span class="wmodal-close" onclick="closeWModal('wmodalWebProg')">&times;</span>
-            <h3 class="wmodal-title">Web Programming</h3>
-            <div class="wmodal-body">
-                <p>Lomba Pemrograman Web menantang kreativitas dan ketangkasan tim dalam mengembangkan aplikasi web yang responsif, fungsional, dan inovatif untuk memecahkan permasalahan nyata di lingkungan sekolah atau masyarakat umum.</p>
-                <div class="wmodal-info-grid">
-                    <div class="wmodal-info-item">
-                        <label>Biaya Registrasi</label>
-                        <span>Rp 75.000</span>
-                    </div>
-                    <div class="wmodal-info-item">
-                        <label>Total Hadiah</label>
-                        <span style="color:#F97316;">Rp 5.000.000</span>
-                    </div>
-                    <div class="wmodal-info-item">
-                        <label>Batas Pendaftaran</label>
-                        <span>15 Maret 2026</span>
-                    </div>
-                    <div class="wmodal-info-item">
-                        <label>Tipe Peserta</label>
-                        <span>Tim (Maks. 3 Orang)</span>
-                    </div>
-                </div>
-                <p style="font-size:0.85rem; color:#9CA3AF;"><strong>Deliverables:</strong> Dokumen proposal sistem aplikasi, tautan kode sumber (GitHub), demo aplikasi web aktif, serta orisinalitas karya bermaterai.</p>
-            </div>
-            <div class="wmodal-actions">
-                <button class="btn btn-close" onclick="closeWModal('wmodalWebProg')">Tutup</button>
-                <a href="{{ url('/lomba') }}" class="btn btn-daftar">Daftar Sekarang</a>
-            </div>
-        </div>
-    </div>
-
-    {{-- Modal Detail Desain Poster --}}
-    <div id="wmodalPoster" class="wmodal">
-        <div class="wmodal-content">
-            <span class="wmodal-close" onclick="closeWModal('wmodalPoster')">&times;</span>
-            <h3 class="wmodal-title">Desain Poster</h3>
-            <div class="wmodal-body">
-                <p>Lomba Desain Poster mengajak peserta mengekspresikan gagasan visual yang kreatif, komunikatif, dan persuasif untuk mempublikasikan pesan edukatif yang kuat dan bermakna bagi khalayak ramai.</p>
-                <div class="wmodal-info-grid">
-                    <div class="wmodal-info-item">
-                        <label>Biaya Registrasi</label>
-                        <span>Rp 50.000</span>
-                    </div>
-                    <div class="wmodal-info-item">
-                        <label>Total Hadiah</label>
-                        <span style="color:#F97316;">Rp 3.000.000</span>
-                    </div>
-                    <div class="wmodal-info-item">
-                        <label>Batas Pendaftaran</label>
-                        <span>15 Maret 2026</span>
-                    </div>
-                    <div class="wmodal-info-item">
-                        <label>Tipe Peserta</label>
-                        <span>Individu</span>
-                    </div>
-                </div>
-                <p style="font-size:0.85rem; color:#9CA3AF;"><strong>Deliverables:</strong> Desain poster format JPG/PNG dengan resolusi tinggi (min 300dpi), orisinalitas karya bermaterai.</p>
-            </div>
-            <div class="wmodal-actions">
-                <button class="btn btn-close" onclick="closeWModal('wmodalPoster')">Tutup</button>
-                <a href="{{ url('/lomba') }}" class="btn btn-daftar">Daftar Sekarang</a>
-            </div>
-        </div>
-    </div>
-
-    {{-- Modal Detail Videography --}}
-    <div id="wmodalVideography" class="wmodal">
-        <div class="wmodal-content">
-            <span class="wmodal-close" onclick="closeWModal('wmodalVideography')">&times;</span>
-            <h3 class="wmodal-title">Videography</h3>
-            <div class="wmodal-body">
-                <p>Lomba Pembuatan Video Pendek/Kreatif menantang sineas muda bercerita secara sinematik mengenai ide, inovasi, atau pesan sosial kemasyarakatan melalui visual bergerak yang menggugah emosi penonton.</p>
-                <div class="wmodal-info-grid">
-                    <div class="wmodal-info-item">
-                        <label>Biaya Registrasi</label>
-                        <span>Rp 50.000</span>
-                    </div>
-                    <div class="wmodal-info-item">
-                        <label>Total Hadiah</label>
-                        <span style="color:#F97316;">Rp 4.000.000</span>
-                    </div>
-                    <div class="wmodal-info-item">
-                        <label>Batas Pendaftaran</label>
-                        <span>15 Maret 2026</span>
-                    </div>
-                    <div class="wmodal-info-item">
-                        <label>Tipe Peserta</label>
-                        <span>Individu</span>
-                    </div>
-                </div>
-                <p style="font-size:0.85rem; color:#9CA3AF;"><strong>Deliverables:</strong> Unggah file video kreatif di Google Drive (akses publik), serta lembar orisinalitas karya bermaterai.</p>
-            </div>
-            <div class="wmodal-actions">
-                <button class="btn btn-close" onclick="closeWModal('wmodalVideography')">Tutup</button>
-                <a href="{{ url('/lomba') }}" class="btn btn-daftar">Daftar Sekarang</a>
-            </div>
-        </div>
-    </div>
+    @endforeach
 
 </body>
 </html>
