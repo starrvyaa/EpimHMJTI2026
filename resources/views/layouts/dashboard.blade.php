@@ -339,6 +339,9 @@
         <a href="{{ route('Pengaturan.index') }}" class="@yield('menuPengaturan', '')">
             <i class="fa-solid fa-gear"></i> Pengaturan
         </a>
+        <a href="{{ route('admin.log.index') }}" class="@yield('menuLog', '')">
+            <i class="fa-solid fa-clock-rotate-left"></i> Log Aktivitas
+        </a>
         @endif
         <form method="POST" action="{{ route('logout') }}" class="logout-form">
             @csrf

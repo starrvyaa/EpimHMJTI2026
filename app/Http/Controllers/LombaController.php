@@ -6,6 +6,7 @@ use App\Helpers\PembayaranHelper;
 use App\Models\Pendaftar;
 use App\Models\Pengaturan;
 use App\Models\Tim;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
@@ -74,7 +75,7 @@ class LombaController extends Controller
             foreach ($userPendaftarans as $p) {
                 $karyaComplete = match ($p->id_lomba) {
                     1 => (bool) $p->judul_karya,
-                    2 => (bool) $p->gambar_karya,
+                    2 => (bool) $p->judul_karya,
                     3 => (bool) $p->judul_karya,
                     4 => (bool) $p->link_video_karya,
                     default => false,
@@ -86,7 +87,15 @@ class LombaController extends Controller
             }
         }
 
-        return view('lomba.index', compact('listKategori', 'datas', 'pengaturan', 'deadline', 'isExpired', 'filterKategori', 'filterStatus', 'userHasPendaftaran', 'userHasUnsubmittedKarya'));
+        $paymentMap = [
+            1 => \App\Helpers\PembayaranHelper::getInfo(1),
+            2 => \App\Helpers\PembayaranHelper::getInfo(2),
+            3 => \App\Helpers\PembayaranHelper::getInfo(3),
+            4 => \App\Helpers\PembayaranHelper::getInfo(4),
+            5 => \App\Helpers\PembayaranHelper::getInfo(5),
+        ];
+
+        return view('lomba.index', compact('listKategori', 'datas', 'pengaturan', 'deadline', 'isExpired', 'filterKategori', 'filterStatus', 'userHasPendaftaran', 'userHasUnsubmittedKarya', 'paymentMap'));
     }
 
     public function store(Request $request)
@@ -95,6 +104,12 @@ class LombaController extends Controller
         $pengaturan = Pengaturan::first();
         if ($pengaturan && $pengaturan->status_pendaftaran_ditutup) {
             return back()->with('error', 'Maaf, pendaftaran lomba saat ini sudah ditutup oleh Admin.');
+        }
+
+        // ► FITUR 8: Batas 1 pendaftaran per user
+        $sudahDaftar = Pendaftar::where('user_id', auth()->id())->exists();
+        if ($sudahDaftar) {
+            return back()->with('error', 'Anda sudah terdaftar di salah satu lomba. Setiap akun hanya dapat mendaftar 1 lomba.');
         }
 
         $idLomba = $request->input('id_lomba');
@@ -116,14 +131,14 @@ class LombaController extends Controller
         $rules['nis_nim_ketua'] = 'required|string|max:50|not_regex:/<[^>]*>/';
         $rules['hp_ketua'] = $phoneRule;
 
-        if ($idLomba == 1) {
+        if ($idLomba == 1 || $idLomba == 2) {
             $rules['nama_tim'] = $noHtmlText;
             $rules['asal_sekolah'] = $noHtmlText;
             $rules['guru_pembimbing'] = $noHtmlText;
             $rules['proposal'] = 'required|file|mimes:pdf|max:10240';
             // $rules['subtema'] = 'required|string|in:Manajemen absensi,Perpustakaan,Ekstrakurikuler,Kantin sehat';
 
-            // Anggota 1 is required for Web Programming because min 2 people (Ketua + Anggota 1)
+            // Anggota 1 is required for Web Programming/Network Engineering because min 2 people (Ketua + Anggota 1)
             $rules['anggota_1'] = $noHtmlText;
             $rules['anggota_nis_1'] = 'required|string|max:50|not_regex:/<[^>]*>/';
             $rules['hp_1'] = $phoneRule;
@@ -133,15 +148,14 @@ class LombaController extends Controller
             $rules['anggota_nis_2'] = 'nullable|string|max:50|not_regex:/<[^>]*>/';
             $rules['hp_2'] = 'nullable|string|max:20|regex:/^[0-9+\-\s]*$/|not_regex:/<[^>]*>/';
         } else {
-            if ($idLomba == 3) {
+            // ID 3 (Design Packaging), ID 5 (Cyber Security) require proposal/berkas
+            if (in_array($idLomba, [3, 5])) {
                 $rules['proposal'] = 'required|file|mimes:pdf|max:10240';
             } else {
                 $rules['proposal'] = 'nullable|file|mimes:pdf|max:10240';
             }
 
-            if ($idLomba == 2) {
-                $rules['gambar_karya'] = 'required|file|mimes:jpg,jpeg,png|max:15360';
-            } elseif ($idLomba == 4) {
+            if ($idLomba == 4) {
                 $rules['link_video_karya'] = 'required|url|max:500';
             }
         }
@@ -186,6 +200,11 @@ class LombaController extends Controller
             $tim->asal_sekolah = $validated['asal_sekolah'];
             $tim->guru_pembimbing = $validated['guru_pembimbing'];
             $tim->no_hp = auth()->user()->nomor_telp ?? '08xxxxxxxxxx';
+        } else if ($idLomba == 2) {
+            $tim->nama_tim = $validated['nama_tim'];
+            $tim->asal_sekolah = $validated['asal_sekolah'];
+            $tim->guru_pembimbing = $validated['guru_pembimbing'];
+            $tim->no_hp = auth()->user()->nomor_telp ?? '08xxxxxxxxxx';
         } else {
             $tim->nama_tim = $validated['nama_ketua'];
             $tim->asal_sekolah = auth()->user()->institusi ?? '-';
@@ -210,7 +229,15 @@ class LombaController extends Controller
             $pendaftar->anggota_2 = $request->anggota_2 ?? null;
             $pendaftar->anggota_nis_2 = $request->anggota_nis_2 ?? null;
             $pendaftar->hp_2 = $request->hp_2 ?? null;
+        } else if ($idLomba == 2) {
+            $pendaftar->anggota_1 = $validated['anggota_1'];
+            $pendaftar->anggota_nis_1 = $validated['anggota_nis_1'];
+            $pendaftar->hp_1 = $validated['hp_1'];
+            $pendaftar->anggota_2 = $request->anggota_2 ?? null;
+            $pendaftar->anggota_nis_2 = $request->anggota_nis_2 ?? null;
+            $pendaftar->hp_2 = $request->hp_2 ?? null;
         }
+
 
         $pendaftar->status_pembayaran = 'verified';
         $pendaftar->accepted_integrity = true;
@@ -448,12 +475,25 @@ class LombaController extends Controller
             }
 
             $timId = $pendaftar->tim_id;
+            $namaTim = $pendaftar->tim->nama_tim ?? 'Tim #' . $realId;
             $pendaftar->delete();
 
             // Hapus record tim terkait agar tidak membebani database
             if ($timId) {
                 \App\Models\Tim::where('id', $timId)->delete();
             }
+
+            // ► FITUR 9: Log aktivitas admin
+            $admin = auth()->user();
+            ActivityLog::create([
+                'admin_id'    => $admin->id,
+                'admin_name'  => $admin->name,
+                'action'      => 'Hapus Peserta',
+                'target_type' => 'pendaftar',
+                'target_id'   => $realId,
+                'target_name' => $namaTim,
+                'keterangan'  => 'Menghapus pendaftaran tim dan berkas terkait',
+            ]);
 
             return back()->with('success', 'Pendaftaran tim dan seluruh berkasnya berhasil dihapus.');
         } catch (\Exception $e) {
@@ -486,7 +526,21 @@ class LombaController extends Controller
         $pendaftar = Pendaftar::findOrFail($id);
         $pendaftar->status_kelulusan = $status;
         $pendaftar->save();
-        return back()->with('success', 'Status kelulusan ' . ($pendaftar->tim->nama_tim ?? 'Tim #' . $id) . ': ' . strtoupper($status));
+
+        // ► FITUR 9: Log aktivitas admin
+        $admin = Auth::user();
+        $namaTim = $pendaftar->tim->nama_tim ?? 'Tim #' . $id;
+        ActivityLog::create([
+            'admin_id'    => $admin->id,
+            'admin_name'  => $admin->name,
+            'action'      => $status === 'lolos' ? 'Loloskan Peserta' : 'Tolak Peserta',
+            'target_type' => 'pendaftar',
+            'target_id'   => $id,
+            'target_name' => $namaTim,
+            'keterangan'  => 'Status kelulusan diubah menjadi ' . strtoupper($status),
+        ]);
+
+        return back()->with('success', 'Status kelulusan ' . $namaTim . ': ' . strtoupper($status));
     }
 
     public function updateStatusAktif(Request $request, $id)

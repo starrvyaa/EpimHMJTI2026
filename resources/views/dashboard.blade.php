@@ -84,17 +84,6 @@
 
     <div class="card orange">
         <div>
-            <h3>Cyber Security</h3>
-            <p>Cabang ini menantang peserta untuk mengamankan sistem atau aplikasi dari ancaman keamanan siber.</p>
-        </div>
-        <div class="btn-group">
-            <button type="button" class="btn btn-white" onclick="openModal('modalPoster')">Selengkapnya</button>
-            <a href="https://drive.google.com/drive/folders/1x07zL_FzBVwIIwEdqBpsiQXYE9ODxItl" target="_blank" rel="noopener noreferrer" class="btn btn-white">Guidebook</a>
-        </div>
-    </div>
-
-    <div class="card orange">
-        <div>
             <h3>Network Engineering</h3>
             <p>Cabang ini menantang peserta untuk merancang, mengonfigurasi, dan mengamankan jaringan komputer.</p>
         </div>
@@ -120,8 +109,7 @@
 $modals = [
     'modalWebProgramming' => ['fa-code', 'Web Programming', 'Cabang ini menantang peserta membuat website yang rapi, responsif, mudah digunakan, dan sesuai tema. Penilaian biasanya mencakup tampilan antarmuka, struktur kode, kreativitas fitur, performa, serta kesesuaian solusi dengan kebutuhan pengguna.'],
     'modalPackaging' => ['fa-box-open', 'Design Packaging', 'Cabang ini berfokus pada rancangan kemasan produk yang menarik, informatif, dan punya nilai jual. Peserta perlu memadukan identitas visual, komposisi, warna, tipografi, dan fungsi kemasan agar produk terlihat profesional.'],
-    'modalPoster' => ['fa-image', 'Design Poster', 'Cabang ini menilai kemampuan peserta menyampaikan pesan melalui poster visual. Karya yang kuat harus punya ide jelas, hierarki informasi yang mudah dibaca, komposisi matang, dan visual yang relevan dengan tema.'],
-    'modalVideography' => ['fa-video', 'Videography', 'Cabang ini menguji kemampuan membuat video yang komunikatif dan sinematik. Penilaian dapat mencakup konsep cerita, kualitas pengambilan gambar, editing, audio, ritme visual, dan kekuatan pesan yang disampaikan.'],
+    'modalNetworkEngineering' => ['fa-image', 'Poster Competition', 'Cabang ini menilai kemampuan peserta menyampaikan pesan melalui poster visual. Karya yang kuat harus punya ide jelas, hierarki informasi yang mudah dibaca, komposisi matang, dan visual yang relevan dengan tema.'],
     'modalVideography' => ['fa-video', 'Videography', 'Cabang ini menguji kemampuan membuat video yang komunikatif dan sinematik. Penilaian dapat mencakup konsep cerita, kualitas pengambilan gambar, editing, audio, ritme visual, dan kekuatan pesan yang disampaikan.'],
 ];
 @endphp

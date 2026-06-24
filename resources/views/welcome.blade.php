@@ -719,10 +719,7 @@
             margin-bottom: 0.75rem;
         }
 
-        .lomba-tag.design { background: rgba(249,115,22,0.2); color: var(--orange); }
-        .lomba-tag.technology { background: rgba(59,130,246,0.2); color: #60a5fa; }
-        .lomba-tag.science { background: rgba(16,185,129,0.2); color: #34d399; }
-        .lomba-tag.writing { background: rgba(139,92,246,0.2); color: #a78bfa; }
+        .lomba-tag.design { background: rgba(249,115,22,0.15); color: var(--orange); border: 1px solid rgba(249,115,22,0.3); }
 
         .lomba-card-desc {
             color: var(--text-gray);
@@ -1816,8 +1813,8 @@
 
   <div class="max-w-6xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
     <div class="text-center mb-16">
-      <h1 class="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">TIMELINE KEGIATAN</h1>
-      <div class="mt-3 border-t-4 border-red-600 w-16 mx-auto rounded-full"></div>
+      <h1 class="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">TIMELINE <span style="color: var(--orange);">KEGIATAN</span></h1>
+      <div class="mt-3 border-t-4 border-orange-600 w-16 mx-auto rounded-full"></div>
     </div>
 
     <div class="relative">
@@ -1842,9 +1839,9 @@
 
           <div class="relative flex items-center justify-center z-10 order-2">
             @php
-              $badgeColor = $item['isHighlight'] ? 'bg-yellow-500' : ($loop->first ? 'bg-red-600' : 'bg-slate-700');
+              $badgeColor = $item['isHighlight'] ? 'bg-yellow-500' : ($loop->first ? 'bg-red-600' : 'bg-orange-500');
             @endphp
-            <div class="w-16 h-16 {{ $badgeColor }} rounded-full flex items-center justify-center border-2 border-red shadow-md">
+            <div class="w-16 h-16 {{ $badgeColor }} rounded-full flex items-center justify-center border-4 border-orange-800/50 shadow-md">
               <span class="text-xs md:text-sm font-bold text-white tracking-wider">{{ $item['year'] }}</span>
             </div>
           </div>
@@ -1859,7 +1856,7 @@
             </div>
 
             {{-- Body Card --}}
-            <div class="{{ $item['isHighlight'] ? 'bg-red-50' : 'bg-gray-900' }} p-4">
+            <div class="{{ $item['isHighlight'] ? 'bg-red-50' : 'bg-gray-800' }} p-4">
               <h3 class="text-xl md:text-lg font-semibold {{ $item['isHighlight'] ? 'text-red-900' : 'text-white' }}">
                 {{ $item['cardTitle'] }}
               </h3>
@@ -1875,40 +1872,6 @@
     </div>
   </div>
 </section>
-    {{-- ===== GALLERY SLIDER ===== --}}
-    <section class="gallery-slider">
-        <div class="slider-section-inner">
-            <div class="section-header">
-                <div class="section-eyebrow-center">
-                    <i class="fas fa-images"></i> GALERI KEGIATAN <i class="fas fa-images"></i>
-                </div>
-                <h2 class="section-title">DOKUMENTASI <span>EPIM</span></h2>
-                <p class="section-subtitle">Abadikan momen-momen terbaik dari rangkaian acara EPIM</p>
-            </div>
-            <div class="slider-container">
-                <div class="slider-track" id="sliderTrack">
-                    <div class="slide-item">
-                        <img src="{{ asset('images/image.png') }}" alt="Dokumentasi 1">
-                    </div>
-                    <div class="slide-item">
-                            <img src="{{ asset('images/DSC02634.avif') }}" alt="EPIM 2">
-                        </div>
-                        <div class="slide-item">
-                            <img src="{{ asset('images/DSC02839.avif') }}" alt="EPIM 3">
-                        </div>
-                        <div class="slide-item">
-                            <img src="{{ asset('images/DSC02847.avif') }}" alt="EPIM 4">
-                        </div>
-                        <div class="slide-item">
-                            <img src="{{ asset('images/DSC02852.avif') }}" alt="EPIM 5">
-                        </div>
-                </div>
-                <button class="slider-btn slider-btn-prev" id="sliderPrev"><i class="fas fa-chevron-left"></i></button>
-                <button class="slider-btn slider-btn-next" id="sliderNext"><i class="fas fa-chevron-right"></i></button>
-            </div>
-            <div class="slider-dots" id="sliderDots"></div>
-        </div>
-    </section>
 
     {{-- ===== KATEGORI LOMBA ===== --}}
     <section class="lomba" id="lomba">
@@ -1933,12 +1896,12 @@
                         'tag_label' => 'design',
                         'card_desc' => 'Desain kemasan sangat penting dalam mempengaruhi persepsi konsumen, menarik perhatian mereka, dan membedakan produk dari pesaing di rak toko.',
                         'modal_desc' => 'Lomba Desain Kemasan Produk Kreatif bertujuan untuk menantang kreativitas dan ketajaman desain peserta dalam merancang kemasan produk yang estetik, inovatif, ramah lingkungan, serta memiliki nilai jual tinggi untuk sektor UMKM/industri.',
-                        'img' => asset('images/LogoEPIM.png'),
+                        'img' => asset('images/despack.avif'),
                         'emoji' => '📦',
                         'icon' => 'fas fa-cube',
-                        'biaya' => 'Rp 50.000',
+                        'biaya' => 'Rp 55.000',
                         'hadiah' => 'Rp 3.000.000',
-                        'batas' => '15 Maret 2026',
+                        'batas' => '8 Agustus 2026',
                         'tipe' => 'Individu',
                         'deliverables' => 'Peserta wajib mengumpulkan proposal berisi cover dengan judul, nama, asal sekolah, serta penempatan logo Polije, JTI, EPIM, dan sekolah sesuai ketentuan, yang dilengkapi isi berupa deskripsi filosofi, elemen desain, target pasar, kelebihan kemasan, serta lampiran gambar dieline dan mockup packaging menyeluruh.',
                         'deadline' => '23 Juni - 8 Agustus 2026',
@@ -1948,17 +1911,17 @@
                     [
                         'id' => 'wmodalWebProg',
                         'title' => 'Web Programming',
-                        'tag_class' => 'technology',
+                        'tag_class' => 'design',
                         'tag_label' => 'technology',
                         'card_desc' => 'Front-end web programming fokus pada pembuatan tampilan yang menarik, responsif, dan fungsional untuk situs web.',
                         'modal_desc' => 'Lomba Pemrograman Web menantang kreativitas dan ketangkasan tim dalam mengembangkan aplikasi web yang responsif, fungsional, dan inovatif untuk memecahkan permasalahan nyata di lingkungan sekolah atau masyarakat umum.',
                         'img' => asset('images/webpro.webp'),
                         'emoji' => '💻',
                         'icon' => 'fas fa-code',
-                        'biaya' => 'Rp 75.000',
+                        'biaya' => 'Rp 85.000',
                         'hadiah' => 'Rp 5.000.000',
-                        'batas' => '15 Maret 2026',
-                        'tipe' => 'Tim (Maks. 3 Orang)',
+                        'batas' => '8 Agustus 2026',
+                        'tipe' => 'Tim (SMA/SMK Maks. 3 Orang)',
                         'deliverables' => 'Peserta wajib mengumpulkan proposal proyek yang berisi draf rancangan sistem, flowchart sistem, serta desain awal website berupa wireframe atau mockup.',
                         'deadline' => '23 Juni - 8 Agustus 2026',
                         'prize' => 'Rp 3.000.000',
@@ -1966,7 +1929,7 @@
                     ],
                     [
                         'id' => 'wmodalPoster',
-                        'title' => 'Desain Jaringan',
+                        'title' => 'Network Engineering',
                         'tag_class' => 'design',
                         'tag_label' => 'design',
                         'card_desc' => 'Ekspresikan kreativitas melalui desain visual yang menarik, komunikatif, dan berkarakter kuat dalam berbagai media.',
@@ -1974,30 +1937,11 @@
                         'img' => asset('images/desjar.avif'),
                         'emoji' => '🎨',
                         'icon' => 'fas fa-image',
-                        'biaya' => 'Rp 50.000',
+                        'biaya' => 'Rp 85.000',
                         'hadiah' => 'Rp 3.000.000',
-                        'batas' => '15 Maret 2026',
-                        'tipe' => 'Individu',
+                        'batas' => '8 Agustus 2026',
+                        'tipe' => 'Tim(SMA/SMK Maks 3)',
                         'deliverables' => 'File desain topologi jaringan format PDF/Cisco Packet Tracer, lembar orisinalitas karya bermaterai.',
-                        'deadline' => '23 Juni - 8 Agustus 2026',
-                        'prize' => 'Rp 3.000.000',
-                        'guidebook' => 'https://drive.google.com/drive/folders/1x07zL_FzBVwIIwEdqBpsiQXYE9ODxItl'
-                    ],
-                    [
-                        'id' => 'wmodalCyber',
-                        'title' => 'Cyber Security',
-                        'tag_class' => 'cybersecurity',
-                        'tag_label' => 'cybersecurity',
-                        'card_desc' => 'Lomba ini berfokus pada keamanan siber, menguji ketangkasan dan analisis keamanan peserta.',
-                        'modal_desc' => 'Lomba Cyber Security ini berfokus pada keamanan siber, di mana peserta akan diuji kemampuannya dalam menghadapi berbagai tantangan keamanan siber.',
-                        'img' => asset('images/cyber.avif'),
-                        'emoji' => '🎨',
-                        'icon' => 'fas fa-shield-halved',
-                        'biaya' => 'Rp 50.000',
-                        'hadiah' => 'Rp 3.000.000',
-                        'batas' => '15 Maret 2026',
-                        'tipe' => 'Individu',
-                        'deliverables' => 'Laporan write-up penetrasi/analisis keamanan siber, lembar orisinalitas karya bermaterai.',
                         'deadline' => '23 Juni - 8 Agustus 2026',
                         'prize' => 'Rp 3.000.000',
                         'guidebook' => 'https://drive.google.com/drive/folders/1x07zL_FzBVwIIwEdqBpsiQXYE9ODxItl'
@@ -2012,9 +1956,9 @@
                         'img' => asset('images/videografi.jpeg'),
                         'emoji' => '🎥',
                         'icon' => 'fas fa-video',
-                        'biaya' => 'Rp 50.000',
-                        'hadiah' => 'Rp 4.000.000',
-                        'batas' => '15 Maret 2026',
+                        'biaya' => 'Rp 60.000',
+                        'hadiah' => 'Rp 3.000.000',
+                        'batas' => '8 Agustus 2026',
                         'tipe' => 'Individu',
                         'deliverables' => 'Peserta Lomba Videography wajib mengumpulkan video bertema "Innovative Visual Motion" berdurasi 2 hingga 5 menit format MP4 resolusi minimal 1080p dengan cara mencantumkan tautan Google Drive pribadi yang aksesnya telah diatur ke opsi “Siapa saja yang memiliki link dapat melihat”.',
                         'deadline' => '23 Juni - 8 Agustus 2026',
@@ -2050,7 +1994,9 @@
                         </div>
                         <div class="lomba-actions">
                             <a href="javascript:void(0)" onclick="openWModal('{{ $lomba['id'] }}')" class="btn-detail">Detail Lomba</a>
-                            <a href="{{ url('/lomba') }}" class="btn-daftar">Daftar</a>
+                            @if(!auth()->check() || strtolower(auth()->user()->role ?? '') !== 'admin')
+                                <a href="{{ url('/lomba') }}" class="btn-daftar">Daftar</a>
+                            @endif
                         </div>
                         <div style="margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
                             <span style="font-size:0.78rem;color:var(--text-gray);"><i class="fas fa-book"></i> Guidebook</span>
@@ -2064,6 +2010,41 @@
             </div>
         </div>
     </section>
+    {{-- ===== GALLERY SLIDER ===== --}}
+    <section class="gallery-slider">
+        <div class="slider-section-inner">
+            <div class="section-header">
+                <div class="section-eyebrow-center">
+                    <i class="fas fa-images"></i> GALERI KEGIATAN <i class="fas fa-images"></i>
+                </div>
+                <h2 class="section-title">DOKUMENTASI <span>EPIM</span></h2>
+                <p class="section-subtitle">Abadikan momen-momen terbaik dari rangkaian acara EPIM</p>
+            </div>
+            <div class="slider-container">
+                <div class="slider-track" id="sliderTrack">
+                    <div class="slide-item">
+                        <img src="{{ asset('images/image.png') }}" alt="Dokumentasi 1">
+                    </div>
+                    <div class="slide-item">
+                            <img src="{{ asset('images/DSC02634.avif') }}" alt="EPIM 2">
+                        </div>
+                        <div class="slide-item">
+                            <img src="{{ asset('images/DSC02839.avif') }}" alt="EPIM 3">
+                        </div>
+                        <div class="slide-item">
+                            <img src="{{ asset('images/DSC02847.avif') }}" alt="EPIM 4">
+                        </div>
+                        <div class="slide-item">
+                            <img src="{{ asset('images/DSC02852.avif') }}" alt="EPIM 5">
+                        </div>
+                </div>
+                <button class="slider-btn slider-btn-prev" id="sliderPrev"><i class="fas fa-chevron-left"></i></button>
+                <button class="slider-btn slider-btn-next" id="sliderNext"><i class="fas fa-chevron-right"></i></button>
+            </div>
+            <div class="slider-dots" id="sliderDots"></div>
+        </div>
+    </section>
+
 
 
     {{-- ===== BENEFITS ===== --}}
@@ -2080,32 +2061,32 @@
         </div>
         <div class="benefits-grid">
             <div class="benefit-card fade-up">
-                <span class="benefit-icon">🏆</span>
+                <span class="benefit-icon"><i class="fas fa-trophy" style="color: var(--orange);"></i></span>
                 <div class="benefit-title">Total Hadiah 30 Juta</div>
                 <p class="benefit-desc">Hadiah menarik untuk juara 1, 2, 3 di setiap kategori lomba</p>
             </div>
             <div class="benefit-card fade-up">
-                <span class="benefit-icon">📜</span>
+                <span class="benefit-icon"><i class="fas fa-certificate" style="color: var(--orange);"></i></span>
                 <div class="benefit-title">Sertifikat Resmi</div>
                 <p class="benefit-desc">Sertifikat peserta dan pemenang yang dapat digunakan untuk portofolio</p>
             </div>
             <div class="benefit-card fade-up">
-                <span class="benefit-icon">🤝</span>
+                <span class="benefit-icon"><i class="fas fa-users" style="color: var(--orange);"></i></span>
                 <div class="benefit-title">Networking Luas</div>
                 <p class="benefit-desc">Kesempatan bertemu dan berkolaborasi dengan mahasiswa se-Indonesia</p>
             </div>
             <div class="benefit-card fade-up">
-                <span class="benefit-icon">⭐</span>
+                <span class="benefit-icon"><i class="fas fa-star" style="color: var(--orange);"></i></span>
                 <div class="benefit-title">Pengalaman Berharga</div>
                 <p class="benefit-desc">Asah kemampuan dan tingkatkan kepercayaan diri melalui kompetisi nyata</p>
             </div>
             <div class="benefit-card fade-up">
-                <span class="benefit-icon">🤖</span>
+                <span class="benefit-icon"><i class="fas fa-robot" style="color: var(--orange);"></i></span>
                 <div class="benefit-title">Juri Profesional</div>
                 <p class="benefit-desc">Dinilai langsung oleh para profesional dan pakar di bidangnya</p>
             </div>
             <div class="benefit-card fade-up">
-                <span class="benefit-icon">🚀</span>
+                <span class="benefit-icon"><i class="fas fa-rocket" style="color: var(--orange);"></i></span>
                 <div class="benefit-title">Karier Lebih Baik</div>
                 <p class="benefit-desc">Portofolio kompetisi yang dapat memperkuat profil profesional kamu</p>
             </div>
@@ -2424,7 +2405,9 @@
             </div>
             <div class="wmodal-actions">
                 <button class="btn btn-close" onclick="closeWModal('{{ $m['id'] }}')">Tutup</button>
-                <a href="{{ url('/lomba') }}" class="btn btn-daftar">Daftar Sekarang</a>
+                @if(!auth()->check() || strtolower(auth()->user()->role ?? '') !== 'admin')
+                    <a href="{{ url('/lomba') }}" class="btn btn-daftar">Daftar Sekarang</a>
+                @endif
             </div>
         </div>
     </div>
