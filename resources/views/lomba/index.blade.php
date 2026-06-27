@@ -522,11 +522,10 @@
                                 @else
                                     @php
                                         $waMap = [
-                                            1 => 'EPIM2026-WEB', 
-                                            2 => 'Ia29F8LBbqR0Q69xF6zVor', 
-                                            3 => 'EPIM2026-PACKAGING', 
-                                            4 => 'Ia29F8LBbqR0Q69xF6zVor',
-                                            5 => 'Ia29F8LBbqR0Q69xF6zVor'
+                                            1 => 'DqYNGG634VO7zEkYmczuVM', 
+                                            2 => 'Edj1nHP9pYOH3dEHKK5kZQ', 
+                                            3 => 'EQWLSjH6VBmBXeoWy3cTZO', 
+                                            4 => 'EGjLe4LcTUGFJNSUZP2u2H'
                                         ];
                                         $waCode = $waMap[$data->id_lomba] ?? 'EPIM2026';
                                         $waGroupLink = 'https://chat.whatsapp.com/' . $waCode;

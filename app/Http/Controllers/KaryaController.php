@@ -248,7 +248,10 @@ class KaryaController extends Controller
                 unlink(public_path('uploads/proposal/' . $pendaftar->proposal));
             }
             $file = $request->file('proposal');
-            $namaProposal = 'PROPOSAL_' . time() . '_' . $file->getClientOriginalName();
+            $slugLomba = \Illuminate\Support\Str::slug($pendaftar->kategori->nama_lomba ?? 'lomba', '_');
+            $namaIdentifier = $pendaftar->id_lomba == 1 || $pendaftar->id_lomba == 2 ? $pendaftar->nama_ketua . '_' . ($pendaftar->tim->nama_tim ?? '') : $pendaftar->nama_ketua;
+            $slugNama = \Illuminate\Support\Str::slug($namaIdentifier, '_');
+            $namaProposal = 'proposal_' . $slugLomba . '_' . $slugNama . '_reg' . $pendaftar->id . '_' . \Illuminate\Support\Str::random(4) . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('uploads/proposal'), $namaProposal);
             $updateData['proposal'] = $namaProposal;
         }
@@ -259,7 +262,10 @@ class KaryaController extends Controller
                 unlink(public_path('uploads/orisinalitas/' . $pendaftar->orisinalitas));
             }
             $file = $request->file('orisinalitas');
-            $namaFile = 'ORISINALITAS_' . time() . '_' . $file->getClientOriginalName();
+            $slugLomba = \Illuminate\Support\Str::slug($pendaftar->kategori->nama_lomba ?? 'lomba', '_');
+            $namaIdentifier = $pendaftar->id_lomba == 1 || $pendaftar->id_lomba == 2 ? $pendaftar->nama_ketua . '_' . ($pendaftar->tim->nama_tim ?? '') : $pendaftar->nama_ketua;
+            $slugNama = \Illuminate\Support\Str::slug($namaIdentifier, '_');
+            $namaFile = 'orisinalitas_' . $slugLomba . '_' . $slugNama . '_reg' . $pendaftar->id . '_' . \Illuminate\Support\Str::random(4) . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('uploads/orisinalitas'), $namaFile);
             $updateData['orisinalitas'] = $namaFile;
         }

@@ -249,53 +249,73 @@ class LombaController extends Controller
             $pendaftar->link_video_karya = $validated['link_video_karya'];
         }
 
+        // Simpan pendaftar terlebih dahulu agar mendapatkan database ID (sebagai No Pendaftaran)
+        $pendaftar->save();
+
+        // Ambil nama kategori lomba secara dinamis untuk penamaan file
+        $kategoriModel = \App\Models\KategoriLomba::find($idLomba);
+        $slugLomba = \Illuminate\Support\Str::slug($kategoriModel->nama_lomba ?? 'lomba', '_');
+        $namaIdentifier = $idLomba == 1 || $idLomba == 2 ? $validated['nama_ketua'] . '_' . $validated['nama_tim'] : $validated['nama_ketua'];
+        $slugNama = \Illuminate\Support\Str::slug($namaIdentifier, '_');
+
+        $updateData = [];
+
         if ($request->hasFile('proposal')) {
             $f = $request->file('proposal');
-            $filename = 'proposal_' . time() . '.' . $f->getClientOriginalExtension();
+            $filename = 'proposal_' . $slugLomba . '_' . $slugNama . '_reg' . $pendaftar->id . '_' . \Illuminate\Support\Str::random(4) . '.' . $f->getClientOriginalExtension();
             $f->move(public_path('uploads/proposal'), $filename);
             $pendaftar->proposal = $filename;
+            $updateData['proposal'] = $filename;
         }
         if ($request->hasFile('orisinalitas')) {
             $f = $request->file('orisinalitas');
-            $filename = 'orisinalitas_' . time() . '.' . $f->getClientOriginalExtension();
+            $filename = 'orisinalitas_' . $slugLomba . '_' . $slugNama . '_reg' . $pendaftar->id . '_' . \Illuminate\Support\Str::random(4) . '.' . $f->getClientOriginalExtension();
             $f->move(public_path('uploads/orisinalitas'), $filename);
             $pendaftar->orisinalitas = $filename;
+            $updateData['orisinalitas'] = $filename;
         }
         if ($request->hasFile('bukti_bayar')) {
             $f = $request->file('bukti_bayar');
-            $filename = 'bayar_' . time() . '.' . $f->getClientOriginalExtension();
+            $filename = 'bayar_' . $slugLomba . '_' . $slugNama . '_reg' . $pendaftar->id . '_' . \Illuminate\Support\Str::random(4) . '.' . $f->getClientOriginalExtension();
             $f->move(public_path('uploads/pembayaran'), $filename);
             $pendaftar->bukti_bayar = $filename;
+            $updateData['bukti_bayar'] = $filename;
         }
         if ($request->hasFile('bukti_status_aktif')) {
             $f = $request->file('bukti_status_aktif');
-            $filename = 'status_' . time() . '.' . $f->getClientOriginalExtension();
+            $filename = 'status_' . $slugLomba . '_' . $slugNama . '_reg' . $pendaftar->id . '_' . \Illuminate\Support\Str::random(4) . '.' . $f->getClientOriginalExtension();
             $f->move(public_path('uploads/status_aktif'), $filename);
             $pendaftar->bukti_status_aktif = $filename;
+            $updateData['bukti_status_aktif'] = $filename;
         }
         if ($request->hasFile('bukti_sosmed')) {
             $f = $request->file('bukti_sosmed');
-            $filename = 'sosmed_' . time() . '.' . $f->getClientOriginalExtension();
+            $filename = 'sosmed_' . $slugLomba . '_' . $slugNama . '_reg' . $pendaftar->id . '_' . \Illuminate\Support\Str::random(4) . '.' . $f->getClientOriginalExtension();
             $f->move(public_path('uploads/sosmed'), $filename);
             $pendaftar->bukti_sosmed = $filename;
+            $updateData['bukti_sosmed'] = $filename;
         }
         if ($request->hasFile('bukti_twibon')) {
             $f = $request->file('bukti_twibon');
-            $filename = 'twibon_' . time() . '.' . $f->getClientOriginalExtension();
+            $filename = 'twibon_' . $slugLomba . '_' . $slugNama . '_reg' . $pendaftar->id . '_' . \Illuminate\Support\Str::random(4) . '.' . $f->getClientOriginalExtension();
             $f->move(public_path('uploads/twibon'), $filename);
             $pendaftar->bukti_twibon = $filename;
+            $updateData['bukti_twibon'] = $filename;
         }
         if ($request->hasFile('gambar_karya')) {
             $f = $request->file('gambar_karya');
-            $filename = 'POSTER_' . time() . '_' . $f->getClientOriginalName();
+            $filename = 'POSTER_' . $slugLomba . '_' . $slugNama . '_reg' . $pendaftar->id . '_' . \Illuminate\Support\Str::random(4) . '.' . $f->getClientOriginalExtension();
             $f->move(public_path('uploads/karya'), $filename);
             $pendaftar->gambar_karya = $filename;
+            $updateData['gambar_karya'] = $filename;
         }
 
-        $pendaftar->save();
+        if (!empty($updateData)) {
+            $pendaftar->save();
+        }
 
         // WA Group link
-        $waMap = [1 => 'EPIM2026-WEB', 2 => 'EPIM2026-POSTER', 3 => 'EPIM2026-PACKAGING', 4 => 'EPIM2026-VIDEO'];
+        $waMap = [1 => 'DqYNGG634VO7zEkYmczuVM', 2 => 'Edj1nHP9pYOH3dEHKK5kZQ', 3 => 'EQWLSjH6VBmBXeoWy3cTZO', 4 => 'EGjLe4LcTUGFJNSUZP2u2H'];
         $waLink = 'https://chat.whatsapp.com/' . ($waMap[$idLomba] ?? 'EPIM2026');
 
         return redirect()
@@ -341,7 +361,10 @@ class LombaController extends Controller
 
         if ($request->hasFile('proposal')) {
             $file = $request->file('proposal');
-            $nama_file = time() . '_' . $file->getClientOriginalName();
+            $slugLomba = \Illuminate\Support\Str::slug($data->kategori->nama_lomba ?? 'lomba', '_');
+            $namaIdentifier = $data->id_lomba == 1 || $data->id_lomba == 2 ? $data->nama_ketua . '_' . ($data->tim->nama_tim ?? '') : $data->nama_ketua;
+            $slugNama = \Illuminate\Support\Str::slug($namaIdentifier, '_');
+            $nama_file = 'proposal_' . $slugLomba . '_' . $slugNama . '_reg' . $data->id . '_' . \Illuminate\Support\Str::random(4) . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('uploads/proposal'), $nama_file);
 
             $data->proposal = $nama_file;
@@ -413,7 +436,10 @@ class LombaController extends Controller
             }
 
             $file = $request->file('orisinalitas');
-            $nama_file = time() . '_' . $file->getClientOriginalName();
+            $slugLomba = \Illuminate\Support\Str::slug($data->kategori->nama_lomba ?? 'lomba', '_');
+            $namaIdentifier = $data->id_lomba == 1 || $data->id_lomba == 2 ? $data->nama_ketua . '_' . ($data->tim->nama_tim ?? '') : $data->nama_ketua;
+            $slugNama = \Illuminate\Support\Str::slug($namaIdentifier, '_');
+            $nama_file = 'orisinalitas_' . $slugLomba . '_' . $slugNama . '_reg' . $data->id . '_' . \Illuminate\Support\Str::random(4) . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('uploads/orisinalitas'), $nama_file);
 
             $data->update(['orisinalitas' => $nama_file]);
@@ -568,7 +594,10 @@ class LombaController extends Controller
             }
 
             $f = $request->file('bukti_status_aktif');
-            $filename = 'status_' . time() . '.' . $f->getClientOriginalExtension();
+            $slugLomba = \Illuminate\Support\Str::slug($data->kategori->nama_lomba ?? 'lomba', '_');
+            $namaIdentifier = $data->id_lomba == 1 || $data->id_lomba == 2 ? $data->nama_ketua . '_' . ($data->tim->nama_tim ?? '') : $data->nama_ketua;
+            $slugNama = \Illuminate\Support\Str::slug($namaIdentifier, '_');
+            $filename = 'status_' . $slugLomba . '_' . $slugNama . '_reg' . $data->id . '_' . \Illuminate\Support\Str::random(4) . '.' . $f->getClientOriginalExtension();
             $f->move(public_path('uploads/status_aktif'), $filename);
 
             $data->bukti_status_aktif = $filename;
@@ -603,7 +632,10 @@ class LombaController extends Controller
             }
 
             $f = $request->file('bukti_sosmed');
-            $filename = 'sosmed_' . time() . '.' . $f->getClientOriginalExtension();
+            $slugLomba = \Illuminate\Support\Str::slug($data->kategori->nama_lomba ?? 'lomba', '_');
+            $namaIdentifier = $data->id_lomba == 1 || $data->id_lomba == 2 ? $data->nama_ketua . '_' . ($data->tim->nama_tim ?? '') : $data->nama_ketua;
+            $slugNama = \Illuminate\Support\Str::slug($namaIdentifier, '_');
+            $filename = 'sosmed_' . $slugLomba . '_' . $slugNama . '_reg' . $data->id . '_' . \Illuminate\Support\Str::random(4) . '.' . $f->getClientOriginalExtension();
             $f->move(public_path('uploads/sosmed'), $filename);
 
             $data->bukti_sosmed = $filename;
@@ -644,13 +676,17 @@ class LombaController extends Controller
 
         $updateData = [];
 
+        $slugLomba = \Illuminate\Support\Str::slug($pendaftar->kategori->nama_lomba ?? 'lomba', '_');
+        $namaIdentifier = $pendaftar->id_lomba == 1 || $pendaftar->id_lomba == 2 ? $pendaftar->nama_ketua . '_' . ($pendaftar->tim->nama_tim ?? '') : $pendaftar->nama_ketua;
+        $slugNama = \Illuminate\Support\Str::slug($namaIdentifier, '_');
+
         if ($request->hasFile('bukti_bayar')) {
             // Delete old file
             if ($pendaftar->bukti_bayar && file_exists(public_path('uploads/pembayaran/' . $pendaftar->bukti_bayar))) {
                 unlink(public_path('uploads/pembayaran/' . $pendaftar->bukti_bayar));
             }
             $file = $request->file('bukti_bayar');
-            $filename = 'bayar_' . time() . '.' . $file->getClientOriginalExtension();
+            $filename = 'bayar_' . $slugLomba . '_' . $slugNama . '_reg' . $pendaftar->id . '_' . \Illuminate\Support\Str::random(4) . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('uploads/pembayaran'), $filename);
             $updateData['bukti_bayar'] = $filename;
         }
@@ -661,7 +697,7 @@ class LombaController extends Controller
                 unlink(public_path('uploads/status_aktif/' . $pendaftar->bukti_status_aktif));
             }
             $file = $request->file('bukti_status_aktif');
-            $filename = 'status_' . time() . '.' . $file->getClientOriginalExtension();
+            $filename = 'status_' . $slugLomba . '_' . $slugNama . '_reg' . $pendaftar->id . '_' . \Illuminate\Support\Str::random(4) . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('uploads/status_aktif'), $filename);
             $updateData['bukti_status_aktif'] = $filename;
         }
@@ -672,7 +708,7 @@ class LombaController extends Controller
                 unlink(public_path('uploads/sosmed/' . $pendaftar->bukti_sosmed));
             }
             $file = $request->file('bukti_sosmed');
-            $filename = 'sosmed_' . time() . '.' . $file->getClientOriginalExtension();
+            $filename = 'sosmed_' . $slugLomba . '_' . $slugNama . '_reg' . $pendaftar->id . '_' . \Illuminate\Support\Str::random(4) . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('uploads/sosmed'), $filename);
             $updateData['bukti_sosmed'] = $filename;
         }
@@ -681,7 +717,7 @@ class LombaController extends Controller
                 unlink(public_path('uploads/twibon/' . $pendaftar->bukti_twibon));
             }
             $file = $request->file('bukti_twibon');
-            $filename = 'twibon_' . time() . '.' . $file->getClientOriginalExtension();
+            $filename = 'twibon_' . $slugLomba . '_' . $slugNama . '_reg' . $pendaftar->id . '_' . \Illuminate\Support\Str::random(4) . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('uploads/twibon'), $filename);
             $updateData['bukti_twibon'] = $filename;
         }

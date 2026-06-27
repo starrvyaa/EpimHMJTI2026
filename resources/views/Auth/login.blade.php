@@ -147,7 +147,10 @@
         </div>
 
         <div style="margin-top:1rem;">
-            <label>Password</label>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <label>Password</label>
+                <a href="{{ route('Forgot.page') }}" class="link" style="font-size:0.75rem;">Lupa Password?</a>
+            </div>
             <div class="password-wrap">
                 <input id="loginPassword" type="password" name="password" required>
                 <button type="button" class="toggle-password" onclick="togglePassword('loginPassword', this)" title="Lihat password">

@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.tailwindcss.com"></script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
         *, *::before, *::after {
@@ -1746,7 +1746,7 @@
         [
             "title" => "Launching EPIM 2026",
             "subtitle" => "Pembukaan resmi kompetisi.",
-            "date" => "23 JUNI 2026",
+            "date" => "28 JUNI 2026",
             "cardTitle" => "Launching EPIM 2026",
             "cardSubtitle" => "",
             "year" => "2026",
@@ -1755,17 +1755,17 @@
         [
             "title" => "Tahap Pendaftaran",
             "subtitle" => "Pendaftaran dan Submit Proposal",
-            "date" => "23 JUNI - 8 AGUSTUS 2026",
+            "date" => "28 JUNI - 8 AGUSTUS 2026",
             "cardTitle" => "Pendaftaran dan Submit Proposal",
             "cardSubtitle" => "",
             "year" => "2026",
             "isHighlight" => false
         ],
         [
-            "title" => "Batas Akhir Submit Proposal",
-            "subtitle" => "Batas akhir penyerahan proposal tim.",
+            "title" => "Batas Akhir Submit Proposal/Karya",
+            "subtitle" => "Batas akhir penyerahan proposal/karya tim.",
             "date" => "8 Agustus 2026",
-            "cardTitle" => "Batas Akhir Submit Proposal",
+            "cardTitle" => "Batas Akhir Submit Proposal/Karya",
             "cardSubtitle" => "",
             "year" => "2026",
             "isHighlight" => false
@@ -1791,7 +1791,7 @@
         [
             "title" => "Final Lomba",
             "subtitle" => "Pelaksanaan Final Lomba",
-            "date" => "22 AGUSTUS 2026",
+            "date" => "19 AGUSTUS 2026",
             "cardTitle" => "Pelaksanaan Final Lomba",
             "cardSubtitle" => "",
             "year" => "2026",
@@ -1899,14 +1899,14 @@
                         'img' => asset('images/despack.avif'),
                         'emoji' => '📦',
                         'icon' => 'fas fa-cube',
-                        'biaya' => 'Rp 55.000',
+                        'biaya' => 'Rp 60.000',
                         'hadiah' => 'Rp 3.000.000',
                         'batas' => '8 Agustus 2026',
                         'tipe' => 'Individu',
                         'deliverables' => 'Peserta wajib mengumpulkan proposal berisi cover dengan judul, nama, asal sekolah, serta penempatan logo Polije, JTI, EPIM, dan sekolah sesuai ketentuan, yang dilengkapi isi berupa deskripsi filosofi, elemen desain, target pasar, kelebihan kemasan, serta lampiran gambar dieline dan mockup packaging menyeluruh.',
-                        'deadline' => '23 Juni - 8 Agustus 2026',
+                        'deadline' => '28 Juni - 8 Agustus 2026',
                         'prize' => 'Rp 3.000.000',
-                        'guidebook' => 'https://drive.google.com/drive/folders/1x07zL_FzBVwIIwEdqBpsiQXYE9ODxItl'
+                        'guidebook' => 'https://drive.google.com/drive/u/1/folders/189TmZ9NCeEgzyImoEfoFU6lZT5m9jxu3'
                     ],
                     [
                         'id' => 'wmodalWebProg',
@@ -1919,13 +1919,13 @@
                         'emoji' => '💻',
                         'icon' => 'fas fa-code',
                         'biaya' => 'Rp 85.000',
-                        'hadiah' => 'Rp 5.000.000',
+                        'hadiah' => 'Rp 3.000.000',
                         'batas' => '8 Agustus 2026',
                         'tipe' => 'Tim (SMA/SMK Maks. 3 Orang)',
                         'deliverables' => 'Peserta wajib mengumpulkan proposal proyek yang berisi draf rancangan sistem, flowchart sistem, serta desain awal website berupa wireframe atau mockup.',
-                        'deadline' => '23 Juni - 8 Agustus 2026',
+                        'deadline' => '28 Juni - 8 Agustus 2026',
                         'prize' => 'Rp 3.000.000',
-                        'guidebook' => 'https://drive.google.com/drive/folders/1x07zL_FzBVwIIwEdqBpsiQXYE9ODxItl'
+                        'guidebook' => 'https://drive.google.com/drive/u/1/folders/189TmZ9NCeEgzyImoEfoFU6lZT5m9jxu3'
                     ],
                     [
                         'id' => 'wmodalPoster',
@@ -1941,10 +1941,10 @@
                         'hadiah' => 'Rp 3.000.000',
                         'batas' => '8 Agustus 2026',
                         'tipe' => 'Tim(SMA/SMK Maks 3)',
-                        'deliverables' => 'File desain topologi jaringan format PDF/Cisco Packet Tracer, lembar orisinalitas karya bermaterai.',
-                        'deadline' => '23 Juni - 8 Agustus 2026',
+                        'deliverables' => 'File desain topologi jaringan format PDF/Cisco Packet Tracer, lembar orisinalitas.',
+                        'deadline' => '28 Juni - 8 Agustus 2026',
                         'prize' => 'Rp 3.000.000',
-                        'guidebook' => 'https://drive.google.com/drive/folders/1x07zL_FzBVwIIwEdqBpsiQXYE9ODxItl'
+                        'guidebook' => 'https://drive.google.com/drive/u/1/folders/189TmZ9NCeEgzyImoEfoFU6lZT5m9jxu3'
                     ],
                     [
                         'id' => 'wmodalVideography',
@@ -1961,9 +1961,9 @@
                         'batas' => '8 Agustus 2026',
                         'tipe' => 'Individu',
                         'deliverables' => 'Peserta Lomba Videography wajib mengumpulkan video bertema "Innovative Visual Motion" berdurasi 2 hingga 5 menit format MP4 resolusi minimal 1080p dengan cara mencantumkan tautan Google Drive pribadi yang aksesnya telah diatur ke opsi “Siapa saja yang memiliki link dapat melihat”.',
-                        'deadline' => '23 Juni - 8 Agustus 2026',
+                        'deadline' => '28 Juni - 8 Agustus 2026',
                         'prize' => 'Rp 3.000.000',
-                        'guidebook' => 'https://drive.google.com/drive/folders/1x07zL_FzBVwIIwEdqBpsiQXYE9ODxItl'
+                        'guidebook' => 'https://drive.google.com/drive/u/1/folders/189TmZ9NCeEgzyImoEfoFU6lZT5m9jxu3'
                     ]
                 ];
                 @endphp

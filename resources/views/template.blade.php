@@ -293,7 +293,7 @@
                 <div class="tl-vertical-line"></div>
 
                 @php
-                    $driveLink = 'https://drive.google.com/drive/folders/1x07zL_FzBVwIIwEdqBpsiQXYE9ODxItl';
+                    $driveLink = 'https://drive.google.com/drive/folders/1qsrQK_RA7XW2RPx_U00IVsqosO7ZUsa0?usp=sharinghttps://drive.google.com/drive/folders/1qsrQK_RA7XW2RPx_U00IVsqosO7ZUsa0?usp=sharing';
                     $files = [
                         ['name' => 'Logo EPIM 2026', 'desc' => 'Format PNG & SVG — Resmi'],
                         /* ['name' => 'Template Poster Lomba', 'desc' => 'Canva & PSD editable'], */

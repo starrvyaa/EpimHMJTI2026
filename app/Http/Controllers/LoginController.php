@@ -12,7 +12,7 @@ class LoginController extends Controller
 
     public function index()
     {
-        return view('Auth.LoginPage');
+        return view('auth.login');
     }
 
     public function LoginPost(Request $request)
@@ -53,13 +53,13 @@ class LoginController extends Controller
                 } else if (Auth::user()->role == "Peserta") {
                     return redirect('dashboardPeserta');
                 } else {
-                    return redirect('/Login')->withErrors(['error' => 'Invalid user role']);
+                    return redirect('/login')->withErrors(['error' => 'Invalid user role']);
                 }
             } else {
-                return redirect('/Login')->withErrors(['error' => 'Akun atau Password salah']);
+                return redirect('/login')->withErrors(['error' => 'Akun atau Password salah']);
             }
         } else {
-            return redirect('/Login')->withErrors(['error' => 'Akun atau Password salah']);
+            return redirect('/login')->withErrors(['error' => 'Akun atau Password salah']);
         }
     }
 
