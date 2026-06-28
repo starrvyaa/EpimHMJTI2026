@@ -1742,7 +1742,7 @@
 
 @php
     // 1. Definisikan array data langsung di dalam Blade
-    $timelineData = [
+    $timelineUmum = [
         [
             "title" => "Launching EPIM 2026",
             "subtitle" => "Pembukaan resmi kompetisi.",
@@ -1807,6 +1807,45 @@
             "isHighlight" => true
         ]
     ];
+
+    $timelineVideography = [
+        [
+            "title" => "Pendaftaran",
+            "subtitle" => "Registrasi akun dan pengisian data peserta videography.",
+            "date" => "28 JUNI - 8 AGUSTUS 2026",
+            "cardTitle" => "Pendaftaran Lomba Videography",
+            "cardSubtitle" => "",
+            "year" => "2026",
+            "isHighlight" => false
+        ],
+        [
+            "title" => "Pengumpulan Karya",
+            "subtitle" => "Batas akhir pengumpulan karya video kreatif.",
+            "date" => "28 JUNI - 8 AGUSTUS 2026",
+            "cardTitle" => "Pengumpulan Karya Video",
+            "cardSubtitle" => "Video dikumpulkan via tautan Google Drive",
+            "year" => "2026",
+            "isHighlight" => false
+        ],
+        [
+            "title" => "Pengumuman Juara",
+            "subtitle" => "Penilaian karya oleh juri profesional dan pengumuman pemenang.",
+            "date" => "19 AGUSTUS 2026",
+            "cardTitle" => "Pengumuman Juara Lomba Videography",
+            "cardSubtitle" => "",
+            "year" => "2026",
+            "isHighlight" => false
+        ],
+        [
+            "title" => "Puncak Acara",
+            "subtitle" => "Puncak acara EPIM 2026 dan pembagian hadiah bagi para juara.",
+            "date" => "20 AGUSTUS 2026",
+            "cardTitle" => "Puncak Acara & Pembagian Hadiah",
+            "cardSubtitle" => "Berlokasi di Kampus Politeknik Negeri Jember",
+            "year" => "🏆",
+            "isHighlight" => true
+        ]
+    ];
 @endphp
 
 <section id="timeline" style="background-color: var(--dark);" class="font-sans antialiased text-gray-800">
@@ -1814,62 +1853,129 @@
   <div class="max-w-6xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
     <div class="text-center mb-16">
       <h1 class="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">TIMELINE <span style="color: var(--orange);">KEGIATAN</span></h1>
-      <div class="mt-3 border-t-4 border-orange-600 w-16 mx-auto rounded-full"></div>
+      <div class="mt-3 border-t-4 border-orange-600 w-16 mx-auto rounded-full mb-8"></div>
     </div>
 
-    <div class="relative">
-      <div class="absolute inset-0 flex justify-center pointer-events-none">
-        <div class="w-0.5 bg-gray-200 h-full"></div>
-      </div>
-      
-      @foreach($timelineData as $item)
-        @php
-          // Mengatur posisi otomatis zig-zag: Genap di Kiri, Ganjil di Kanan
-          $isLeft = $loop->index % 2 === 0;
-        @endphp
+    <!-- Timeline Tab Buttons -->
+    <div class="timeline-tabs">
+      <button class="timeline-tab active" data-target="umum">
+        <i class="fas fa-calendar-alt"></i> UMUM / KATEGORI LAIN
+      </button>
+      <button class="timeline-tab" data-target="videography">
+        <i class="fas fa-video"></i> VIDEOGRAPHY
+      </button>
+    </div>
 
-        <div class="relative grid grid-cols-[1fr,auto,1fr] gap-x-4 md:gap-x-8 items-center min-h-[150px] {{ $item['isHighlight'] ? 'mt-8' : 'mt-4' }}">
-          
-          <div class="{{ $isLeft ? 'text-right' : 'text-left order-3' }}">
-            <h2 class="text-lg md:text-xl font-bold {{ $item['isHighlight'] ? 'text-red-600 text-2xl' : 'text-white' }}">
-              {{ $item['title'] }}
-            </h2>
-            <p class="text-xs md:text-sm text-white mt-1">{{ $item['subtitle'] }}</p>
-          </div>
-
-          <div class="relative flex items-center justify-center z-10 order-2">
-            @php
-              $badgeColor = $item['isHighlight'] ? 'bg-yellow-500' : ($loop->first ? 'bg-red-600' : 'bg-orange-500');
-            @endphp
-            <div class="w-16 h-16 {{ $badgeColor }} rounded-full flex items-center justify-center border-4 border-orange-800/50 shadow-md">
-              <span class="text-xs md:text-sm font-bold text-white tracking-wider">{{ $item['year'] }}</span>
-            </div>
-          </div>
-
-          <div class="order-1 {{ $isLeft ? 'order-3' : '' }} shadow-md overflow-hidden max-w-xl w-full {{ $isLeft ? 'justify-self-start' : 'justify-self-end' }}">
-            
-            {{-- Header Card --}}
-            <div class="{{ $item['isHighlight'] ? 'bg-red-800' : 'bg-orange-500' }} px-4 py-1.5 flex items-center space-x-2">
-              @if($item['isHighlight'])
-            @endif
-              <span class="text-[16px] font-bold text-white tracking-wide">{{ $item['date'] }}</span>
-            </div>
-
-            {{-- Body Card --}}
-            <div class="{{ $item['isHighlight'] ? 'bg-red-50' : 'bg-gray-800' }} p-4">
-              <h3 class="text-xl md:text-lg font-semibold {{ $item['isHighlight'] ? 'text-red-900' : 'text-white' }}">
-                {{ $item['cardTitle'] }}
-              </h3>
-              @if($item['cardSubtitle'])
-                <p class="text-xs text-gray-700 mt-1">{{ $item['cardSubtitle'] }}</p>
-              @endif
-            </div>
-
-          </div>
-
+    <!-- Timeline Content: UMUM -->
+    <div class="timeline-content active" id="timeline-umum">
+      <div class="relative">
+        <div class="absolute inset-0 flex justify-center pointer-events-none">
+          <div class="w-0.5 bg-gray-200 h-full"></div>
         </div>
-      @endforeach
+        
+        @foreach($timelineUmum as $item)
+          @php
+            // Mengatur posisi otomatis zig-zag: Genap di Kiri, Ganjil di Kanan
+            $isLeft = $loop->index % 2 === 0;
+          @endphp
+
+          <div class="relative grid grid-cols-[1fr,auto,1fr] gap-x-4 md:gap-x-8 items-center min-h-[150px] {{ $item['isHighlight'] ? 'mt-8' : 'mt-4' }}">
+            
+            <div class="{{ $isLeft ? 'text-right' : 'text-left order-3' }}">
+              <h2 class="text-lg md:text-xl font-bold {{ $item['isHighlight'] ? 'text-red-600 text-2xl' : 'text-white' }}">
+                {{ $item['title'] }}
+              </h2>
+              <p class="text-xs md:text-sm text-white mt-1">{{ $item['subtitle'] }}</p>
+            </div>
+
+            <div class="relative flex items-center justify-center z-10 order-2">
+              @php
+                $badgeColor = $item['isHighlight'] ? 'bg-yellow-500' : ($loop->first ? 'bg-red-600' : 'bg-orange-500');
+              @endphp
+              <div class="w-16 h-16 {{ $badgeColor }} rounded-full flex items-center justify-center border-4 border-orange-800/50 shadow-md">
+                <span class="text-xs md:text-sm font-bold text-white tracking-wider">{{ $item['year'] }}</span>
+              </div>
+            </div>
+
+            <div class="order-1 {{ $isLeft ? 'order-3' : '' }} shadow-md overflow-hidden max-w-xl w-full {{ $isLeft ? 'justify-self-start' : 'justify-self-end' }}">
+              
+              {{-- Header Card --}}
+              <div class="{{ $item['isHighlight'] ? 'bg-red-800' : 'bg-orange-500' }} px-4 py-1.5 flex items-center space-x-2">
+                <span class="text-[16px] font-bold text-white tracking-wide">{{ $item['date'] }}</span>
+              </div>
+
+              {{-- Body Card --}}
+              <div class="{{ $item['isHighlight'] ? 'bg-red-50' : 'bg-gray-800' }} p-4">
+                <h3 class="text-xl md:text-lg font-semibold {{ $item['isHighlight'] ? 'text-red-900' : 'text-white' }}">
+                  {{ $item['cardTitle'] }}
+                </h3>
+                @if($item['cardSubtitle'])
+                  <p class="text-xs text-gray-700 mt-1">{{ $item['cardSubtitle'] }}</p>
+                @endif
+              </div>
+
+            </div>
+
+          </div>
+        @endforeach
+      </div>
     </div>
+
+    <!-- Timeline Content: VIDEOGRAPHY -->
+    <div class="timeline-content" id="timeline-videography">
+      <div class="relative">
+        <div class="absolute inset-0 flex justify-center pointer-events-none">
+          <div class="w-0.5 bg-gray-200 h-full"></div>
+        </div>
+        
+        @foreach($timelineVideography as $item)
+          @php
+            // Mengatur posisi otomatis zig-zag: Genap di Kiri, Ganjil di Kanan
+            $isLeft = $loop->index % 2 === 0;
+          @endphp
+
+          <div class="relative grid grid-cols-[1fr,auto,1fr] gap-x-4 md:gap-x-8 items-center min-h-[150px] {{ $item['isHighlight'] ? 'mt-8' : 'mt-4' }}">
+            
+            <div class="{{ $isLeft ? 'text-right' : 'text-left order-3' }}">
+              <h2 class="text-lg md:text-xl font-bold {{ $item['isHighlight'] ? 'text-red-600 text-2xl' : 'text-white' }}">
+                {{ $item['title'] }}
+              </h2>
+              <p class="text-xs md:text-sm text-white mt-1">{{ $item['subtitle'] }}</p>
+            </div>
+
+            <div class="relative flex items-center justify-center z-10 order-2">
+              @php
+                $badgeColor = $item['isHighlight'] ? 'bg-yellow-500' : ($loop->first ? 'bg-red-600' : 'bg-orange-500');
+              @endphp
+              <div class="w-16 h-16 {{ $badgeColor }} rounded-full flex items-center justify-center border-4 border-orange-800/50 shadow-md">
+                <span class="text-xs md:text-sm font-bold text-white tracking-wider">{{ $item['year'] }}</span>
+              </div>
+            </div>
+
+            <div class="order-1 {{ $isLeft ? 'order-3' : '' }} shadow-md overflow-hidden max-w-xl w-full {{ $isLeft ? 'justify-self-start' : 'justify-self-end' }}">
+              
+              {{-- Header Card --}}
+              <div class="{{ $item['isHighlight'] ? 'bg-red-800' : 'bg-orange-500' }} px-4 py-1.5 flex items-center space-x-2">
+                <span class="text-[16px] font-bold text-white tracking-wide">{{ $item['date'] }}</span>
+              </div>
+
+              {{-- Body Card --}}
+              <div class="{{ $item['isHighlight'] ? 'bg-red-50' : 'bg-gray-800' }} p-4">
+                <h3 class="text-xl md:text-lg font-semibold {{ $item['isHighlight'] ? 'text-red-900' : 'text-white' }}">
+                  {{ $item['cardTitle'] }}
+                </h3>
+                @if($item['cardSubtitle'])
+                  <p class="text-xs text-gray-700 mt-1">{{ $item['cardSubtitle'] }}</p>
+                @endif
+              </div>
+
+            </div>
+
+          </div>
+        @endforeach
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -1899,7 +2005,7 @@
                         'img' => asset('images/despack.avif'),
                         'emoji' => '📦',
                         'icon' => 'fas fa-cube',
-                        'biaya' => 'Rp 60.000',
+                        'biaya' => 'Rp 65.000',
                         'hadiah' => 'Rp 3.000.000',
                         'batas' => '8 Agustus 2026',
                         'tipe' => 'Individu',
