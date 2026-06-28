@@ -97,7 +97,7 @@
         <div class="email-card">
             <!-- Header Logo -->
             <div class="email-header">
-                <img src="https://i.ibb.co.com/84xTmdy/LogoEPIM.png" alt="Logo EPIM 2026">
+                <img src="{{ asset('images/maskot1.png') }}" alt="Logo EPIM 2026">
             </div>
 
             <!-- Body -->
