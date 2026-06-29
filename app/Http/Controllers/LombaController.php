@@ -93,7 +93,6 @@ class LombaController extends Controller
             'bukti_bayar' => 'required|image|mimes:jpg,jpeg,png|max:2048',
             'bukti_status_aktif' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
             'bukti_sosmed' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'bukti_twibon' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
             'judul_karya' => 'required|string|max:255|not_regex:/<[^>]*>/',
             'accepted_integrity' => 'required|accepted',
         ];
@@ -155,7 +154,6 @@ class LombaController extends Controller
             'bukti_bayar' => 'Bukti pembayaran',
             'bukti_status_aktif' => 'Bukti status aktif',
             'bukti_sosmed' => 'Bukti follow sosmed',
-            'bukti_twibon' => 'Bukti twibon',
             'judul_karya' => 'Judul karya',
             'subtema' => 'Subtema',
             'gambar_karya' => 'File poster',
@@ -239,12 +237,6 @@ class LombaController extends Controller
             $filename = 'sosmed_' . time() . '.' . $f->getClientOriginalExtension();
             $f->move(public_path('uploads/sosmed'), $filename);
             $pendaftar->bukti_sosmed = $filename;
-        }
-        if ($request->hasFile('bukti_twibon')) {
-            $f = $request->file('bukti_twibon');
-            $filename = 'twibon_' . time() . '.' . $f->getClientOriginalExtension();
-            $f->move(public_path('uploads/twibon'), $filename);
-            $pendaftar->bukti_twibon = $filename;
         }
         if ($request->hasFile('gambar_karya')) {
             $f = $request->file('gambar_karya');
@@ -425,7 +417,6 @@ class LombaController extends Controller
                 'bukti_bayar' => 'pembayaran',
                 'bukti_status_aktif' => 'status_aktif',
                 'bukti_sosmed' => 'sosmed',
-                'bukti_twibon' => 'twibon',
                 'gambar_karya' => 'karya',
             ];
 
@@ -559,7 +550,6 @@ class LombaController extends Controller
             'bukti_bayar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'bukti_status_aktif' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
             'bukti_sosmed' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'bukti_twibon' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ], [
             '*.image' => ':attribute harus berupa gambar.',
             '*.mimes' => ':attribute formatnya tidak valid.',
@@ -610,16 +600,6 @@ class LombaController extends Controller
             $file->move(public_path('uploads/sosmed'), $filename);
             $updateData['bukti_sosmed'] = $filename;
         }
-        if ($request->hasFile('bukti_twibon')) {
-            if ($pendaftar->bukti_twibon && file_exists(public_path('uploads/twibon/' . $pendaftar->bukti_twibon))) {
-                unlink(public_path('uploads/twibon/' . $pendaftar->bukti_twibon));
-            }
-            $file = $request->file('bukti_twibon');
-            $filename = 'twibon_' . time() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('uploads/twibon'), $filename);
-            $updateData['bukti_twibon'] = $filename;
-        }
-
         if (!empty($updateData)) {
             $pendaftar->update($updateData);
             return back()->with('success', 'Berkas bukti pendaftaran berhasil diperbarui!');

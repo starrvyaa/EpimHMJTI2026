@@ -1479,7 +1479,7 @@
         <ul class="navbar-nav">
             <li><a href="#beranda" class="active">BERANDA</a></li>
             <li><a href="#lomba">LOMBA</a></li>
-            <li><a href="{{ url('/template') }}">TEMPLATE</a></li>
+            {{-- <li><a href="{{ url('/template') }}">TEMPLATE</a></li> --}}
             <li><a href="#timeline">TIMELINE</a></li>
             @guest
                 <li><a href="{{ route('login') }}" class="btn-login">Login</a></li>

@@ -698,30 +698,6 @@
                     </div>
                     @endif
                 </div>
-                <div class="detail-item">
-                    <label>Bukti Twibon</label>
-                    @if($data->bukti_twibon)
-                        @php
-                            $extTwibon = strtolower(pathinfo($data->bukti_twibon, PATHINFO_EXTENSION));
-                            $isTwibonImg = in_array($extTwibon, ['jpg', 'jpeg', 'png', 'gif', 'webp']);
-                        @endphp
-                        @if($isTwibonImg)
-                            <div style="margin-top: 8px;">
-                                <a href="{{ asset('uploads/twibon/' . $data->bukti_twibon) }}" target="_blank" title="Klik untuk memperbesar">
-                                    <img src="{{ asset('uploads/twibon/' . $data->bukti_twibon) }}" alt="Bukti Twibon" style="max-width: 100%; max-height: 200px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); display: block; object-fit: contain;">
-                                </a>
-                            </div>
-                        @else
-                            <strong>
-                                <a href="{{ asset('uploads/twibon/' . $data->bukti_twibon) }}" target="_blank" style="color: #60A5FA; text-decoration: none;">
-                                    <i class="fa-solid fa-file-pdf"></i> Lihat PDF Bukti Twibon
-                                </a>
-                            </strong>
-                        @endif
-                    @else
-                        <strong style="color: #EF4444;">Belum diunggah</strong>
-                    @endif
-                </div>
             </div>
             <button class="btn btn-outline" style="width:100%; margin-top:20px;" onclick="closeModal('modalDetail{{ $data->id }}')">Tutup</button>
         </div>
@@ -793,14 +769,6 @@
                     <label style="display:block; margin-bottom:5px; font-weight:600; font-size:0.85rem;">Bukti Follow Sosmed (PDF/JPG/JPEG/PNG, maks 2MB)</label>
                     <input type="file" name="bukti_sosmed" class="form-control" accept=".pdf,.jpg,.jpeg,.png" style="padding: 8px;">
                     @if($data->bukti_sosmed)
-                        <span style="color:#10B981; font-size:0.75rem; display:block; margin-top:4px;"><i class="fa-solid fa-circle-check"></i> Sudah ada berkas</span>
-                    @endif
-                </div>
-
-                <div class="form-group" style="margin-bottom: 20px;">
-                    <label style="display:block; margin-bottom:5px; font-weight:600; font-size:0.85rem;">Bukti Twibbon (PDF/JPG/JPEG/PNG, maks 2MB)</label>
-                    <input type="file" name="bukti_twibon" class="form-control" accept=".pdf,.jpg,.jpeg,.png" style="padding: 8px;">
-                    @if($data->bukti_twibon)
                         <span style="color:#10B981; font-size:0.75rem; display:block; margin-top:4px;"><i class="fa-solid fa-circle-check"></i> Sudah ada berkas</span>
                     @endif
                 </div>
@@ -1198,12 +1166,6 @@
                     @error('bukti_sosmed') <span class="form-error">{{ $message }}</span> @enderror
                 </div>
 
-                <!-- Bukti Twibon -->
-                <div class="form-group">
-                    <label>Upload Bukti Twibon <span style="color:#EF4444;">*</span> (PDF/JPG/PNG, maks 2MB)</label>
-                    <input type="file" name="bukti_twibon" class="form-control" required accept=".pdf,.jpg,.jpeg,.png">
-                    @error('bukti_twibon') <span class="form-error">{{ $message }}</span> @enderror
-                </div>  
 
                 <div style="display:flex; gap:10px; margin-top:20px;">
                     <button type="button" class="btn btn-outline" style="flex:1" onclick="goToStep(1)">Kembali</button>
