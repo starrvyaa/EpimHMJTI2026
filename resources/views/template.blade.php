@@ -297,7 +297,11 @@
                     $files = [
                         ['name' => 'Logo EPIM 2026', 'desc' => 'Format PNG & SVG — Resmi'],
                         /* ['name' => 'Template Poster Lomba', 'desc' => 'Canva & PSD editable'], */
+
                         // ['name' => 'Template Proposal', 'desc' => 'DOCX — Format proposal resmi'],
+
+                        ['name' => 'Template Proposal', 'desc' => 'DOCX — Format proposal resmi'],
+
                         ['name' => 'Panduan Teknis Lomba', 'desc' => 'PDF — Buku panduan lengkap'],
                         /* ['name' => 'Form Pendaftaran', 'desc' => 'PDF — Isi & upload kembali'], */
                         ['name' => 'Surat Pernyataan Orisinalitas', 'desc' => 'DOCX — Tanda tangan basah'],

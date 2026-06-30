@@ -7,6 +7,8 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\LombaController;
 use App\Http\Controllers\KaryaController;
 use App\Http\Controllers\PengaturanController;
+use App\Http\Controllers\ForgetPasswordManager;
+use App\Http\Controllers\ActivityLogController;
 
 // 1. HALAMAN UTAMA (Sudah diberi nama 'home' agar tidak error lagi!)
 Route::get('/', function () {
@@ -67,6 +69,9 @@ Route::middleware(['auth'])->group(function () {
         // Pengaturan (Setting) — Admin only
         Route::get('/pengaturan', [PengaturanController::class, 'index'])->name('Pengaturan.index');
         Route::post('/pengaturan', [PengaturanController::class, 'store'])->name('Pengaturan.store');
+
+        // Log Aktivitas Admin (Fitur 9)
+        Route::get('/admin/log-aktivitas', [ActivityLogController::class, 'index'])->name('admin.log.index');
     });
 });
 
@@ -80,7 +85,6 @@ Route::post('/register', [RegisterController::class, 'register']);
 
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-
 // 4. ROUTE DASHBOARD
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -88,3 +92,9 @@ Route::get('/dashboard', function () {
 
 
 require __DIR__.'/auth.php';
+
+// Lupa Password (Fitur 7) — sudah ada controllernya, tinggal pasang route
+Route::get('/lupa-password', [ForgetPasswordManager::class, 'index'])->name('Forgot.page');
+Route::post('/lupa-password', [ForgetPasswordManager::class, 'store'])->name('Forgot.auth');
+Route::get('/reset-password/{token}', [ForgetPasswordManager::class, 'reset'])->name('Forgot.reset');
+Route::post('/reset-password', [ForgetPasswordManager::class, 'resetPass'])->name('ForgotReset.post');

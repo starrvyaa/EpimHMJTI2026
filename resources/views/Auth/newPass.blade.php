@@ -1,244 +1,189 @@
 <!DOCTYPE html>
-<html lang="zxx" class="js">
-
+<html lang="id">
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <!-- Fav Icon  -->
-    <link rel="shortcut icon" href="{{ asset('') }}/favicon.ico">
-    <!-- Page Title  -->
-    <title>New Password</title>
-    <!-- StyleSheets  -->
-    <link rel="stylesheet" href="{{ asset('dashboard_asset/css/dashlite.css?ver=3.2.2') }}">
-    <link id="skin-default" rel="stylesheet" href="{{ asset('dashboard_asset/css/theme.css?ver=3.2.2') }}">
+    <title>Set New Password - EPIM 2026</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
     <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: #0A0A0A;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        .reset-box {
+            width: min(400px, 100%);
+            background: #111;
+            padding: 2.5rem;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .title {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .title span { color: #F97316; }
+
+        .subtitle {
+            font-size: 0.85rem;
+            color: #9CA3AF;
+            margin-bottom: 2rem;
+            line-height: 1.5;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.75rem;
+            background: #0f0f0f;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: #fff;
+            margin-top: 0.5rem;
+        }
+
+        .password-wrap {
+            position: relative;
+            width: 100%;
+        }
+
+        .password-wrap input {
+            padding-right: 2.8rem;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-35%);
+            background: none;
+            border: none;
+            color: #9CA3AF;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        label {
+            font-size: 0.8rem;
+            color: #9CA3AF;
+        }
+
+        .btn {
+            width: 100%;
+            margin-top: 1.5rem;
+            padding: 0.8rem;
+            background: #F97316;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: #EA580C;
+        }
+
+        .error {
+            color: #FCA5A5;
+            font-size: 0.78rem;
+            display: block;
+            margin-top: 0.45rem;
+        }
+
         .alert {
-            margin-bottom: 0;
-            /* remove margin bottom */
-            padding-bottom: 0;
-            /* remove padding bottom */
+            padding: 0.85rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
+            line-height: 1.4;
         }
 
-        .alert.show {
-            margin-bottom: 20px;
-            /* add margin bottom only when alert is shown */
-            padding-bottom: 20px;
-            /* add padding bottom only when alert is shown */
-        }
-
-        .alert.hide {
-            display: none;
-            /* add display none when alert is hidden */
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: #FCA5A5;
+            border: 1px solid rgba(239, 68, 68, 0.2);
         }
     </style>
 </head>
+<body>
 
-<body class="nk-body bg-white npc-default pg-auth">
-    <div class="nk-app-root">
-        <!-- main @s -->
-        <div class="nk-main ">
-            <!-- wrap @s -->
-            <div class="nk-wrap nk-wrap-nosidebar">
-                <!-- content @s -->
-                <div class="nk-content ">
-                    <div class="nk-split nk-split-page nk-split-lg">
-                        <div class="nk-split-content nk-block-area nk-block-area-column nk-auth-container bg-white">
-                            <div class="absolute-top-right d-lg-none p-3 p-sm-5">
-                                <a href="#" class="toggle btn-white btn btn-icon btn-light"
-                                    data-target="athPromo"><em class="icon ni ni-info"></em></a>
-                            </div>
-                            <div class="nk-block nk-block-middle nk-auth-body">
-                                <div class="brand-logo pb-5">
-                                    <a href="/" class="logo-link">
-                                        <img class="logo-light logo-img logo-img-lg"
-                                            src="{{ asset('img') }}/Logo-epim.png"
-                                            srcset="{{ asset('img') }}/Logo-epim.png" alt="logo">
-                                        <img class="logo-dark logo-img logo-img-lg"
-                                            src="{{ asset('img') }}/Logo-epim.png"
-                                            srcset="{{ asset('img') }}/Logo-epim.png" alt="logo-dark">
-                                    </a>
-                                </div>
-                                <div class="nk-block-head">
-                                    <div class="nk-block-head-content">
-                                        <h5 class="nk-block-title">Forgot Password</h5>
+<div class="reset-box">
+    <div class="title">New <span>Password</span></div>
+    <div class="subtitle">Buat password baru untuk akun kamu.</div>
 
-                                    </div>
-
-                                </div><!-- .nk-block-head -->
-                                <p>We Will send a link to your email, use that link to reset password</p>
-
-                                @if (session()->has('success'))
-                                    <div class="alert alert-success alert-dismissible fade show" role="alert"
-                                        id="success-alert">
-                                        {{ session('success') }}
-                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <script>
-                                        setTimeout(function() {
-                                            document.getElementById('success-alert').classList.remove('show');
-                                            document.getElementById('success-alert').classList.add('hide');
-                                        }, 3000);
-                                    </script>
-                                @endif
-
-                                @if (session()->has('loginError'))
-                                    <div class="alert alert-danger alert-dismissible fade show" role="alert"
-                                        id="error-alert">
-                                        {{ session('loginError') }}
-                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <script>
-                                        setTimeout(function() {
-                                            document.getElementById('error-alert').classList.remove('show');
-                                            document.getElementById('error-alert').classList.add('hide');
-                                        }, 3000);
-                                    </script>
-                                @endif
-
-                                @if ($errors->any())
-                                    <div class="alert alert-danger alert-dismissible fade show" role="alert"
-                                        id="error-alert">
-                                        <ul>
-                                            @foreach ($errors->all() as $error)
-                                                <li>{{ $error }}</li>
-                                            @endforeach
-                                        </ul>
-
-                                    </div>
-                                    <script>
-                                        setTimeout(function() {
-                                            document.getElementById('error-alert').classList.remove('show');
-                                            document.getElementById('error-alert').classList.add('hide');
-                                        }, 3000);
-                                    </script>
-                                @endif
-                                <form action="{{ route('ForgotReset.post') }}" method="POST"
-                                    class="form-validate is-alter" autocomplete="off">
-                                    @csrf
-                                    <input type="text" name="token" hidden value="{{ $token }}">
-                                    <div class="form-group">
-                                        <div class="form-label-group">
-                                            <label class="form-label" for="email-address">Email</label>
-                                            {{-- <a class="link link-primary link-sm" tabindex="-1" href="#">Need Help?</a> --}}
-                                        </div>
-                                        <div class="form-control-wrap">
-                                            <input autocomplete="off" type="email" name="email"
-                                                class="form-control form-control-lg @error('email') is-invalid @enderror"
-                                                required id="email-address"
-                                                placeholder="Enter your email address">
-                                            @error('email')
-                                                <div class="invalid-feedback">
-                                                    {{ $message }}
-                                                </div>
-                                            @enderror
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <div class="form-label-group">
-                                            <label class="form-label" for="password">Enter new Password</label>
-                                            {{-- <a class="link link-primary link-sm" tabindex="-1" href="#">Need Help?</a> --}}
-                                        </div>
-                                        <div class="form-control-wrap">
-                                            <a tabindex="-1" href="#"
-                                                class="form-icon form-icon-right passcode-switch lg"
-                                                data-target="password">
-                                                <em class="passcode-icon icon-show icon ni ni-eye"></em>
-                                                <em class="passcode-icon icon-hide icon ni ni-eye-off"></em>
-                                            </a>
-                                            <input autocomplete="off" type="password" name="password"
-                                                class="form-control form-control-lg @error('password') is-invalid @enderror"
-                                                placeholder="Enter a password of at least 8 characters" required
-                                                id="password">
-                                            @error('password')
-                                                <div class="invalid-feedback">
-                                                    {{ $message }}
-                                                </div>
-                                            @enderror
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <div class="form-label-group">
-                                            <label class="form-label" for="password_confirmation">Confirm
-                                                Password</label>
-                                            {{-- <a class="link link-primary link-sm" tabindex="-1" href="#">Need Help?</a> --}}
-                                        </div>
-                                        <div class="form-control-wrap">
-                                            <a tabindex="-1" href="#"
-                                                class="form-icon form-icon-right passcode-switch lg"
-                                                data-target="password_confirmation">
-                                                <em class="passcode-icon icon-show icon ni ni-eye"></em>
-                                                <em class="passcode-icon icon-hide icon ni ni-eye-off"></em>
-                                            </a>
-                                            <input autocomplete="off" type="password" name="password_confirmation"
-                                                class="form-control form-control-lg @error('password') is-invalid @enderror"
-                                                placeholder="Enter a password of at least 8 characters" required
-                                                id="password_confirmation">
-                                            @error('password_confirmation')
-                                                <div class="invalid-feedback">
-                                                    {{ $message }}
-                                                </div>
-                                            @enderror
-                                        </div>
-                                    </div>
-
-
-
-
-                                    <!-- .form-group -->
-                                    <div class="form-group">
-                                        <button class="btn btn-lg btn-primary btn-block"
-                                            type="submit">Submit</button>
-                                    </div>
-
-                                </form>
-                                <!-- form -->
-
-
-
-
-                            </div><!-- .nk-block -->
-
-                        </div><!-- .nk-split-content -->
-                        <div class="nk-split-content nk-split-stretch bg-lighter d-flex toggle-break-lg toggle-slide toggle-slide-right"
-                            data-toggle-body="true" data-content="athPromo" data-toggle-screen="lg"
-                            data-toggle-overlay="true">
-                            <div class="slider-wrap w-100 w-max-550px p-3 p-sm-5 m-auto text-center">
-                                <div class="slider-init" data-slick='{"dots":true, "arrows":false}'>
-                                    <div class="slider-item">
-                                        <div class="nk-feature nk-feature-center">
-                                            <div class="nk-feature-img text-center">
-                                                <img class="round mx-auto d-block" src="{{ asset('img') }}/thumbnail.jpg"
-                                                    srcset="{{ asset('img') }}/thumbnail.jpg" alt="">
-                                            </div>
-                                            {{-- <div class="nk-feature-content py-4 p-sm-5">
-                                                <h4>EPIM</h4>
-
-                                            </div> --}}
-                                        </div>
-                                    </div><!--.slider-item -->
-                                    
-                                </div><!--.slider-init -->
-                                <div class="slider-dots"></div>
-                                <div class="slider-arrows"></div>
-                            </div><!--.slider-wrap -->
-                        </div><!-- .nk-split-content -->
-                    </div><!-- .nk-split -->
-                </div>
-                <!-- wrap @e -->
-            </div>
-            <!-- content @e -->
+    @if (session()->has('loginError'))
+        <div class="alert alert-danger">
+            {{ session('loginError') }}
         </div>
-        <!-- main @e -->
-    </div>
-    <!-- app-root @e -->
-    <!-- JavaScript -->
-    <script src="{{ asset('dashboard_asset/js/bundle.js?ver=3.2.2') }}"></script>
-    <script src="{{ asset('dashboard_asset/js/scripts.js?ver=3.2.2') }}"></script>
+    @endif
 
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul style="margin: 0; padding-left: 1.2rem;">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <form action="{{ route('ForgotReset.post') }}" method="POST" autocomplete="off">
+        @csrf
+        <input type="hidden" name="token" value="{{ $token }}">
+
+        <div>
+            <label>Password Baru</label>
+            <div class="password-wrap">
+                <input id="password" type="password" name="password" placeholder="Minimal 8 karakter" required>
+                <button type="button" class="toggle-password" onclick="togglePassword('password', this)" title="Lihat password">
+                    <i class="fa-solid fa-eye"></i>
+                </button>
+            </div>
+            @error('password') <span class="error">{{ $message }}</span> @enderror
+        </div>
+
+        <div style="margin-top: 1rem;">
+            <label>Konfirmasi Password Baru</label>
+            <div class="password-wrap">
+                <input id="password_confirmation" type="password" name="password_confirmation" placeholder="Ulangi password baru" required>
+                <button type="button" class="toggle-password" onclick="togglePassword('password_confirmation', this)" title="Lihat password">
+                    <i class="fa-solid fa-eye"></i>
+                </button>
+            </div>
+            @error('password_confirmation') <span class="error">{{ $message }}</span> @enderror
+        </div>
+
+        <button class="btn" type="submit">Ubah Password</button>
+    </form>
+</div>
+
+<script>
+    function togglePassword(inputId, button) {
+        const input = document.getElementById(inputId);
+        const icon = button.querySelector('i');
+        const visible = input.type === 'text';
+
+        input.type = visible ? 'password' : 'text';
+        icon.className = visible ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash';
+        button.title = visible ? 'Lihat password' : 'Sembunyikan password';
+    }
+</script>
+
+</body>
 </html>

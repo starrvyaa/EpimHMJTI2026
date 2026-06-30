@@ -15,7 +15,7 @@ class ForgetPasswordManager extends Controller
 {
     //
     function index(){
-        return view('Auth.ForgotPassword');
+        return view('auth.ForgotPassword');
     }
 
     function store(Request $request){
@@ -39,31 +39,29 @@ class ForgetPasswordManager extends Controller
     }
 
     function reset($token){
-        return view('Auth.newPass',compact('token'));
+        return view('auth.newPass',compact('token'));
     }
 
     function resetPass(Request $request){
         $request->validate([
-            "email" => "required|string|exists:users",
             "password" => "required|string|min:8|confirmed",
             "password_confirmation" => "required"
         ]);
 
         $updatePassword = DB::table('password_resets')
         ->where([
-            "email" =>$request->email,
-            "token" =>$request->token
+            "token" => $request->token
         ])->first();
 
         if(!$updatePassword){
-            return redirect()->to(route("Forgot.reset"))->with("error","invalid");
+            return back()->with("loginError", "Token reset password tidak valid atau telah kedaluwarsa.");
         }
 
-        User::where("email",$request->email)->update(["password" =>Hash::make($request->password)]);
+        User::where("email", $updatePassword->email)->update(["password" => Hash::make($request->password)]);
 
-        DB::table("password_resets")->where(["email" => $request->email])->delete();
+        DB::table("password_resets")->where(["email" => $updatePassword->email])->delete();
 
-        return redirect('/Login')->with("success","Password reset success");
+        return redirect('/login')->with("success", "Password berhasil diubah, silakan masuk.");
     }
 
 }
