@@ -6,6 +6,7 @@ use App\Helpers\PembayaranHelper;
 use App\Models\Pendaftar;
 use App\Models\Pengaturan;
 use App\Models\Tim;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
@@ -23,6 +24,17 @@ class LombaController extends Controller
             // Filter by kategori
             if ($request->filled('filter_kategori')) {
                 $query->where('id_lomba', $request->filter_kategori);
+            }
+            // Filter by status
+            if ($request->filled('filter_status')) {
+                $query->where('status_kelulusan', $request->filter_status);
+            }
+            // Search by nama_tim
+            if ($request->filled('search_tim')) {
+                $search = $request->search_tim;
+                $query->whereHas('tim', function ($q) use ($search) {
+                    $q->where('nama_tim', 'like', '%' . $search . '%');
+                });
             }
             $query->orderBy('updated_at', 'desc');
             $datas = $query->paginate(10)->withQueryString();
@@ -54,6 +66,7 @@ class LombaController extends Controller
         $userHasPendaftaran = Pendaftar::where('user_id', $user->id)->exists();
 
         $filterKategori = $request->filter_kategori;
+        $filterStatus = $request->filter_status;
 
         // Check if user has any pendaftaran with incomplete karya (for alert logic)
         $userHasUnsubmittedKarya = false;
@@ -62,7 +75,7 @@ class LombaController extends Controller
             foreach ($userPendaftarans as $p) {
                 $karyaComplete = match ($p->id_lomba) {
                     1 => (bool) $p->judul_karya,
-                    2 => (bool) $p->gambar_karya,
+                    2 => (bool) $p->judul_karya,
                     3 => (bool) $p->judul_karya,
                     4 => (bool) $p->link_video_karya,
                     default => false,
@@ -74,7 +87,15 @@ class LombaController extends Controller
             }
         }
 
-        return view('lomba.index', compact('listKategori', 'datas', 'pengaturan', 'deadline', 'isExpired', 'filterKategori', 'userHasPendaftaran', 'userHasUnsubmittedKarya'));
+        $paymentMap = [
+            1 => \App\Helpers\PembayaranHelper::getInfo(1),
+            2 => \App\Helpers\PembayaranHelper::getInfo(2),
+            3 => \App\Helpers\PembayaranHelper::getInfo(3),
+            4 => \App\Helpers\PembayaranHelper::getInfo(4),
+            5 => \App\Helpers\PembayaranHelper::getInfo(5),
+        ];
+
+        return view('lomba.index', compact('listKategori', 'datas', 'pengaturan', 'deadline', 'isExpired', 'filterKategori', 'filterStatus', 'userHasPendaftaran', 'userHasUnsubmittedKarya', 'paymentMap'));
     }
 
     public function store(Request $request)
@@ -83,6 +104,12 @@ class LombaController extends Controller
         $pengaturan = Pengaturan::first();
         if ($pengaturan && $pengaturan->status_pendaftaran_ditutup) {
             return back()->with('error', 'Maaf, pendaftaran lomba saat ini sudah ditutup oleh Admin.');
+        }
+
+        // ► FITUR 8: Batas 1 pendaftaran per user
+        $sudahDaftar = Pendaftar::where('user_id', auth()->id())->exists();
+        if ($sudahDaftar) {
+            return back()->with('error', 'Anda sudah terdaftar di salah satu lomba. Setiap akun hanya dapat mendaftar 1 lomba.');
         }
 
         $idLomba = $request->input('id_lomba');
@@ -103,14 +130,14 @@ class LombaController extends Controller
         $rules['nis_nim_ketua'] = 'required|string|max:50|not_regex:/<[^>]*>/';
         $rules['hp_ketua'] = $phoneRule;
 
-        if ($idLomba == 1) {
+        if ($idLomba == 1 || $idLomba == 2) {
             $rules['nama_tim'] = $noHtmlText;
             $rules['asal_sekolah'] = $noHtmlText;
             $rules['guru_pembimbing'] = $noHtmlText;
             $rules['proposal'] = 'required|file|mimes:pdf|max:10240';
             // $rules['subtema'] = 'required|string|in:Manajemen absensi,Perpustakaan,Ekstrakurikuler,Kantin sehat';
 
-            // Anggota 1 is required for Web Programming because min 2 people (Ketua + Anggota 1)
+            // Anggota 1 is required for Web Programming/Network Engineering because min 2 people (Ketua + Anggota 1)
             $rules['anggota_1'] = $noHtmlText;
             $rules['anggota_nis_1'] = 'required|string|max:50|not_regex:/<[^>]*>/';
             $rules['hp_1'] = $phoneRule;
@@ -120,15 +147,14 @@ class LombaController extends Controller
             $rules['anggota_nis_2'] = 'nullable|string|max:50|not_regex:/<[^>]*>/';
             $rules['hp_2'] = 'nullable|string|max:20|regex:/^[0-9+\-\s]*$/|not_regex:/<[^>]*>/';
         } else {
-            if ($idLomba == 3) {
+            // ID 3 (Design Packaging), ID 5 (Cyber Security) require proposal/berkas
+            if (in_array($idLomba, [3, 5])) {
                 $rules['proposal'] = 'required|file|mimes:pdf|max:10240';
             } else {
                 $rules['proposal'] = 'nullable|file|mimes:pdf|max:10240';
             }
 
-            if ($idLomba == 2) {
-                $rules['gambar_karya'] = 'required|file|mimes:jpg,jpeg,png|max:15360';
-            } elseif ($idLomba == 4) {
+            if ($idLomba == 4) {
                 $rules['link_video_karya'] = 'required|url|max:500';
             }
         }
@@ -172,6 +198,11 @@ class LombaController extends Controller
             $tim->asal_sekolah = $validated['asal_sekolah'];
             $tim->guru_pembimbing = $validated['guru_pembimbing'];
             $tim->no_hp = auth()->user()->nomor_telp ?? '08xxxxxxxxxx';
+        } else if ($idLomba == 2) {
+            $tim->nama_tim = $validated['nama_tim'];
+            $tim->asal_sekolah = $validated['asal_sekolah'];
+            $tim->guru_pembimbing = $validated['guru_pembimbing'];
+            $tim->no_hp = auth()->user()->nomor_telp ?? '08xxxxxxxxxx';
         } else {
             $tim->nama_tim = $validated['nama_ketua'];
             $tim->asal_sekolah = auth()->user()->institusi ?? '-';
@@ -196,7 +227,15 @@ class LombaController extends Controller
             $pendaftar->anggota_2 = $request->anggota_2 ?? null;
             $pendaftar->anggota_nis_2 = $request->anggota_nis_2 ?? null;
             $pendaftar->hp_2 = $request->hp_2 ?? null;
+        } else if ($idLomba == 2) {
+            $pendaftar->anggota_1 = $validated['anggota_1'];
+            $pendaftar->anggota_nis_1 = $validated['anggota_nis_1'];
+            $pendaftar->hp_1 = $validated['hp_1'];
+            $pendaftar->anggota_2 = $request->anggota_2 ?? null;
+            $pendaftar->anggota_nis_2 = $request->anggota_nis_2 ?? null;
+            $pendaftar->hp_2 = $request->hp_2 ?? null;
         }
+
 
         $pendaftar->status_pembayaran = 'verified';
         $pendaftar->accepted_integrity = true;
@@ -208,47 +247,73 @@ class LombaController extends Controller
             $pendaftar->link_video_karya = $validated['link_video_karya'];
         }
 
+        // Simpan pendaftar terlebih dahulu agar mendapatkan database ID (sebagai No Pendaftaran)
+        $pendaftar->save();
+
+        // Ambil nama kategori lomba secara dinamis untuk penamaan file
+        $kategoriModel = \App\Models\KategoriLomba::find($idLomba);
+        $slugLomba = \Illuminate\Support\Str::slug($kategoriModel->nama_lomba ?? 'lomba', '_');
+        $namaIdentifier = $idLomba == 1 || $idLomba == 2 ? $validated['nama_ketua'] . '_' . $validated['nama_tim'] : $validated['nama_ketua'];
+        $slugNama = \Illuminate\Support\Str::slug($namaIdentifier, '_');
+
+        $updateData = [];
+
         if ($request->hasFile('proposal')) {
             $f = $request->file('proposal');
-            $filename = 'proposal_' . time() . '.' . $f->getClientOriginalExtension();
+            $filename = 'proposal_' . $slugLomba . '_' . $slugNama . '_reg' . $pendaftar->id . '_' . \Illuminate\Support\Str::random(4) . '.' . $f->getClientOriginalExtension();
             $f->move(public_path('uploads/proposal'), $filename);
             $pendaftar->proposal = $filename;
+            $updateData['proposal'] = $filename;
         }
         if ($request->hasFile('orisinalitas')) {
             $f = $request->file('orisinalitas');
-            $filename = 'orisinalitas_' . time() . '.' . $f->getClientOriginalExtension();
+            $filename = 'orisinalitas_' . $slugLomba . '_' . $slugNama . '_reg' . $pendaftar->id . '_' . \Illuminate\Support\Str::random(4) . '.' . $f->getClientOriginalExtension();
             $f->move(public_path('uploads/orisinalitas'), $filename);
             $pendaftar->orisinalitas = $filename;
+            $updateData['orisinalitas'] = $filename;
         }
         if ($request->hasFile('bukti_bayar')) {
             $f = $request->file('bukti_bayar');
-            $filename = 'bayar_' . time() . '.' . $f->getClientOriginalExtension();
+            $filename = 'bayar_' . $slugLomba . '_' . $slugNama . '_reg' . $pendaftar->id . '_' . \Illuminate\Support\Str::random(4) . '.' . $f->getClientOriginalExtension();
             $f->move(public_path('uploads/pembayaran'), $filename);
             $pendaftar->bukti_bayar = $filename;
+            $updateData['bukti_bayar'] = $filename;
         }
         if ($request->hasFile('bukti_status_aktif')) {
             $f = $request->file('bukti_status_aktif');
-            $filename = 'status_' . time() . '.' . $f->getClientOriginalExtension();
+            $filename = 'status_' . $slugLomba . '_' . $slugNama . '_reg' . $pendaftar->id . '_' . \Illuminate\Support\Str::random(4) . '.' . $f->getClientOriginalExtension();
             $f->move(public_path('uploads/status_aktif'), $filename);
             $pendaftar->bukti_status_aktif = $filename;
+            $updateData['bukti_status_aktif'] = $filename;
         }
         if ($request->hasFile('bukti_sosmed')) {
             $f = $request->file('bukti_sosmed');
-            $filename = 'sosmed_' . time() . '.' . $f->getClientOriginalExtension();
+            $filename = 'sosmed_' . $slugLomba . '_' . $slugNama . '_reg' . $pendaftar->id . '_' . \Illuminate\Support\Str::random(4) . '.' . $f->getClientOriginalExtension();
             $f->move(public_path('uploads/sosmed'), $filename);
             $pendaftar->bukti_sosmed = $filename;
+            $updateData['bukti_sosmed'] = $filename;
+        }
+        if ($request->hasFile('bukti_twibon')) {
+            $f = $request->file('bukti_twibon');
+            $filename = 'twibon_' . $slugLomba . '_' . $slugNama . '_reg' . $pendaftar->id . '_' . \Illuminate\Support\Str::random(4) . '.' . $f->getClientOriginalExtension();
+            $f->move(public_path('uploads/twibon'), $filename);
+            $pendaftar->bukti_twibon = $filename;
+            $updateData['bukti_twibon'] = $filename;
         }
         if ($request->hasFile('gambar_karya')) {
             $f = $request->file('gambar_karya');
-            $filename = 'POSTER_' . time() . '_' . $f->getClientOriginalName();
+            $filename = 'POSTER_' . $slugLomba . '_' . $slugNama . '_reg' . $pendaftar->id . '_' . \Illuminate\Support\Str::random(4) . '.' . $f->getClientOriginalExtension();
             $f->move(public_path('uploads/karya'), $filename);
             $pendaftar->gambar_karya = $filename;
+            $updateData['gambar_karya'] = $filename;
         }
 
-        $pendaftar->save();
+        if (!empty($updateData)) {
+            $pendaftar->save();
+        }
 
         // WA Group link
-        $waMap = [1 => 'EPIM2026-WEB', 2 => 'EPIM2026-POSTER', 3 => 'EPIM2026-PACKAGING', 4 => 'EPIM2026-VIDEO'];
+        $waMap = [1 => 'DqYNGG634VO7zEkYmczuVM', 2 => 'Edj1nHP9pYOH3dEHKK5kZQ', 3 => 'EQWLSjH6VBmBXeoWy3cTZO', 4 => 'EGjLe4LcTUGFJNSUZP2u2H'];
         $waLink = 'https://chat.whatsapp.com/' . ($waMap[$idLomba] ?? 'EPIM2026');
 
         return redirect()
@@ -275,7 +340,7 @@ class LombaController extends Controller
     {
         // ► GATEKEEP: cek upload proposal ditutup
         $pengaturan = Pengaturan::first();
-        if ($pengaturan && $pengaturan->status_upload_postervideo_ditutup && auth()->user()->role !== 'admin') {
+        if ($pengaturan && $pengaturan->status_upload_postervideo_ditutup) {
             return back()->with('error', 'Maaf, pengumpulan proposal saat ini sudah ditutup oleh Admin.');
         }
 
@@ -294,7 +359,10 @@ class LombaController extends Controller
 
         if ($request->hasFile('proposal')) {
             $file = $request->file('proposal');
-            $nama_file = time() . '_' . $file->getClientOriginalName();
+            $slugLomba = \Illuminate\Support\Str::slug($data->kategori->nama_lomba ?? 'lomba', '_');
+            $namaIdentifier = $data->id_lomba == 1 || $data->id_lomba == 2 ? $data->nama_ketua . '_' . ($data->tim->nama_tim ?? '') : $data->nama_ketua;
+            $slugNama = \Illuminate\Support\Str::slug($namaIdentifier, '_');
+            $nama_file = 'proposal_' . $slugLomba . '_' . $slugNama . '_reg' . $data->id . '_' . \Illuminate\Support\Str::random(4) . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('uploads/proposal'), $nama_file);
 
             $data->proposal = $nama_file;
@@ -313,7 +381,7 @@ class LombaController extends Controller
     {
         // ► GATEKEEP: cek upload ditutup
         $pengaturan = Pengaturan::first();
-        if ($pengaturan && $pengaturan->status_upload_postervideo_ditutup && auth()->user()->role !== 'admin') {
+        if ($pengaturan && $pengaturan->status_upload_postervideo_ditutup) {
             return back()->with('error', 'Maaf, penghapusan berkas saat ini sudah ditutup oleh Admin.');
         }
 
@@ -343,7 +411,7 @@ class LombaController extends Controller
     {
         // ► GATEKEEP: cek upload ditutup
         $pengaturan = Pengaturan::first();
-        if ($pengaturan && $pengaturan->status_upload_postervideo_ditutup && auth()->user()->role !== 'admin') {
+        if ($pengaturan && $pengaturan->status_upload_postervideo_ditutup) {
             return back()->with('error', 'Maaf, pengumpulan berkas saat ini sudah ditutup oleh Admin.');
         }
 
@@ -366,7 +434,10 @@ class LombaController extends Controller
             }
 
             $file = $request->file('orisinalitas');
-            $nama_file = time() . '_' . $file->getClientOriginalName();
+            $slugLomba = \Illuminate\Support\Str::slug($data->kategori->nama_lomba ?? 'lomba', '_');
+            $namaIdentifier = $data->id_lomba == 1 || $data->id_lomba == 2 ? $data->nama_ketua . '_' . ($data->tim->nama_tim ?? '') : $data->nama_ketua;
+            $slugNama = \Illuminate\Support\Str::slug($namaIdentifier, '_');
+            $nama_file = 'orisinalitas_' . $slugLomba . '_' . $slugNama . '_reg' . $data->id . '_' . \Illuminate\Support\Str::random(4) . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('uploads/orisinalitas'), $nama_file);
 
             $data->update(['orisinalitas' => $nama_file]);
@@ -379,7 +450,7 @@ class LombaController extends Controller
     {
         // ► GATEKEEP: cek upload ditutup
         $pengaturan = Pengaturan::first();
-        if ($pengaturan && $pengaturan->status_upload_postervideo_ditutup && auth()->user()->role !== 'admin') {
+        if ($pengaturan && $pengaturan->status_upload_postervideo_ditutup) {
             return back()->with('error', 'Maaf, penghapusan berkas saat ini sudah ditutup oleh Admin.');
         }
 
@@ -427,12 +498,25 @@ class LombaController extends Controller
             }
 
             $timId = $pendaftar->tim_id;
+            $namaTim = $pendaftar->tim->nama_tim ?? 'Tim #' . $realId;
             $pendaftar->delete();
 
             // Hapus record tim terkait agar tidak membebani database
             if ($timId) {
                 \App\Models\Tim::where('id', $timId)->delete();
             }
+
+            // ► FITUR 9: Log aktivitas admin
+            $admin = auth()->user();
+            ActivityLog::create([
+                'admin_id'    => $admin->id,
+                'admin_name'  => $admin->name,
+                'action'      => 'Hapus Peserta',
+                'target_type' => 'pendaftar',
+                'target_id'   => $realId,
+                'target_name' => $namaTim,
+                'keterangan'  => 'Menghapus pendaftaran tim dan berkas terkait',
+            ]);
 
             return back()->with('success', 'Pendaftaran tim dan seluruh berkasnya berhasil dihapus.');
         } catch (\Exception $e) {
@@ -465,7 +549,21 @@ class LombaController extends Controller
         $pendaftar = Pendaftar::findOrFail($id);
         $pendaftar->status_kelulusan = $status;
         $pendaftar->save();
-        return back()->with('success', 'Status kelulusan ' . ($pendaftar->tim->nama_tim ?? 'Tim #' . $id) . ': ' . strtoupper($status));
+
+        // ► FITUR 9: Log aktivitas admin
+        $admin = Auth::user();
+        $namaTim = $pendaftar->tim->nama_tim ?? 'Tim #' . $id;
+        ActivityLog::create([
+            'admin_id'    => $admin->id,
+            'admin_name'  => $admin->name,
+            'action'      => $status === 'lolos' ? 'Loloskan Peserta' : 'Tolak Peserta',
+            'target_type' => 'pendaftar',
+            'target_id'   => $id,
+            'target_name' => $namaTim,
+            'keterangan'  => 'Status kelulusan diubah menjadi ' . strtoupper($status),
+        ]);
+
+        return back()->with('success', 'Status kelulusan ' . $namaTim . ': ' . strtoupper($status));
     }
 
     public function updateStatusAktif(Request $request, $id)
@@ -493,7 +591,10 @@ class LombaController extends Controller
             }
 
             $f = $request->file('bukti_status_aktif');
-            $filename = 'status_' . time() . '.' . $f->getClientOriginalExtension();
+            $slugLomba = \Illuminate\Support\Str::slug($data->kategori->nama_lomba ?? 'lomba', '_');
+            $namaIdentifier = $data->id_lomba == 1 || $data->id_lomba == 2 ? $data->nama_ketua . '_' . ($data->tim->nama_tim ?? '') : $data->nama_ketua;
+            $slugNama = \Illuminate\Support\Str::slug($namaIdentifier, '_');
+            $filename = 'status_' . $slugLomba . '_' . $slugNama . '_reg' . $data->id . '_' . \Illuminate\Support\Str::random(4) . '.' . $f->getClientOriginalExtension();
             $f->move(public_path('uploads/status_aktif'), $filename);
 
             $data->bukti_status_aktif = $filename;
@@ -528,7 +629,10 @@ class LombaController extends Controller
             }
 
             $f = $request->file('bukti_sosmed');
-            $filename = 'sosmed_' . time() . '.' . $f->getClientOriginalExtension();
+            $slugLomba = \Illuminate\Support\Str::slug($data->kategori->nama_lomba ?? 'lomba', '_');
+            $namaIdentifier = $data->id_lomba == 1 || $data->id_lomba == 2 ? $data->nama_ketua . '_' . ($data->tim->nama_tim ?? '') : $data->nama_ketua;
+            $slugNama = \Illuminate\Support\Str::slug($namaIdentifier, '_');
+            $filename = 'sosmed_' . $slugLomba . '_' . $slugNama . '_reg' . $data->id . '_' . \Illuminate\Support\Str::random(4) . '.' . $f->getClientOriginalExtension();
             $f->move(public_path('uploads/sosmed'), $filename);
 
             $data->bukti_sosmed = $filename;
@@ -542,7 +646,7 @@ class LombaController extends Controller
     {
         // ► GATEKEEP: cek pendaftaran ditutup
         $pengaturan = Pengaturan::first();
-        if ($pengaturan && ($pengaturan->status_pendaftaran_ditutup || $pengaturan->status_upload_postervideo_ditutup) && auth()->user()->role !== 'admin') {
+        if ($pengaturan && ($pengaturan->status_pendaftaran_ditutup || $pengaturan->status_upload_postervideo_ditutup)) {
             return back()->with('error', 'Maaf, pengeditan berkas pendaftaran saat ini sudah ditutup oleh Admin.');
         }
 
@@ -568,13 +672,17 @@ class LombaController extends Controller
 
         $updateData = [];
 
+        $slugLomba = \Illuminate\Support\Str::slug($pendaftar->kategori->nama_lomba ?? 'lomba', '_');
+        $namaIdentifier = $pendaftar->id_lomba == 1 || $pendaftar->id_lomba == 2 ? $pendaftar->nama_ketua . '_' . ($pendaftar->tim->nama_tim ?? '') : $pendaftar->nama_ketua;
+        $slugNama = \Illuminate\Support\Str::slug($namaIdentifier, '_');
+
         if ($request->hasFile('bukti_bayar')) {
             // Delete old file
             if ($pendaftar->bukti_bayar && file_exists(public_path('uploads/pembayaran/' . $pendaftar->bukti_bayar))) {
                 unlink(public_path('uploads/pembayaran/' . $pendaftar->bukti_bayar));
             }
             $file = $request->file('bukti_bayar');
-            $filename = 'bayar_' . time() . '.' . $file->getClientOriginalExtension();
+            $filename = 'bayar_' . $slugLomba . '_' . $slugNama . '_reg' . $pendaftar->id . '_' . \Illuminate\Support\Str::random(4) . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('uploads/pembayaran'), $filename);
             $updateData['bukti_bayar'] = $filename;
         }
@@ -585,7 +693,7 @@ class LombaController extends Controller
                 unlink(public_path('uploads/status_aktif/' . $pendaftar->bukti_status_aktif));
             }
             $file = $request->file('bukti_status_aktif');
-            $filename = 'status_' . time() . '.' . $file->getClientOriginalExtension();
+            $filename = 'status_' . $slugLomba . '_' . $slugNama . '_reg' . $pendaftar->id . '_' . \Illuminate\Support\Str::random(4) . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('uploads/status_aktif'), $filename);
             $updateData['bukti_status_aktif'] = $filename;
         }
@@ -596,10 +704,20 @@ class LombaController extends Controller
                 unlink(public_path('uploads/sosmed/' . $pendaftar->bukti_sosmed));
             }
             $file = $request->file('bukti_sosmed');
-            $filename = 'sosmed_' . time() . '.' . $file->getClientOriginalExtension();
+            $filename = 'sosmed_' . $slugLomba . '_' . $slugNama . '_reg' . $pendaftar->id . '_' . \Illuminate\Support\Str::random(4) . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('uploads/sosmed'), $filename);
             $updateData['bukti_sosmed'] = $filename;
         }
+        if ($request->hasFile('bukti_twibon')) {
+            if ($pendaftar->bukti_twibon && file_exists(public_path('uploads/twibon/' . $pendaftar->bukti_twibon))) {
+                unlink(public_path('uploads/twibon/' . $pendaftar->bukti_twibon));
+            }
+            $file = $request->file('bukti_twibon');
+            $filename = 'twibon_' . $slugLomba . '_' . $slugNama . '_reg' . $pendaftar->id . '_' . \Illuminate\Support\Str::random(4) . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads/twibon'), $filename);
+            $updateData['bukti_twibon'] = $filename;
+        }
+
         if (!empty($updateData)) {
             $pendaftar->update($updateData);
             return back()->with('success', 'Berkas bukti pendaftaran berhasil diperbarui!');

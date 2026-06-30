@@ -10,7 +10,7 @@ class RegisController extends Controller
 {
     public function index()
     {
-        return view('Auth.Regis');
+        return view('auth.register');
     }
 
     public function store(Request $request)
@@ -25,6 +25,6 @@ class RegisController extends Controller
         $validateData['password'] = Hash::make($validateData['password']);
         User::create($validateData);
         $request->session()->flash('success', 'Registrasi berhasil,silahkan login');
-        return redirect('/Login');
+        return redirect('/login');
     }
 }

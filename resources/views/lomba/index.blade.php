@@ -129,6 +129,22 @@
         border-top: 1px solid #333;
         width: 100%;
     }
+    /* === Perlebar modal detail === */
+    #modalDetail .modal-content,
+    [id^="modalDetail"] .modal-content {
+        max-width: 900px;
+    }
+    /* === Grid 2 kolom untuk Sosmed & Twibon === */
+    .sosmed-twibon-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        grid-column: 1 / -1;
+    }
+    @media (max-width: 640px) {
+        .sosmed-twibon-grid { grid-template-columns: 1fr; }
+        [id^="modalDetail"] .modal-content { max-width: 100%; }
+    }
     @media (max-width: 768px) {
         .card-table { padding: 1rem; }
         table { min-width: 800px; }
@@ -179,7 +195,7 @@
 <div class="card-table">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 10px;">
         <h3 style="margin:0; font-family:'Montserrat';">Status Pendaftaran</h3>
-        @if($datas->isEmpty())
+        @if(strtolower(auth()->user()->role ?? '') !== 'admin' && $datas->isEmpty())
             @if($pengaturan->status_pendaftaran_ditutup ?? false)
                 <span style="color:#6B7280; font-size:0.85rem; display:inline-flex; align-items:center; gap:8px;">
                     <i class="fa-solid fa-ban"></i> Pendaftaran ditutup
@@ -192,23 +208,48 @@
         @endif
     </div>
 
-    {{-- Admin: Filter Kategori --}}
+    {{-- Admin: Filter Kategori & Status --}}
     @if(auth()->user()->role == 'admin')
     <form method="GET" action="{{ route('Lomba.peserta.index') }}" style="margin-bottom:1.5rem; display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+        <!-- Filter Kategori -->
         <label style="color:#9CA3AF; font-size:0.85rem; font-weight:600;">
-            <i class="fa-solid fa-filter"></i> Filter Kategori:
+            <i class="fa-solid fa-filter"></i> Kategori:
         </label>
-        <select name="filter_kategori" onchange="this.form.submit()" style="padding:0.6rem 1rem; background:#222; border:1px solid rgba(255,255,255,0.1); border-radius:10px; color:#fff; outline:none; min-width:200px;">
+        <select name="filter_kategori" onchange="this.form.submit()" style="padding:0.6rem 1rem; background:#222; border:1px solid rgba(255,255,255,0.1); border-radius:10px; color:#fff; outline:none; min-width:180px;">
             <option value="">— Semua Kategori —</option>
             @foreach($listKategori as $kat)
                 <option value="{{ $kat->id }}" {{ ($filterKategori ?? '') == $kat->id ? 'selected' : '' }}>{{ $kat->nama_lomba }}</option>
             @endforeach
         </select>
-        @if($filterKategori)
+
+        <!-- Filter Status -->
+        <label style="color:#9CA3AF; font-size:0.85rem; font-weight:600; margin-left:8px;">
+            <i class="fa-solid fa-circle-info"></i> Status:
+        </label>
+        <select name="filter_status" onchange="this.form.submit()" style="padding:0.6rem 1rem; background:#222; border:1px solid rgba(255,255,255,0.1); border-radius:10px; color:#fff; outline:none; min-width:180px;">
+            <option value="">— Semua Status —</option>
+            <option value="pending" {{ ($filterStatus ?? '') == 'pending' ? 'selected' : '' }}>Terdaftar (Pending)</option>
+            <option value="lolos" {{ ($filterStatus ?? '') == 'lolos' ? 'selected' : '' }}>Lolos</option>
+            <option value="tidak_lolos" {{ ($filterStatus ?? '') == 'tidak_lolos' ? 'selected' : '' }}>Tidak Lolos</option>
+        </select>
+
+        <!-- Search Input -->
+        <div style="position: relative; display: inline-flex; align-items: center; margin-left:8px;">
+            <input type="text" name="search_tim" placeholder="Cari nama tim..." value="{{ request('search_tim') }}" 
+                   style="padding: 0.6rem 1rem 0.6rem 2.2rem; background: #222; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: #fff; outline: none; min-width: 220px;">
+            <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 0.8rem; color: #6B7280; font-size: 0.85rem;"></i>
+        </div>
+
+        <button type="submit" class="btn btn-orange" style="padding: 0.6rem 1.2rem; border-radius: 10px; font-weight: 600; border: none; cursor: pointer;">
+            Cari
+        </button>
+
+        @if($filterKategori || $filterStatus || request('search_tim'))
             <a href="{{ route('Lomba.peserta.index') }}" style="color:#9CA3AF; font-size:0.8rem; text-decoration:none;">
                 <i class="fa-solid fa-xmark"></i> Reset
             </a>
         @endif
+
         <span style="color:#6B7280; font-size:0.8rem; margin-left:auto;">
             <i class="fa-solid fa-list"></i> {{ $datas->total() ?? $datas->count() }} data
         </span>
@@ -219,21 +260,31 @@
             <table>
                 @php
                     $lombaIds = $datas->pluck('id_lomba')->unique();
-                    $colHideProposal   = !$lombaIds->intersect([1,3])->count();
+                    // Original:
+                    // $colHideProposal   = !$lombaIds->intersect([1,3])->count();
+                    // $colHideKarya      = !$lombaIds->intersect([2,4])->count();
+                    // $colHideLihatKarya = !$lombaIds->intersect([2,4])->count();
+                    
+                    // Lomba Baru (ID 2 = Network Engineering, ID 5 = Cyber Security):
+                    $colHideProposal   = !$lombaIds->intersect([1,2,3,5])->count();
                     $colHideSubtema    = !$lombaIds->contains(1);
-                    $colHideKarya      = !$lombaIds->intersect([2,4])->count();
-                    $colHideLihatKarya = !$lombaIds->intersect([2,4])->count();
+                    $colHideKarya      = !$lombaIds->intersect([4])->count();
+                    $colHideLihatKarya = !$lombaIds->intersect([4])->count();
                 @endphp
                 <thead>
                     <tr>
                         <th>No</th>
+                        @if(auth()->user()->role == 'admin')
+                            <th>Tgl. Daftar</th>
+                        @endif
                         <th>Info Tim & Lomba</th>
                         @if(auth()->user()->role == 'admin')
                             <th>Pendaftar (User)</th>
                         @endif
-                        <th>Kelulusan</th>
-                        <th @if($colHideProposal) style="display:none;" @endif>Proposal</th>
-                        <!-- <th @if($colHideSubtema) style="display:none;" @endif>Sub Tema</th> -->
+                        <th>Status</th>
+                        {{-- Original: <th @if($colHideProposal) style="display:none;" @endif>Proposal</th> --}}
+                        <th @if($colHideProposal) style="display:none;" @endif>Proposal / Berkas</th>
+                        {{-- <th @if($colHideSubtema) style="display:none;" @endif>Sub Tema</th> --}}
                         <th>Orisinalitas</th>
                         <th @if($colHideKarya) style="display:none;" @endif>Karya</th>
                         <th @if($colHideLihatKarya) style="display:none;" @endif>Lihat Karya</th>
@@ -244,11 +295,26 @@
                 @forelse ($datas as $data)
                     @php
                         $isLocked = false;
-                        $uploadTutup = auth()->user()->role != 'admin' && ($pengaturan->status_upload_postervideo_ditutup ?? false);
-                        $editAksiTutup = auth()->user()->role != 'admin' && (($pengaturan->status_pendaftaran_ditutup ?? false) || ($pengaturan->status_upload_postervideo_ditutup ?? false));
+                        $uploadTutup = ($pengaturan->status_upload_postervideo_ditutup ?? false);
+                        $editAksiTutup = (($pengaturan->status_pendaftaran_ditutup ?? false) || ($pengaturan->status_upload_postervideo_ditutup ?? false));
                     @endphp
                     <tr>
                         <td>{{ $loop->iteration }}</td>
+
+                        @if(auth()->user()->role == 'admin')
+                            <td>
+                                @if($data->created_at)
+                                    <div style="font-size: 0.82rem; color: #fff; font-weight: 600;">
+                                        {{ \Carbon\Carbon::parse($data->created_at)->timezone('Asia/Jakarta')->format('d M Y') }}
+                                    </div>
+                                    <div style="font-size: 0.75rem; color: #6B7280;">
+                                        {{ \Carbon\Carbon::parse($data->created_at)->timezone('Asia/Jakarta')->format('H:i') }} WIB
+                                    </div>
+                                @else
+                                    <span style="color:#6B7280; font-size:0.8rem;">-</span>
+                                @endif
+                            </td>
+                        @endif
 
                         <td>
                             <div style="font-weight: 700; color: #fff;">{{ $data->tim->nama_tim ?? 'N/A' }}</div>
@@ -269,14 +335,14 @@
                                 $klBadge = match($kl) {
                                     'lolos' => ['bg'=>'rgba(16,185,129,0.15)','color'=>'#10B981','text'=>'Lolos'],
                                     'tidak_lolos' => ['bg'=>'rgba(239,68,68,0.15)','color'=>'#EF4444','text'=>'Tidak Lolos'],
-                                    default => ['bg'=>'rgba(245,158,11,0.15)','color'=>'#F59E0B','text'=>'Pending'],
+                                    default => ['bg'=>'rgba(245,158,11,0.15)','color'=>'#F59E0B','text'=>'Terdaftar'],
                                 };
                             @endphp
                             <span style="display:inline-block; padding:4px 10px; border-radius:6px; font-size:0.72rem; font-weight:600; background:{{ $klBadge['bg'] }}; color:{{ $klBadge['color'] }};">
                                 {{ $klBadge['text'] }}
                             </span>
-                            @if($kl == 'lolos')
-                                @if(auth()->user()->role != 'admin')
+                            @if(auth()->user()->role != 'admin')
+                                @if($kl == 'lolos')
                                 <div style="margin-top:4px;">
                                     <a href="{{ route('tiket.finalis') }}" style="font-size:0.7rem; color:#10B981; text-decoration:none;">
                                         <i class="fa-solid fa-ticket"></i> Cetak Tiket
@@ -287,20 +353,14 @@
                             @if(auth()->user()->role == 'admin')
                                 <div style="display:flex; gap:4px; margin-top:6px;">
                                     @if($kl != 'lolos')
-                                    <form action="{{ route('admin.kelulusan.atur', [$data->id, 'lolos']) }}" method="POST" style="display:inline;">
-                                        @csrf @method('PATCH')
-                                        <button type="submit" class="btn" style="padding:3px 8px; font-size:0.65rem; background:#10B981; color:#fff; border:none; border-radius:4px; cursor:pointer;">
-                                            Loloskan
-                                        </button>
-                                    </form>
+                                    <button type="button" class="btn" onclick="openModal('modalLoloskan{{ $data->id }}')" style="padding:3px 8px; font-size:0.65rem; background:#10B981; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                                        Loloskan
+                                    </button>
                                     @endif
                                     @if($kl != 'tidak_lolos' && $kl != 'pending')
-                                    <form action="{{ route('admin.kelulusan.atur', [$data->id, 'tidak_lolos']) }}" method="POST" style="display:inline;">
-                                        @csrf @method('PATCH')
-                                        <button type="submit" class="btn" style="padding:3px 8px; font-size:0.65rem; background:#EF4444; color:#fff; border:none; border-radius:4px; cursor:pointer;">
-                                            Gugurkan
-                                        </button>
-                                    </form>
+                                    <button type="button" class="btn" onclick="openModal('modalGugurkan{{ $data->id }}')" style="padding:3px 8px; font-size:0.65rem; background:#EF4444; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                                        Gugurkan
+                                    </button>
                                     @endif
                                 </div>
                             @endif
@@ -310,7 +370,8 @@
                             @php
                                 $hasProposal = $data->proposal;
                             @endphp
-                            @if(in_array($data->id_lomba, [1,3]))
+                             {{-- Original: @if(in_array($data->id_lomba, [1,3])) --}}
+                             @if(in_array($data->id_lomba, [1,2,3,5]))
                                 @if($hasProposal)
                                     <div style="display: flex; gap: 8px; align-items: center;">
                                         <a href="{{ asset('uploads/proposal/' . $data->proposal) }}" target="_blank" class="btn btn-info-outline" style="padding: 5px 10px;">
@@ -343,7 +404,7 @@
                             @endif
                         </td>
 
-                        <!-- <td @if($colHideSubtema) style="display:none;" @endif>
+                        {{-- <td @if($colHideSubtema) style="display:none;" @endif>
                             @if($data->id_lomba == 1 && $data->subtema)
                                 <span style="color:#fff; font-size:0.85rem;">{{ $data->subtema }}</span>
                             @elseif($data->id_lomba == 1)
@@ -351,7 +412,7 @@
                             @else
                                 <span style="color:#6B7280; font-size:0.78rem;">—</span>
                             @endif
-                        </td> -->
+                        </td> --}}
 
                         <td>
                             @php
@@ -390,18 +451,19 @@
                             @if(in_array($data->id_lomba, [1, 3]))
                                 <span style="color:#6B7280; font-size:0.78rem;">—</span>
                             @else
-                                @if(auth()->user()->role != 'admin')
                                     @php
                                         $idLomba = $data->id_lomba;
                                         $hasGambar = $data->gambar_karya;
                                         $hasLinkVideo = $data->link_video_karya;
                                         $hasSpecificKarya = ($idLomba == 2 && $hasGambar) || ($idLomba == 4 && $hasLinkVideo);
                                         $karyaSubmitted = $data->judul_karya && $hasSpecificKarya;
-                                        $karyaEditBuka = ($pengaturan->status_pengumpulan_karya ?? 0) && !$uploadTutup;
+                                        $karyaEditBuka = ($pengaturan->status_pengumpulan_karya ?? 0);
+                                        $adminOrNotExpired = auth()->user()->role == 'admin' || !$isExpired;
+                                        $adminOrNotClosed = !$uploadTutup;
                                     @endphp
                                     @if(false)
                                         <span style="color:#6B7280; font-size:0.78rem;"><i class="fa-solid fa-lock"></i></span>
-                                    @elseif($isExpired)
+                                    @elseif(!$adminOrNotExpired)
                                         <span style="color:#EF4444; font-size:0.78rem;"><i class="fa-solid fa-clock"></i> Ditutup</span>
                                     @elseif($karyaSubmitted)
                                         <div style="display:flex; flex-direction:column; gap:2px;">
@@ -419,27 +481,13 @@
                                                 </button>
                                             @endif
                                         </div>
-                                    @elseif($uploadTutup)
+                                    @elseif(!$adminOrNotClosed)
                                         <span style="color:#EF4444; font-size:0.78rem;"><i class="fa-solid fa-ban"></i> Upload ditutup</span>
                                     @else
                                         <button class="btn btn-orange" style="padding:5px 10px; font-size:0.78rem;" onclick="openModal('modalKarya{{ $data->id }}')">
                                             <i class="fa-solid fa-upload"></i> Kumpulkan Karya
                                         </button>
                                     @endif
-                                @else
-                                    @if($data->judul_karya)
-                                        <div style="display:flex; flex-direction:column; gap:2px;">
-                                            <span style="color:#10B981; font-size:0.78rem;">
-                                                <i class="fa-solid fa-check-circle"></i> Terkumpul
-                                            </span>
-                                            <span style="color:#F97316; font-size:0.82rem; font-weight:600;">
-                                                <i class="fa-solid fa-quote-left"></i> {{ $data->judul_karya }}
-                                            </span>
-                                        </div>
-                                    @else
-                                        <span style="color:#6B7280; font-size:0.78rem;">—</span>
-                                    @endif
-                                @endif
                             @endif
                         </td>
 
@@ -465,21 +513,37 @@
                         <td>
                             <div class="action-icons">
                                 <button class="icon-btn" style="color:#60A5FA; display:flex; align-items:center;" onclick="openModal('modalDetail{{ $data->id }}')" title="Detail">
-                                    <i class="fa-solid fa-eye"></i><span style="margin-left:5px; font-weight:600; font-size:0.78rem;">Detail</span>
+                                    <span style="margin-left:5px; font-weight:600; font-size:0.78rem;">Detail</span>
                                 </button>
-                                <a href="https://wa.me/{{ $data->hp_ketua }}" target="_blank" class="icon-btn" style="color:#25D366" title="WhatsApp">
-                                    <i class="fa-brands fa-whatsapp"></i>
-                                </a>
-                                @if(auth()->user()->role != 'admin')
-                                    @if(!$editAksiTutup)
+                                @if(auth()->user()->role == 'admin')
+                                    <a href="https://wa.me/{{ $data->hp_ketua }}" target="_blank" class="icon-btn" style="color:#25D366" title="Hubungi Ketua (WhatsApp)">
+                                        <i class="fa-brands fa-whatsapp"></i>
+                                    </a>
+                                @else
+                                    @php
+                                        $waMap = [
+                                            1 => 'DqYNGG634VO7zEkYmczuVM', 
+                                            2 => 'Edj1nHP9pYOH3dEHKK5kZQ', 
+                                            3 => 'EQWLSjH6VBmBXeoWy3cTZO', 
+                                            4 => 'EGjLe4LcTUGFJNSUZP2u2H'
+                                        ];
+                                        $waCode = $waMap[$data->id_lomba] ?? 'EPIM2026';
+                                        $waGroupLink = 'https://chat.whatsapp.com/' . $waCode;
+                                    @endphp
+                                    @if(($data->status_kelulusan ?? 'pending') != 'tidak_lolos')
+                                        <a href="{{ $waGroupLink }}" target="_blank" rel="noopener noreferrer" class="icon-btn" style="color:#25D366" title="Gabung Grup WhatsApp Kategori">
+                                            <i class="fa-brands fa-whatsapp"></i>
+                                        </a>
+                                    @endif
+                                @endif
+                                @if(!$editAksiTutup)
                                     <button class="icon-btn" style="color:#F97316" onclick="openModal('modalEditBukti{{ $data->id }}')" title="Edit Bukti">
                                         <i class="fa-solid fa-file-pen"></i>
                                     </button>
-                                    @else
+                                @else
                                     <button class="icon-btn" style="color:#4B5563; cursor:not-allowed;" title="Edit Ditutup" disabled>
                                         <i class="fa-solid fa-lock"></i>
                                     </button>
-                                    @endif
                                 @endif
                                 @if(auth()->user()->role == 'admin')
                                 <button type="button" class="icon-btn" style="color:#EF4444" onclick="openModal('modalHapusPendaftaran{{ $data->id }}')" title="Hapus">
@@ -512,7 +576,7 @@
                 @if($datas->onFirstPage())
                     <span style="padding:6px 12px; background:#222; color:#6B7280; border-radius:8px; font-size:0.8rem;">« Prev</span>
                 @else
-                    <a href="{{ $datas->previousPageUrl() }}&filter_kategori={{ $filterKategori }}" style="padding:6px 12px; background:#333; color:#fff; border-radius:8px; font-size:0.8rem; text-decoration:none;">« Prev</a>
+                    <a href="{{ $datas->previousPageUrl() }}" style="padding:6px 12px; background:#333; color:#fff; border-radius:8px; font-size:0.8rem; text-decoration:none;">« Prev</a>
                 @endif
 
                 @php
@@ -525,12 +589,12 @@
                     @if($i == $currentPage)
                         <span style="padding:6px 14px; background:#F97316; color:#fff; border-radius:8px; font-size:0.8rem; font-weight:700;">{{ $i }}</span>
                     @else
-                        <a href="{{ $datas->url($i) }}&filter_kategori={{ $filterKategori }}" style="padding:6px 14px; background:#333; color:#9CA3AF; border-radius:8px; font-size:0.8rem; text-decoration:none;">{{ $i }}</a>
+                        <a href="{{ $datas->url($i) }}" style="padding:6px 14px; background:#333; color:#9CA3AF; border-radius:8px; font-size:0.8rem; text-decoration:none;">{{ $i }}</a>
                     @endif
                 @endfor
 
                 @if($datas->hasMorePages())
-                    <a href="{{ $datas->nextPageUrl() }}&filter_kategori={{ $filterKategori }}" style="padding:6px 12px; background:#333; color:#fff; border-radius:8px; font-size:0.8rem; text-decoration:none;">Next »</a>
+                    <a href="{{ $datas->nextPageUrl() }}" style="padding:6px 12px; background:#333; color:#fff; border-radius:8px; font-size:0.8rem; text-decoration:none;">Next »</a>
                 @else
                     <span style="padding:6px 12px; background:#222; color:#6B7280; border-radius:8px; font-size:0.8rem;">Next »</span>
                 @endif
@@ -544,9 +608,9 @@
 @foreach ($datas as $data)
     <div id="modalDetail{{ $data->id }}" class="modal">
         <div class="modal-content">
-            <h3>{{ $data->id_lomba == 1 ? 'Detail Tim' : 'Detail Peserta' }}</h3>
+            <h3>{{ in_array($data->id_lomba, [1, 2]) ? 'Detail Tim' : 'Detail Peserta' }}</h3>
             <div class="detail-grid">
-                @if($data->id_lomba == 1)
+                @if(in_array($data->id_lomba, [1, 2]))
                 <div class="detail-item">
                     <label>Nama Tim</label>
                     <strong>{{ $data->tim->nama_tim ?? 'N/A' }}</strong>
@@ -556,7 +620,7 @@
                     <label>Kategori Lomba</label>
                     <strong>{{ $data->kategori->nama_lomba ?? 'N/A' }}</strong>
                 </div>
-                @if($data->id_lomba == 1)
+                @if(in_array($data->id_lomba, [1, 2]))
                 <div class="detail-item">
                     <label>Asal Sekolah</label>
                     <strong>{{ $data->tim->asal_sekolah ?? 'N/A' }}</strong>
@@ -568,11 +632,11 @@
                 @endif
                 <hr class="detail-separator">
                 <div class="detail-item">
-                    <label>{{ $data->id_lomba == 1 ? 'Ketua' : 'Nama' }}</label>
+                    <label>{{ in_array($data->id_lomba, [1, 2]) ? 'Ketua' : 'Nama' }}</label>
                     <strong>{{ $data->nama_ketua ?? 'N/A' }}@if($data->nis_nim_ketua) (NIM/NIS: {{ $data->nis_nim_ketua }})@endif</strong>
                 </div>
                 <div class="detail-item">
-                    <label>{{ $data->id_lomba == 1 ? 'No WA Ketua' : 'No WA' }}</label>
+                    <label>{{ in_array($data->id_lomba, [1, 2]) ? 'No WA Ketua' : 'No WA' }}</label>
                     <strong>{{ $data->hp_ketua ?? 'N/A' }}</strong>
                 </div>
                 @if($data->anggota_1)
@@ -594,6 +658,7 @@
                     </div>
                 @endif
                 <hr class="detail-separator">
+                <div class="sosmed-twibon-grid">
                 <div class="detail-item">
                     <label>Bukti Pembayaran</label>
                     @if($data->bukti_bayar)
@@ -658,6 +723,8 @@
                     </div>
                     @endif
                 </div>
+                </div>
+                <div class="sosmed-twibon-grid">
                 <div class="detail-item">
                     <label>Bukti Follow Sosmed</label>
                     @if($data->bukti_sosmed)
@@ -698,6 +765,31 @@
                     </div>
                     @endif
                 </div>
+                <div class="detail-item">
+                    <label>Bukti Twibon</label>
+                    @if($data->bukti_twibon)
+                        @php
+                            $extTwibon = strtolower(pathinfo($data->bukti_twibon, PATHINFO_EXTENSION));
+                            $isTwibonImg = in_array($extTwibon, ['jpg', 'jpeg', 'png', 'gif', 'webp']);
+                        @endphp
+                        @if($isTwibonImg)
+                            <div style="margin-top: 8px;">
+                                <a href="{{ asset('uploads/twibon/' . $data->bukti_twibon) }}" target="_blank" title="Klik untuk memperbesar">
+                                    <img src="{{ asset('uploads/twibon/' . $data->bukti_twibon) }}" alt="Bukti Twibon" style="max-width: 100%; max-height: 200px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); display: block; object-fit: contain;">
+                                </a>
+                            </div>
+                        @else
+                            <strong>
+                                <a href="{{ asset('uploads/twibon/' . $data->bukti_twibon) }}" target="_blank" style="color: #60A5FA; text-decoration: none;">
+                                    <i class="fa-solid fa-file-pdf"></i> Lihat PDF Bukti Twibon
+                                </a>
+                            </strong>
+                        @endif
+                    @else
+                        <strong style="color: #EF4444;">Belum diunggah</strong>
+                    @endif
+                </div>
+                </div>{{-- end sosmed-twibon-grid --}}
             </div>
             <button class="btn btn-outline" style="width:100%; margin-top:20px;" onclick="closeModal('modalDetail{{ $data->id }}')">Tutup</button>
         </div>
@@ -705,7 +797,16 @@
 
     <div id="modalProposal{{ $data->id }}" class="modal">
         <div class="modal-content">
-            <h3>Upload / Edit Proposal</h3>
+            <!-- Original: <h3>Upload / Edit Proposal</h3> -->
+            @php
+                $propTitle = match($data->id_lomba) {
+                    2 => 'Upload / Edit Desain Topologi',
+                    5 => 'Upload / Edit Write-up Penetrasi',
+                    default => 'Upload / Edit Proposal'
+                };
+                $propAccept = '.pdf';
+            @endphp
+            <h3>{{ $propTitle }}</h3>
             @if($data->proposal)
             <p style="color: #9CA3AF; font-size: 0.85rem; margin-bottom: 1rem;">
                 <i class="fa-solid fa-info-circle"></i> File lama akan diganti dengan file baru.
@@ -713,7 +814,8 @@
             @endif
             <form action="{{ route('Lomba.peserta.tambahproposal', $data->user_id) }}" method="POST" enctype="multipart/form-data">
                 @csrf @method('PATCH')
-                <div class="form-group"><input type="file" name="proposal" class="form-control" required accept=".pdf"></div>
+                <!-- Original: <div class="form-group"><input type="file" name="proposal" class="form-control" required accept=".pdf"></div> -->
+                <div class="form-group"><input type="file" name="proposal" class="form-control" required accept="{{ $propAccept }}"></div>
                 <div style="display:flex; gap:10px;">
                     <button type="button" class="btn btn-outline" style="flex:1" onclick="closeModal('modalProposal{{ $data->id }}')">Batal</button>
                     <button type="submit" class="btn btn-orange" style="flex:1">Simpan</button>
@@ -739,7 +841,40 @@
         </div>
     </div>
 
-    @if(auth()->user()->role != 'admin')
+    <div id="modalLoloskan{{ $data->id }}" class="modal">
+        <div class="modal-content" style="text-align:center; max-width:450px;">
+            <i class="fa-solid fa-circle-check" style="font-size:3rem; color:#10B981; margin-bottom:15px;"></i>
+            <h3>Loloskan Peserta?</h3>
+            <p style="color:#9CA3AF; font-size:0.9rem; line-height:1.6; margin:10px 0 0;">
+                Apakah Anda yakin ingin meloloskan tim <strong style="color:#fff;">{{ $data->tim->nama_tim ?? 'ini' }}</strong>?
+            </p>
+            <form action="{{ route('admin.kelulusan.atur', [$data->id, 'lolos']) }}" method="POST">
+                @csrf @method('PATCH')
+                <div style="display:flex; gap:10px; margin-top:20px;">
+                    <button type="button" class="btn btn-outline" style="flex:1" onclick="closeModal('modalLoloskan{{ $data->id }}')">Batal</button>
+                    <button type="submit" class="btn" style="flex:1; background:#10B981;">Ya, Loloskan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modalGugurkan{{ $data->id }}" class="modal">
+        <div class="modal-content" style="text-align:center; max-width:450px;">
+            <i class="fa-solid fa-circle-xmark" style="font-size:3rem; color:#EF4444; margin-bottom:15px;"></i>
+            <h3>Gugurkan Peserta?</h3>
+            <p style="color:#9CA3AF; font-size:0.9rem; line-height:1.6; margin:10px 0 0;">
+                Apakah Anda yakin ingin menggugurkan tim <strong style="color:#fff;">{{ $data->tim->nama_tim ?? 'ini' }}</strong>?
+            </p>
+            <form action="{{ route('admin.kelulusan.atur', [$data->id, 'tidak_lolos']) }}" method="POST">
+                @csrf @method('PATCH')
+                <div style="display:flex; gap:10px; margin-top:20px;">
+                    <button type="button" class="btn btn-outline" style="flex:1" onclick="closeModal('modalGugurkan{{ $data->id }}')">Batal</button>
+                    <button type="submit" class="btn btn-danger" style="flex:1; background:#EF4444;">Ya, Gugurkan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div id="modalEditBukti{{ $data->id }}" class="modal">
         <div class="modal-content">
             <h3 style="color:#F97316; font-family:'Montserrat'; margin-bottom:15px;">Edit Bukti Pendaftaran</h3>
@@ -780,12 +915,19 @@
             </form>
         </div>
     </div>
-    @endif
 
     <div id="modalHapusProposal{{ $data->id }}" class="modal">
         <div class="modal-content" style="text-align:center;">
             <i class="fa-solid fa-triangle-exclamation" style="font-size:3rem; color:#EF4444; margin-bottom:15px;"></i>
-            <h3>Hapus Proposal?</h3>
+            <!-- Original: <h3>Hapus Proposal?</h3> -->
+            @php
+                $hapusTitle = match($data->id_lomba) {
+                    2 => 'Hapus Desain Topologi?',
+                    5 => 'Hapus Write-up?',
+                    default => 'Hapus Proposal?'
+                };
+            @endphp
+            <h3>{{ $hapusTitle }}</h3>
             <form action="{{ route('Lomba.peserta.hapusproposal', $data->user_id) }}" method="POST">
                 @csrf @method('DELETE')
                 <div style="display:flex; gap:10px; margin-top:20px;">
@@ -837,8 +979,9 @@
 {{-- Modal Karya per peserta --}}
 @foreach ($datas as $data)
     @php $idLomba = $data->id_lomba; @endphp
-    @if(auth()->user()->role != 'admin' && ($data->status_pembayaran ?? 'pending') == 'verified' && !$isExpired && !($pengaturan->status_upload_postervideo_ditutup ?? false)
-        && !(($idLomba == 1 && $data->judul_karya) || ($idLomba == 2 && $data->gambar_karya) || ($idLomba == 3 && $data->judul_karya) || ($idLomba == 4 && $data->link_video_karya)))
+    {{-- Original check: && !(($idLomba == 1 && $data->judul_karya) || ($idLomba == 2 && $data->gambar_karya) || ($idLomba == 3 && $data->judul_karya) || ($idLomba == 4 && $data->link_video_karya))) --}}
+    @if((auth()->user()->role == 'admin' || (($data->status_pembayaran ?? 'pending') == 'verified' && !$isExpired && !($pengaturan->status_upload_postervideo_ditutup ?? false)))
+        && !( (in_array($idLomba, [1, 2, 3, 5]) && $data->judul_karya) || ($idLomba == 4 && $data->link_video_karya) ))
     <div id="modalKarya{{ $data->id }}" class="modal">
         <div class="modal-content">
             <h3 style="color:#F97316; font-family:'Montserrat'; margin-bottom:4px;">Kumpulkan Karya</h3>
@@ -848,6 +991,7 @@
             </div>
             <form action="{{ route('karya.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
+                <input type="hidden" name="pendaftar_id" value="{{ $data->id }}">
                 <div class="form-group">
                     <label>Judul Karya <span style="color:#EF4444;">*</span></label>
                     <input type="text" name="judul_karya" class="form-control" placeholder="Masukkan judul karya" required>
@@ -864,12 +1008,14 @@
                     </select>
                 </div>
                 @endif
+                {{-- Original Poster upload field commented out since ID 2 is now Network Engineering (documents/proposal-based)
                 @if($idLomba == 2)
                 <div class="form-group">
                     <label>Upload File Poster <span style="color:#EF4444;">*</span> (JPG/JPEG/PNG, min 300dpi, maks 15MB, wajib logo Polije/HMJTI/EPIM)</label>
                     <input type="file" name="gambar_karya" class="form-control" accept=".jpg,.jpeg,.png" required>
                 </div>
                 @endif
+                --}}
                 @if($idLomba == 4)
                 <div class="form-group">
                     <label>Link Video <span style="color:#EF4444;">*</span> (Setting: "Siapa saja dengan link dapat melihat")</label>
@@ -902,7 +1048,7 @@
 {{-- Modal Edit Karya per peserta --}}
 @foreach ($datas as $data)
     @php $ekIdLomba = $data->id_lomba; @endphp
-    @if(auth()->user()->role != 'admin' && $data->judul_karya && ($pengaturan->status_pengumpulan_karya ?? 0) && !$uploadTutup)
+    @if($data->judul_karya && (auth()->user()->role == 'admin' || ($pengaturan->status_pengumpulan_karya ?? 0)))
     <div id="modalEditKarya{{ $data->id }}" class="modal">
         <div class="modal-content">
             <h3 style="color:#F97316; font-family:'Montserrat'; margin-bottom:4px;">Edit Karya</h3>
@@ -916,7 +1062,7 @@
                     <label>Judul Karya <span style="color:#EF4444;">*</span></label>
                     <input type="text" name="judul_karya" class="form-control" value="{{ old('judul_karya', $data->judul_karya) }}" required>
                 </div>
-                <!-- 
+                {{-- 
                 @if($ekIdLomba == 1)
                 <div class="form-group">
                     <label>Pilih Subtema <span style="color:#EF4444;">*</span></label>
@@ -928,7 +1074,8 @@
                     </select>
                 </div>
                 @endif
-                -->
+                --}}
+                {{-- Original Poster input block (Commented out):
                 @if($ekIdLomba == 2)
                 <div class="form-group">
                     <label>Upload File Poster (JPG/JPEG/PNG, maks 15MB) <span style="color:#6B7280; font-size:0.75rem;">— kosongkan jika tidak diganti</span></label>
@@ -940,15 +1087,25 @@
                         </div>
                     @endif
                 </div>
-                @elseif($ekIdLomba == 4)
+                @endif
+                --}}
+                @if($ekIdLomba == 4)
                 <div class="form-group">
-                    <label>Link Video YouTube/Drive <span style="color:#EF4444;">*</span></label>
+                    <label>Link Video (Drive Peserta) <span style="color:#EF4444;">*</span></label>
                     <input type="url" name="link_video_karya" class="form-control" value="{{ old('link_video_karya', $data->link_video_karya) }}" required>
                 </div>
                 @else
+                @php
+                    $proposalLabel = match($ekIdLomba) {
+                        2 => 'Upload Topologi Jaringan (PDF, maks 10MB)',
+                        5 => 'Upload Write-up Penetrasi (PDF, maks 15MB)',
+                        default => 'Upload Proposal (PDF, maks 10MB)'
+                    };
+                    $proposalAccept = '.pdf';
+                @endphp
                 <div class="form-group">
-                    <label>Upload Proposal (PDF, maks 10MB) <span style="color:#6B7280; font-size:0.75rem;">— kosongkan jika tidak diganti</span></label>
-                    <input type="file" name="proposal" class="form-control" accept=".pdf">
+                    <label>{{ $proposalLabel }} <span style="color:#6B7280; font-size:0.75rem;">— kosongkan jika tidak diganti</span></label>
+                    <input type="file" name="proposal" class="form-control" accept="{{ $proposalAccept }}">
                     @if($data->proposal)
                         <div style="margin-top:6px; display:flex; align-items:center; gap:8px;">
                             <span style="color:#10B981; font-size:0.78rem;"><i class="fa-solid fa-check-circle"></i> File sudah ada</span>
@@ -967,6 +1124,7 @@
                         </div>
                     @endif
                 </div>
+                @endif
 
                 <!-- 
                 {{-- 
@@ -986,7 +1144,6 @@
                 @endif
                 --}}
                 -->
-                @endif
                 <div style="display:flex; gap:10px; margin-top:20px;">
                     <button type="button" class="btn btn-outline" style="flex:1" onclick="closeModal('modalEditKarya{{ $data->id }}')">Batal</button>
                     <button type="submit" class="btn btn-orange" style="flex:1">
@@ -1161,7 +1318,7 @@
 
                 <!-- Bukti Sosmed -->
                 <div class="form-group">
-                    <label>Upload Bukti Follow Sosmed EPIM <span style="color:#EF4444;">*</span> (PDF/JPG/PNG, maks 2MB)</label>
+                    <label>Upload Bukti Follow Instagram @hmjti_polije & @epim_polije, YouTube @hmjtipolije, serta TikTok @hmjti_polije <span style="color:#EF4444;">*</span> (Format PDF   , maks 2MB)</label>
                     <input type="file" name="bukti_sosmed" class="form-control" required accept=".pdf,.jpg,.jpeg,.png">
                     @error('bukti_sosmed') <span class="form-error">{{ $message }}</span> @enderror
                 </div>
@@ -1207,12 +1364,13 @@
                 --}}
                 -->
 
-                <!-- Design Poster Upload -->
+                {{-- Design Poster Upload commented out since ID 2 is now Network Engineering (documents/proposal-based)
                 <div class="form-group" id="gambarKaryaInputGroup" style="display:none;">
                     <label>Upload File Poster <span style="color:#EF4444;">*</span> (JPG/JPEG/PNG, maks 15MB)</label>
                     <input type="file" name="gambar_karya" id="gambarKaryaInput" class="form-control" accept=".jpg,.jpeg,.png">
                     @error('gambar_karya') <span class="form-error">{{ $message }}</span> @enderror
                 </div>
+                --}}
 
                 <!-- Videography Link Video -->
                 <div class="form-group" id="linkVideoInputGroup" style="display:none;">
@@ -1262,12 +1420,7 @@
 @section('extraJs')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    const PAYMENT_MAP = {
-        1: { label: 'Web Programming', nominal: 85000, bank: 'Mandiri', rekening: '9876-5432-1098', an: 'AGNESS SHERLYTA ANGG' },
-        2: { label: 'Design Poster', nominal: 55000, bank: 'Mandiri', rekening: '9876-5432-1098', an: 'AGNESS SHERLYTA ANGG' },
-        3: { label: 'Design Packaging', nominal: 60000, bank: 'Mandiri', rekening: '9876-5432-1098', an: 'AGNESS SHERLYTA ANGG' },
-        4: { label: 'Videography', nominal: 60000, bank: 'Mandiri', rekening: '9876-5432-1098', an: 'AGNESS SHERLYTA ANGG' },
-    };
+    const PAYMENT_MAP = @json($paymentMap);
     function openModal(id) {
         if(id === 'modalCreate') {
             document.getElementById('formPendaftaran').reset();
@@ -1303,8 +1456,25 @@
         const linkVideoInputGroup = document.getElementById('linkVideoInputGroup');
         const linkVideoInput = document.getElementById('linkVideoInput');
 
-        if (val == '1') {
-            // Web Programming
+        // Reset all optional/dynamic inputs as hidden & disabled by default
+        if (gambarKaryaInputGroup) gambarKaryaInputGroup.style.display = 'none';
+        if (gambarKaryaInput) {
+            gambarKaryaInput.required = false;
+            gambarKaryaInput.disabled = true;
+        }
+        if (linkVideoInputGroup) linkVideoInputGroup.style.display = 'none';
+        if (linkVideoInput) {
+            linkVideoInput.required = false;
+            linkVideoInput.disabled = true;
+        }
+        if (proposalInputGroup) proposalInputGroup.style.display = 'none';
+        if (proposalInput) {
+            proposalInput.required = false;
+            proposalInput.disabled = true;
+        }
+
+        if (val == '1' || val == '2') {
+            // Web Programming & Network Engineering
             webProgFields.style.display = 'block';
             nonWebProgFields.style.display = 'none';
 
@@ -1327,22 +1497,32 @@
             proposalInputGroup.style.display = 'block';
             proposalInput.required = true;
             proposalInput.disabled = false;
-
-            if (subtemaInputGroup) subtemaInputGroup.style.display = 'block';
-            if (subtemaInput) {
-                subtemaInput.required = false;
-                subtemaInput.disabled = false;
+            
+            proposalInput.accept = '.pdf';
+            const label = proposalInputGroup.querySelector('label');
+            if (val == '2') {
+                if (label) label.innerHTML = 'Upload Proposal / Desain Topologi <span style="color:#EF4444;">*</span> (PDF, maks 10MB)';
+            } else {
+                if (label) label.innerHTML = 'Upload Proposal <span style="color:#EF4444;">*</span> (PDF, maks 10MB)';
             }
-            
-            gambarKaryaInputGroup.style.display = 'none';
-            gambarKaryaInput.required = false;
-            gambarKaryaInput.disabled = true;
-            
-            linkVideoInputGroup.style.display = 'none';
-            linkVideoInput.required = false;
-            linkVideoInput.disabled = true;
+
+            if (subtemaInputGroup) {
+                if (val == '1') {
+                    subtemaInputGroup.style.display = 'block';
+                    if (subtemaInput) {
+                        subtemaInput.required = false;
+                        subtemaInput.disabled = false;
+                    }
+                } else {
+                    subtemaInputGroup.style.display = 'none';
+                    if (subtemaInput) {
+                        subtemaInput.required = false;
+                        subtemaInput.disabled = true;
+                    }
+                }
+            }
         } else {
-            // Non Web-Programming
+            // Non Web-Programming / Non Network-Engineering
             webProgFields.style.display = 'none';
             nonWebProgFields.style.display = 'block';
             document.getElementById('anggotaContainer').innerHTML = '';
@@ -1360,15 +1540,14 @@
                 input.disabled = false;
             });
 
-            if (val == '3') {
-                // Design Packaging (needs proposal)
+            if (val == '3' || val == '5') {
+                // Design Packaging (3), Cyber Security (5) need proposal/berkas
                 proposalInputGroup.style.display = 'block';
                 proposalInput.required = true;
                 proposalInput.disabled = false;
-            } else {
-                proposalInputGroup.style.display = 'none';
-                proposalInput.required = false;
-                proposalInput.disabled = true;
+                proposalInput.accept = '.pdf';
+                const label = proposalInputGroup.querySelector('label');
+                if (label) label.innerHTML = 'Upload Proposal <span style="color:#EF4444;">*</span> (PDF, maks 10MB)';
             }
 
             if (subtemaInputGroup) subtemaInputGroup.style.display = 'none';
@@ -1377,32 +1556,10 @@
                 subtemaInput.disabled = true;
             }
 
-            if (val == '2') {
-                // Design Poster
-                gambarKaryaInputGroup.style.display = 'block';
-                gambarKaryaInput.required = true;
-                gambarKaryaInput.disabled = false;
-                
-                linkVideoInputGroup.style.display = 'none';
-                linkVideoInput.required = false;
-                linkVideoInput.disabled = true;
-            } else if (val == '4') {
-                // Videography
-                gambarKaryaInputGroup.style.display = 'none';
-                gambarKaryaInput.required = false;
-                gambarKaryaInput.disabled = true;
-                
+            if (val == '4') { // Videography (in db, ID 4 is Videography)
                 linkVideoInputGroup.style.display = 'block';
                 linkVideoInput.required = true;
                 linkVideoInput.disabled = false;
-            } else {
-                gambarKaryaInputGroup.style.display = 'none';
-                gambarKaryaInput.required = false;
-                gambarKaryaInput.disabled = true;
-                
-                linkVideoInputGroup.style.display = 'none';
-                linkVideoInput.required = false;
-                linkVideoInput.disabled = true;
             }
         }
     }
@@ -1417,7 +1574,7 @@
 
     function tambahAnggota() {
         if (countAnggota() >= 1) {
-            alert('Maksimal 3 anggota (Ketua + 2 Anggota) untuk Web Programming.');
+            alert('Maksimal 3 anggota (Ketua + 2 Anggota) untuk Web Programming / Network Engineering.');
             return;
         }
         if (document.getElementById('anggotaBlock-2')) return;

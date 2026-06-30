@@ -36,7 +36,21 @@ class PengaturanController extends Controller
             'status_pengumpulan_karya' => $request->status_pengumpulan_karya_buka == 'on' ? 1 : 0,
         ]);
 
+        // ► FITUR 9: Log aktivitas admin
+        $admin = auth()->user();
+        \App\Models\ActivityLog::create([
+            'admin_id'    => $admin->id,
+            'admin_name'  => $admin->name,
+            'action'      => 'Mengubah Pengaturan',
+            'target_type' => 'pengaturan',
+            'target_id'   => 1,
+            'target_name' => 'Pengaturan Sistem',
+            'keterangan'  => 'Pendaftaran: ' . ($request->status_pendaftaran_buka == 'on' ? 'BUKA' : 'TUTUP') . 
+                             ', Upload Proposal/Orisinalitas: ' . ($request->status_upload_postervideo_buka == 'on' ? 'BUKA' : 'TUTUP') .
+                             ', Pengumpulan Karya: ' . ($request->status_pengumpulan_karya_buka == 'on' ? 'BUKA' : 'TUTUP'),
+        ]);
+
         return redirect()->route('Pengaturan.index')
-            ->with('success', 'Pengaturan berhasil disimpan ✅');
+            ->with('success', 'Pengaturan berhasil disimpan ');
     }
 }
