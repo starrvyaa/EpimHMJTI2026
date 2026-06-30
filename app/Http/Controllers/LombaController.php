@@ -120,7 +120,6 @@ class LombaController extends Controller
             'bukti_bayar' => 'required|image|mimes:jpg,jpeg,png|max:2048',
             'bukti_status_aktif' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
             'bukti_sosmed' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'bukti_twibon' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
             'judul_karya' => 'required|string|max:255|not_regex:/<[^>]*>/',
             'accepted_integrity' => 'required|accepted',
         ];
@@ -181,7 +180,6 @@ class LombaController extends Controller
             'bukti_bayar' => 'Bukti pembayaran',
             'bukti_status_aktif' => 'Bukti status aktif',
             'bukti_sosmed' => 'Bukti follow sosmed',
-            'bukti_twibon' => 'Bukti twibon',
             'judul_karya' => 'Judul karya',
             'subtema' => 'Subtema',
             'gambar_karya' => 'File poster',
@@ -490,7 +488,6 @@ class LombaController extends Controller
                 'bukti_bayar' => 'pembayaran',
                 'bukti_status_aktif' => 'status_aktif',
                 'bukti_sosmed' => 'sosmed',
-                'bukti_twibon' => 'twibon',
                 'gambar_karya' => 'karya',
             ];
 
@@ -657,7 +654,6 @@ class LombaController extends Controller
             'bukti_bayar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'bukti_status_aktif' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
             'bukti_sosmed' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'bukti_twibon' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ], [
             '*.image' => ':attribute harus berupa gambar.',
             '*.mimes' => ':attribute formatnya tidak valid.',

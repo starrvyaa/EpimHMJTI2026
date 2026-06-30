@@ -908,14 +908,6 @@
                     @endif
                 </div>
 
-                <div class="form-group" style="margin-bottom: 20px;">
-                    <label style="display:block; margin-bottom:5px; font-weight:600; font-size:0.85rem;">Bukti Twibbon (PDF/JPG/JPEG/PNG, maks 2MB)</label>
-                    <input type="file" name="bukti_twibon" class="form-control" accept=".pdf,.jpg,.jpeg,.png" style="padding: 8px;">
-                    @if($data->bukti_twibon)
-                        <span style="color:#10B981; font-size:0.75rem; display:block; margin-top:4px;"><i class="fa-solid fa-circle-check"></i> Sudah ada berkas</span>
-                    @endif
-                </div>
-
                 <div style="display:flex; gap:10px;">
                     <button type="button" class="btn btn-outline" style="flex:1" onclick="closeModal('modalEditBukti{{ $data->id }}')">Batal</button>
                     <button type="submit" class="btn btn-orange" style="flex:1">Simpan Bukti</button>
@@ -1331,12 +1323,6 @@
                     @error('bukti_sosmed') <span class="form-error">{{ $message }}</span> @enderror
                 </div>
 
-                <!-- Bukti Twibon -->
-                <div class="form-group">
-                    <label>Upload Bukti Twibon <span style="color:#EF4444;">*</span> (PDF/JPG/PNG, maks 2MB)</label>
-                    <input type="file" name="bukti_twibon" class="form-control" required accept=".pdf,.jpg,.jpeg,.png">
-                    @error('bukti_twibon') <span class="form-error">{{ $message }}</span> @enderror
-                </div>  
 
                 <div style="display:flex; gap:10px; margin-top:20px;">
                     <button type="button" class="btn btn-outline" style="flex:1" onclick="goToStep(1)">Kembali</button>
