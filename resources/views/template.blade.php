@@ -300,7 +300,7 @@
 
                         // ['name' => 'Template Proposal', 'desc' => 'DOCX — Format proposal resmi'],
 
-                        ['name' => 'Template Proposal', 'desc' => 'DOCX — Format proposal resmi'],
+                        // ['name' => 'Template Proposal', 'desc' => 'DOCX — Format proposal resmi'],
 
                         ['name' => 'Panduan Teknis Lomba', 'desc' => 'PDF — Buku panduan lengkap'],
                         /* ['name' => 'Form Pendaftaran', 'desc' => 'PDF — Isi & upload kembali'], */
